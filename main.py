@@ -16,7 +16,18 @@ def agregar_alumno():
     print()
 
     nombre = input("Nombre: ")
-    edad = input("Edad: ")
+
+    while True:
+        try:
+            edad = int(input("Edad: "))
+
+            if 16 <= edad <= 80:
+                break
+            else:
+                print("La edad debe estar entre 16 y 80 años.")
+
+        except ValueError:
+            print("La edad debe ser un número.")
 
     if alumnos:
         id_alumno = max(alumno[0] for alumno in alumnos) + 1
