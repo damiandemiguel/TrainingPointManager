@@ -32,6 +32,176 @@ def agregar_alumno():
     print("Alumno agregado correctamente.")
     print("ID asignado:", id_alumno)
 
+def mostrar_alumnos():
+    print()
+    print("--- LISTA DE ALUMNOS ---")
+    print()
+
+    for alumno in alumnos:
+        print("ID:", alumno[0])
+        print("Nombre:", alumno[1])
+        print("Edad:", alumno[2])
+        print("-----------------------")
+
+def buscar_alumno():
+    print()
+    print("--- BUSCAR ALUMNO ---")
+    print()
+
+    busqueda = input("Ingrese el nombre o ID del alumno: ")
+
+    encontrados = []
+
+    for alumno in alumnos:
+        if normalizar(busqueda) in normalizar(alumno[1]) or busqueda == str(alumno[0]):
+            encontrados.append(alumno)
+
+    if len(encontrados) == 0:
+        print()
+        print("No se encontró ningún alumno.")
+
+    else:
+        for alumno in encontrados:
+            print()
+            print("Alumno encontrado:")
+            print("ID:", alumno[0])
+            print("Nombre:", alumno[1])
+            print("Edad:", alumno[2])        
+
+def modificar_alumno():
+    print()
+    print("--- MODIFICAR ALUMNO ---")
+    print()
+
+    nombre_buscar = input("Ingrese el nombre o ID del alumno: ")
+
+    encontrados = []
+
+    for alumno in alumnos:
+        if normalizar(nombre_buscar) in normalizar(alumno[1]) or nombre_buscar == str(alumno[0]):
+            encontrados.append(alumno)
+
+    if len(encontrados) == 0:
+        print()
+        print("No se encontró ningún alumno.")
+
+    elif len(encontrados) == 1:
+        alumno = encontrados[0]
+
+    else:
+        print()
+        print("Se encontraron varios alumnos:")
+        print()
+
+        for i, alumno_encontrado in enumerate(encontrados, start=1):
+            print(f"{i}. {alumno_encontrado[1]}")
+            print(f"   Edad: {alumno_encontrado[2]}")
+            print(f"   ID: {alumno_encontrado[0]}")
+            print()
+
+        seleccion = int(input("Seleccione el número del alumno que desea modificar: "))
+        alumno = encontrados[seleccion - 1]
+
+    if len(encontrados) > 0:
+        print()
+        print("Alumno seleccionado:")
+        print("ID:", alumno[0])
+        print("Nombre:", alumno[1])
+        print("Edad:", alumno[2])
+
+        print()
+        print("¿Qué dato desea modificar?")
+        print("1. Nombre")
+        print("2. Edad")
+        print("3. Cancelar")
+
+        opcion_modificar = input("Seleccione una opción: ")
+
+        if opcion_modificar == "1":
+            nuevo_nombre = input("Ingrese el nuevo nombre: ")
+            alumno[1] = nuevo_nombre
+
+            with open("alumnos.json", "w") as archivo:
+                json.dump(alumnos, archivo, indent=4)
+
+            print()
+            print("Nombre modificado correctamente.")
+
+        elif opcion_modificar == "2":
+            nueva_edad = input("Ingrese la nueva edad: ")
+            alumno[2] = nueva_edad
+
+            with open("alumnos.json", "w") as archivo:
+                json.dump(alumnos, archivo, indent=4)
+
+            print()
+            print("Edad modificada correctamente.")
+
+        elif opcion_modificar == "3":
+            print()
+            print("Modificación cancelada.")
+
+def eliminar_alumno():
+    print()
+    print("--- ELIMINAR ALUMNO ---")
+    print()
+
+    nombre_buscar = input("Ingrese el nombre o ID del alumno: ")
+
+    encontrados = []
+
+    for alumno in alumnos:
+        if normalizar(nombre_buscar) in normalizar(alumno[1]) or nombre_buscar == str(alumno[0]):
+            encontrados.append(alumno)
+
+    if len(encontrados) == 0:
+        print()
+        print("No se encontró ningún alumno.")
+
+    elif len(encontrados) == 1:
+        alumno = encontrados[0]
+
+    else:
+        print()
+        print("Se encontraron varios alumnos:")
+        print()
+
+        for i, alumno_encontrado in enumerate(encontrados, start=1):
+            print(f"{i}. {alumno_encontrado[1]}")
+            print(f"   Edad: {alumno_encontrado[2]}")
+            print(f"   ID: {alumno_encontrado[0]}")
+            print()
+
+        seleccion = int(input("Seleccione el número del alumno que desea eliminar: "))
+        alumno = encontrados[seleccion - 1]
+
+    if len(encontrados) > 0:
+        print()
+        print("Alumno seleccionado:")
+        print("ID:", alumno[0])
+        print("Nombre:", alumno[1])
+        print("Edad:", alumno[2])
+
+        print()
+        print("¿Está seguro de eliminar este alumno?")
+        print("1. Sí")
+        print("2. No")
+
+        confirmacion = input("Seleccione una opción: ")
+
+        if confirmacion == "1":
+            alumnos.remove(alumno)
+
+            with open("alumnos.json", "w") as archivo:
+                json.dump(alumnos, archivo, indent=4)
+
+            print()
+            print("Alumno eliminado correctamente.")
+
+        elif confirmacion == "2":
+            print()
+            print("Eliminación cancelada.")
+
 print("===================================")
 print("      TRAINING POINT MANAGER")
 print("===================================")
@@ -58,174 +228,16 @@ while True:
         agregar_alumno()
 
     elif opcion == "2":
-        print()
-        print("--- LISTA DE ALUMNOS ---")
-        print()
-
-        for alumno in alumnos:
-            print("ID:", alumno[0])
-            print("Nombre:", alumno[1])
-            print("Edad:", alumno[2])
-            print("-----------------------")
+        mostrar_alumnos()
 
     elif opcion == "3":
-        print()
-        print("--- BUSCAR ALUMNO ---")
-        print()
-
-        busqueda = input("Ingrese el nombre o ID del alumno: ")
-
-        encontrados = []
-
-        for alumno in alumnos:
-            if normalizar(busqueda) in normalizar(alumno[1]) or busqueda == str(alumno[0]):
-                encontrados.append(alumno)
-
-        if len(encontrados) == 0:
-            print()
-            print("No se encontró ningún alumno.")
-
-        else:
-            for alumno in encontrados:
-                print()
-                print("Alumno encontrado:")
-                print("ID:", alumno[0])
-                print("Nombre:", alumno[1])
-                print("Edad:", alumno[2])
+        buscar_alumno()
 
     elif opcion == "4":
-        print()
-        print("--- MODIFICAR ALUMNO ---")
-        print()
-
-        nombre_buscar = input("Ingrese el nombre o ID del alumno: ")
-
-        encontrados = []
-
-        for alumno in alumnos:
-            if normalizar(nombre_buscar) in normalizar(alumno[1]) or nombre_buscar == str(alumno[0]):
-                encontrados.append(alumno)
-
-        if len(encontrados) == 0:
-            print()
-            print("No se encontró ningún alumno.")
-
-        elif len(encontrados) == 1:
-            alumno = encontrados[0]
-
-        else:
-            print()
-            print("Se encontraron varios alumnos:")
-            print()
-
-            for i, alumno_encontrado in enumerate(encontrados, start=1):
-                print(f"{i}. {alumno_encontrado[1]}")
-                print(f"   Edad: {alumno_encontrado[2]}")
-                print(f"   ID: {alumno_encontrado[0]}")
-                print()
-
-            seleccion = int(input("Seleccione el número del alumno que desea modificar: "))
-            alumno = encontrados[seleccion - 1]
-
-        if len(encontrados) > 0:
-            print()
-            print("Alumno seleccionado:")
-            print("ID:", alumno[0])
-            print("Nombre:", alumno[1])
-            print("Edad:", alumno[2])
-
-            print()
-            print("¿Qué dato desea modificar?")
-            print("1. Nombre")
-            print("2. Edad")
-            print("3. Cancelar")
-
-            opcion_modificar = input("Seleccione una opción: ")
-
-            if opcion_modificar == "1":
-                nuevo_nombre = input("Ingrese el nuevo nombre: ")
-                alumno[1] = nuevo_nombre
-
-                with open("alumnos.json", "w") as archivo:
-                    json.dump(alumnos, archivo, indent=4)
-
-                print()
-                print("Nombre modificado correctamente.")
-
-            elif opcion_modificar == "2":
-                nueva_edad = input("Ingrese la nueva edad: ")
-                alumno[2] = nueva_edad
-
-                with open("alumnos.json", "w") as archivo:
-                    json.dump(alumnos, archivo, indent=4)
-
-                print()
-                print("Edad modificada correctamente.")
-
-            elif opcion_modificar == "3":
-                print()
-                print("Modificación cancelada.")
+        modificar_alumno()
 
     elif opcion == "5":
-        print()
-        print("--- ELIMINAR ALUMNO ---")
-        print()
-
-        nombre_buscar = input("Ingrese el nombre o ID del alumno: ")
-
-        encontrados = []
-
-        for alumno in alumnos:
-            if normalizar(nombre_buscar) in normalizar(alumno[1]) or nombre_buscar == str(alumno[0]):
-                encontrados.append(alumno)
-
-        if len(encontrados) == 0:
-            print()
-            print("No se encontró ningún alumno.")
-
-        elif len(encontrados) == 1:
-            alumno = encontrados[0]
-
-        else:
-            print()
-            print("Se encontraron varios alumnos:")
-            print()
-
-            for i, alumno_encontrado in enumerate(encontrados, start=1):
-                print(f"{i}. {alumno_encontrado[1]}")
-                print(f"   Edad: {alumno_encontrado[2]}")
-                print(f"   ID: {alumno_encontrado[0]}")
-                print()
-
-            seleccion = int(input("Seleccione el número del alumno que desea eliminar: "))
-            alumno = encontrados[seleccion - 1]
-
-        if len(encontrados) > 0:
-            print()
-            print("Alumno seleccionado:")
-            print("ID:", alumno[0])
-            print("Nombre:", alumno[1])
-            print("Edad:", alumno[2])
-
-            print()
-            print("¿Está seguro de eliminar este alumno?")
-            print("1. Sí")
-            print("2. No")
-
-            confirmacion = input("Seleccione una opción: ")
-
-            if confirmacion == "1":
-                alumnos.remove(alumno)
-
-                with open("alumnos.json", "w") as archivo:
-                    json.dump(alumnos, archivo, indent=4)
-
-                print()
-                print("Alumno eliminado correctamente.")
-
-            elif confirmacion == "2":
-                print()
-                print("Eliminación cancelada.")
+        eliminar_alumno()
 
     elif opcion == "6":
         print()
