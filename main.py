@@ -10,6 +10,28 @@ def normalizar(texto):
     )
     return texto
 
+def agregar_alumno():
+    print()
+    print("--- AGREGAR ALUMNO ---")
+    print()
+
+    nombre = input("Nombre: ")
+    edad = input("Edad: ")
+
+    if alumnos:
+        id_alumno = max(alumno[0] for alumno in alumnos) + 1
+    else:
+        id_alumno = 1
+
+    alumnos.append([id_alumno, nombre, edad])
+
+    with open("alumnos.json", "w") as archivo:
+        json.dump(alumnos, archivo, indent=4)
+
+    print()
+    print("Alumno agregado correctamente.")
+    print("ID asignado:", id_alumno)
+
 print("===================================")
 print("      TRAINING POINT MANAGER")
 print("===================================")
@@ -33,23 +55,7 @@ while True:
     opcion = input("Seleccione una opción: ")
 
     if opcion == "1":
-        print()
-        print("--- AGREGAR ALUMNO ---")
-        print()
-
-        nombre = input("Nombre: ")
-        edad = input("Edad: ")
-
-        id_alumno = len(alumnos) + 1
-
-        alumnos.append([id_alumno, nombre, edad])
-
-        with open("alumnos.json", "w") as archivo:
-            json.dump(alumnos, archivo, indent=4)
-
-        print()
-        print("Alumno agregado correctamente.")
-        print("ID asignado:", id_alumno)
+        agregar_alumno()
 
     elif opcion == "2":
         print()
