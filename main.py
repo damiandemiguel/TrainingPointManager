@@ -213,18 +213,20 @@ def eliminar_alumno():
             print()
             print("Eliminación cancelada.")
 
-print("===================================")
-print("      TRAINING POINT MANAGER")
-print("===================================")
-print()
+def mostrar_menu():
+    print()
+    print("===================================")
+    print("      TRAINING POINT MANAGER")
+    print("===================================")
+    print()
 
-print("1. Agregar alumno")
-print("2. Mostrar alumnos")
-print("3. Buscar alumno")
-print("4. Modificar alumno")
-print("5. Eliminar alumno")
-print("6. Salir")
-print()
+    print("1. Agregar alumno")
+    print("2. Mostrar alumnos")
+    print("3. Buscar alumno")
+    print("4. Modificar alumno")
+    print("5. Eliminar alumno")
+    print("6. Salir")
+    print()
 
 try:
     with open("alumnos.json", "r") as archivo:
@@ -233,6 +235,7 @@ except FileNotFoundError:
     alumnos = []
 
 while True:
+    mostrar_menu()
     opcion = input("Seleccione una opción: ")
 
     if opcion == "1":
