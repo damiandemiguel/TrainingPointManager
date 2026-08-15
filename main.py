@@ -1,5 +1,6 @@
 import json
 import unicodedata
+from datetime import datetime
 
 def normalizar(texto):
     texto = texto.lower()
@@ -10,31 +11,85 @@ def normalizar(texto):
     )
     return texto
 
+def calcular_edad(fecha_nacimiento):
+    fecha_nacimiento = datetime.strptime(fecha_nacimiento, "%d/%m/%Y")
+    hoy = datetime.today()
+
+    edad = hoy.year - fecha_nacimiento.year
+
+    if (hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day):
+        edad -= 1
+
+    return edad
+
+def validar_fecha_nacimiento(fecha_nacimiento):
+    try:
+        fecha = datetime.strptime(fecha_nacimiento, "%d/%m/%Y")
+        edad = calcular_edad(fecha_nacimiento)
+
+        if 16 <= edad <= 80:
+            return True
+        else:
+            print("La edad debe estar entre 16 y 80 años.")
+            return False
+
+    except ValueError:
+        print("La fecha no es válida. Use el formato DD/MM/AAAA.")
+        return False
+
+def validar_email(email):
+    if "@" in email and "." in email.split("@")[1]:
+        return True
+    else:
+        print("El e-mail no es válido.")
+        return False        
+
+def email_ya_existe(email):
+    for alumno in alumnos:
+        if alumno["email"].lower() == email.lower():
+            return True
+
+    return False
+
 def agregar_alumno():
     print()
     print("--- AGREGAR ALUMNO ---")
     print()
 
-    nombre = input("Nombre: ")
+    nombre = input("Nombre y apellido: ")
 
     while True:
-        try:
-            edad = int(input("Edad: "))
+        email = input("E-mail: ")
 
-            if 16 <= edad <= 80:
-                break
-            else:
-                print("La edad debe estar entre 16 y 80 años.")
+        if not validar_email(email):
+            continue
 
-        except ValueError:
-            print("La edad debe ser un número.")
+        if email_ya_existe(email):
+            print("Ya existe un alumno registrado con ese e-mail.")
+            continue
+
+        break
+        break
+
+    while True:
+        fecha_nacimiento = input("Fecha de nacimiento (DD/MM/AAAA): ")
+
+        if validar_fecha_nacimiento(fecha_nacimiento):
+            break
 
     if alumnos:
-        id_alumno = max(alumno[0] for alumno in alumnos) + 1
+        id_alumno = max(alumno["id"] for alumno in alumnos) + 1
     else:
         id_alumno = 1
 
-    alumnos.append([id_alumno, nombre, edad])
+    nuevo_alumno = {
+        "id": id_alumno,
+        "nombre": nombre,
+        "email": email,
+        "fecha_nacimiento": fecha_nacimiento
+    }
+
+    alumnos.append(nuevo_alumno)
 
     with open("alumnos.json", "w") as archivo:
         json.dump(alumnos, archivo, indent=4)
@@ -49,9 +104,13 @@ def mostrar_alumnos():
     print()
 
     for alumno in alumnos:
-        print("ID:", alumno[0])
-        print("Nombre:", alumno[1])
-        print("Edad:", alumno[2])
+        edad = calcular_edad(alumno["fecha_nacimiento"])
+
+        print("ID:", alumno["id"])
+        print("Nombre:", alumno["nombre"])
+        print("E-mail:", alumno["email"])
+        print("Fecha de nacimiento:", alumno["fecha_nacimiento"])
+        print("Edad:", edad, "años")
         print("-----------------------")
 
 def buscar_alumno():
@@ -64,7 +123,7 @@ def buscar_alumno():
     encontrados = []
 
     for alumno in alumnos:
-        if normalizar(busqueda) in normalizar(alumno[1]) or busqueda == str(alumno[0]):
+        if normalizar(busqueda) in normalizar(alumno["nombre"]) or busqueda == str(alumno["id"]):
             encontrados.append(alumno)
 
     if len(encontrados) == 0:
@@ -75,9 +134,11 @@ def buscar_alumno():
         for alumno in encontrados:
             print()
             print("Alumno encontrado:")
-            print("ID:", alumno[0])
-            print("Nombre:", alumno[1])
-            print("Edad:", alumno[2])        
+            print("ID:", alumno["id"])
+            print("Nombre:", alumno["nombre"])
+            print("E-mail:", alumno["email"])
+            print("Fecha de nacimiento:", alumno["fecha_nacimiento"])
+            print("Edad:", calcular_edad(alumno["fecha_nacimiento"]), "años")      
 
 def modificar_alumno():
     print()
@@ -89,12 +150,13 @@ def modificar_alumno():
     encontrados = []
 
     for alumno in alumnos:
-        if normalizar(nombre_buscar) in normalizar(alumno[1]) or nombre_buscar == str(alumno[0]):
+        if normalizar(nombre_buscar) in normalizar(alumno["nombre"]) or nombre_buscar == str(alumno["id"]):
             encontrados.append(alumno)
 
     if len(encontrados) == 0:
         print()
         print("No se encontró ningún alumno.")
+        return
 
     elif len(encontrados) == 1:
         alumno = encontrados[0]
@@ -105,52 +167,85 @@ def modificar_alumno():
         print()
 
         for i, alumno_encontrado in enumerate(encontrados, start=1):
-            print(f"{i}. {alumno_encontrado[1]}")
-            print(f"   Edad: {alumno_encontrado[2]}")
-            print(f"   ID: {alumno_encontrado[0]}")
+            print(f"{i}. {alumno_encontrado['nombre']}")
+            print(f"   E-mail: {alumno_encontrado['email']}")
+            print(f"   ID: {alumno_encontrado['id']}")
             print()
 
         seleccion = int(input("Seleccione el número del alumno que desea modificar: "))
         alumno = encontrados[seleccion - 1]
 
-    if len(encontrados) > 0:
-        print()
-        print("Alumno seleccionado:")
-        print("ID:", alumno[0])
-        print("Nombre:", alumno[1])
-        print("Edad:", alumno[2])
+    print()
+    print("Alumno seleccionado:")
+    print("ID:", alumno["id"])
+    print("Nombre:", alumno["nombre"])
+    print("E-mail:", alumno["email"])
+    print("Fecha de nacimiento:", alumno["fecha_nacimiento"])
+    print("Edad:", calcular_edad(alumno["fecha_nacimiento"]), "años")
+
+    print()
+    print("¿Qué dato desea modificar?")
+    print("1. Nombre y apellido")
+    print("2. E-mail")
+    print("3. Fecha de nacimiento")
+    print("4. Cancelar")
+
+    opcion_modificar = input("Seleccione una opción: ")
+
+    if opcion_modificar == "1":
+        nuevo_nombre = input("Ingrese el nuevo nombre y apellido: ")
+
+        alumno["nombre"] = nuevo_nombre
+
+        with open("alumnos.json", "w") as archivo:
+            json.dump(alumnos, archivo, indent=4)
 
         print()
-        print("¿Qué dato desea modificar?")
-        print("1. Nombre")
-        print("2. Edad")
-        print("3. Cancelar")
+        print("Nombre modificado correctamente.")
 
-        opcion_modificar = input("Seleccione una opción: ")
+    elif opcion_modificar == "2":
+        while True:
+            nuevo_email = input("Ingrese el nuevo e-mail: ")
 
-        if opcion_modificar == "1":
-            nuevo_nombre = input("Ingrese el nuevo nombre: ")
-            alumno[1] = nuevo_nombre
+            if not validar_email(nuevo_email):
+                continue
 
-            with open("alumnos.json", "w") as archivo:
-                json.dump(alumnos, archivo, indent=4)
+            if nuevo_email.lower() != alumno["email"].lower() and email_ya_existe(nuevo_email):
+                print("Ya existe otro alumno registrado con ese e-mail.")
+                continue
 
-            print()
-            print("Nombre modificado correctamente.")
+            break
 
-        elif opcion_modificar == "2":
-            nueva_edad = input("Ingrese la nueva edad: ")
-            alumno[2] = nueva_edad
+        alumno["email"] = nuevo_email
 
-            with open("alumnos.json", "w") as archivo:
-                json.dump(alumnos, archivo, indent=4)
+        with open("alumnos.json", "w") as archivo:
+            json.dump(alumnos, archivo, indent=4)
 
-            print()
-            print("Edad modificada correctamente.")
+        print()
+        print("E-mail modificado correctamente.")
 
-        elif opcion_modificar == "3":
-            print()
-            print("Modificación cancelada.")
+    elif opcion_modificar == "3":
+        while True:
+            nueva_fecha = input("Ingrese la nueva fecha de nacimiento (DD/MM/AAAA): ")
+
+            if validar_fecha_nacimiento(nueva_fecha):
+                break
+
+        alumno["fecha_nacimiento"] = nueva_fecha
+
+        with open("alumnos.json", "w") as archivo:
+            json.dump(alumnos, archivo, indent=4)
+
+        print()
+        print("Fecha de nacimiento modificada correctamente.")
+
+    elif opcion_modificar == "4":
+        print()
+        print("Modificación cancelada.")
+
+    else:
+        print()
+        print("Opción no válida.")
 
 def eliminar_alumno():
     print()

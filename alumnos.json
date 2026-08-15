@@ -1,22 +1,32 @@
 [
-    [
-        3,
-        "Dami\u00c3\u00a1n de Miguel Prueba",
-        34
-    ],
-    [
-        6,
-        "Juan Prueba",
-        34
-    ],
-    [
-        8,
-        "Hern\u00e1n Carmel\u00e9",
-        50
-    ],
-    [
-        9,
-        "Pedro Prueba",
-        40
-    ]
+    {
+        "id": 1,
+        "nombre": "Rub\u00e9n de Miguel Prueba",
+        "email": "rubendemiguel@hotmail.com",
+        "fecha_nacimiento": "13/08/1959"
+    },
+    {
+        "id": 2,
+        "nombre": "Franco Loiacono Prueba",
+        "email": "francoloiacono@hotmail.com",
+        "fecha_nacimiento": "15/02/1958"
+    },
+    {
+        "id": 3,
+        "nombre": "Lilia Gattari Prueba",
+        "email": "lilia@hotmail.com",
+        "fecha_nacimiento": "31/05/1961"
+    },
+    {
+        "id": 4,
+        "nombre": "adolfo",
+        "email": "liliagattari@hotmail.com",
+        "fecha_nacimiento": "1/1/1991"
+    },
+    {
+        "id": 5,
+        "nombre": "Adolfo Prueba",
+        "email": "adolfo@hotmail.com",
+        "fecha_nacimiento": "15/08/1980"
+    }
 ]
