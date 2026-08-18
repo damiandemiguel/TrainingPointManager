@@ -257,7 +257,7 @@ def eliminar_alumno():
     encontrados = []
 
     for alumno in alumnos:
-        if normalizar(nombre_buscar) in normalizar(alumno[1]) or nombre_buscar == str(alumno[0]):
+        if normalizar(nombre_buscar) in normalizar(alumno["nombre"]) or nombre_buscar == str(alumno["id"]):
             encontrados.append(alumno)
 
     if len(encontrados) == 0:
@@ -273,9 +273,11 @@ def eliminar_alumno():
         print()
 
         for i, alumno_encontrado in enumerate(encontrados, start=1):
-            print(f"{i}. {alumno_encontrado[1]}")
-            print(f"   Edad: {alumno_encontrado[2]}")
-            print(f"   ID: {alumno_encontrado[0]}")
+            print(f"{i}. {alumno_encontrado['nombre']}")
+            print(f"   E-mail: {alumno_encontrado['email']}")
+            print(f"   Fecha de nacimiento: {alumno_encontrado['fecha_nacimiento']}")
+            print(f"   Edad: {calcular_edad(alumno_encontrado['fecha_nacimiento'])} años")
+            print(f"   ID: {alumno_encontrado['id']}")
             print()
 
         seleccion = int(input("Seleccione el número del alumno que desea eliminar: "))
@@ -284,9 +286,11 @@ def eliminar_alumno():
     if len(encontrados) > 0:
         print()
         print("Alumno seleccionado:")
-        print("ID:", alumno[0])
-        print("Nombre:", alumno[1])
-        print("Edad:", alumno[2])
+        print("ID:", alumno["id"])
+        print("Nombre:", alumno["nombre"])
+        print("E-mail:", alumno["email"])
+        print("Fecha de nacimiento:", alumno["fecha_nacimiento"])
+        print("Edad:", calcular_edad(alumno["fecha_nacimiento"]), "años")
 
         print()
         print("¿Está seguro de eliminar este alumno?")
