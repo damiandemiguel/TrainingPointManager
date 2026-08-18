@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Training Point - Ingreso</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login {
+            width: 90%;
+            max-width: 400px;
+
+            background-color: white;
+
+            padding: 40px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.15);
+
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+
+            padding: 14px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+
+            padding: 14px;
+
+            background-color: #222;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #444;
+        }
+
+        .registro {
+            margin-top: 20px;
+        }
+
+        .registro a {
+            color: #222;
+
+            font-weight: bold;
+
+            text-decoration: none;
+        }
+
+        .error {
+            color: #c00;
+
+            margin-bottom: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login">
+
+        <h1>TRAINING POINT</h1>
+
+        <p class="subtitulo">
+            Ingresá a tu cuenta
+        </p>
+
+
+        {% if error %}
+
+            <p class="error">
+                {{ error }}
+            </p>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <input
+                type="text"
+                name="usuario"
+                placeholder="Tu usuario"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Tu contraseña"
+                required
+            >
+
+            <button type="submit">
+                Ingresar
+            </button>
+
+        </form>
+
+
+        <div class="registro">
+
+            <p>
+                ¿No tenés una cuenta?
+            </p>
+
+            <a href="#">
+                Crear usuario
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
