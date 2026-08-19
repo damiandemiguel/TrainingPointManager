@@ -60,7 +60,7 @@ def panel():
         return redirect(url_for("inicio"))
 
     if session["rol"] == "administrador":
-        return "Panel del administrador"
+        return render_template("admin.html")
 
     return "Panel del alumno"
 

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Training Point - Administrador</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .encabezado p {
+            margin: 8px 0 0;
+            color: #ccc;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto 100px;
+        }
+
+        .bienvenida {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .bienvenida h2 {
+            margin-top: 0;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .boton {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+
+            text-decoration: none;
+            color: #222;
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.10);
+
+            text-align: center;
+
+            transition: 0.2s;
+        }
+
+        .boton:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .icono {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .titulo {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .descripcion {
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .salir {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+
+            padding: 14px;
+
+            background-color: #222;
+            color: white;
+
+            text-align: center;
+            text-decoration: none;
+
+            border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+
+            .menu {
+                grid-template-columns: 1fr;
+            }
+
+            .contenedor {
+                width: 92%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header class="encabezado">
+
+        <h1>TRAINING POINT</h1>
+
+        <p>Panel de administración</p>
+
+    </header>
+
+
+    <main class="contenedor">
+
+        <section class="bienvenida">
+
+            <h2>Hola, {{ session["usuario"] }} 👋</h2>
+
+            <p>
+                Bienvenido al panel de administración
+                de Training Point.
+            </p>
+
+        </section>
+
+
+        <section class="menu">
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">📅</div>
+
+                <div class="titulo">
+                    Clases
+                </div>
+
+                <div class="descripcion">
+                    Crear y gestionar clases
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">👥</div>
+
+                <div class="titulo">
+                    Alumnos
+                </div>
+
+                <div class="descripcion">
+                    Ver y gestionar alumnos
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">💳</div>
+
+                <div class="titulo">
+                    Créditos
+                </div>
+
+                <div class="descripcion">
+                    Cargar y gestionar créditos
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">🏋️</div>
+
+                <div class="titulo">
+                    Rutinas
+                </div>
+
+                <div class="descripcion">
+                    Crear y administrar rutinas
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">📱</div>
+
+                <div class="titulo">
+                    Lector QR
+                </div>
+
+                <div class="descripcion">
+                    Registrar asistencia
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">🔔</div>
+
+                <div class="titulo">
+                    Notificaciones
+                </div>
+
+                <div class="descripcion">
+                    Enviar y recibir mensajes
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">📄</div>
+
+                <div class="titulo">
+                    Certificados médicos
+                </div>
+
+                <div class="descripcion">
+                    Gestionar certificados
+                </div>
+
+            </a>
+
+
+            <a href="#" class="boton">
+
+                <div class="icono">⚙️</div>
+
+                <div class="titulo">
+                    Configuración
+                </div>
+
+                <div class="descripcion">
+                    Configurar la aplicación
+                </div>
+
+            </a>
+
+
+        </section>
+
+
+        <a href="#" class="salir">
+            Cerrar sesión
+        </a>
+
+    </main>
+
+</body>
+
+</html>
