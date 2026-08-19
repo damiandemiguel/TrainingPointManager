@@ -63,3 +63,30 @@ def crear_tabla_alumnos():
 
     conexion.commit()
     conexion.close()
+
+def crear_alumno(usuario_id, nombre, email, fecha_nacimiento, telefono, direccion):
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        INSERT INTO alumnos (
+            usuario_id,
+            nombre,
+            email,
+            fecha_nacimiento,
+            telefono,
+            direccion
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        usuario_id,
+        nombre,
+        email,
+        fecha_nacimiento,
+        telefono,
+        direccion
+    ))
+
+    conexion.commit()
+    conexion.close()
