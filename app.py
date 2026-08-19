@@ -52,7 +52,6 @@ def inicio():
 
     return render_template("login.html")
 
-
 @app.route("/panel")
 def panel():
 
@@ -62,7 +61,32 @@ def panel():
     if session["rol"] == "administrador":
         return render_template("admin.html")
 
-    return "Panel del alumno"
+    return redirect(url_for("perfil_alumno"))
+
+
+@app.route("/perfil")
+def perfil_alumno():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT nombre, email, fecha_nacimiento, telefono, direccion, certificado_medico, activo
+        FROM alumnos
+        WHERE usuario_id = ?
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    conexion.close()
+
+    if alumno is None:
+        return "No se encontró el perfil del alumno."
+
+    return render_template("perfil_alumno.html", alumno=alumno)
 
 
 @app.route("/alumnos")
@@ -71,8 +95,21 @@ def mostrar_alumnos():
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
 
-    with open("alumnos.json", "r") as archivo:
-        alumnos = json.load(archivo)
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre, email, telefono, activo
+        FROM alumnos
+        ORDER BY nombre
+    """)
+
+    alumnos = cursor.fetchall()
+
+    conexion.close()
 
     return render_template("alumnos.html", alumnos=alumnos)
 
