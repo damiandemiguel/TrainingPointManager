@@ -39,3 +39,27 @@ def crear_usuario(usuario, password, rol):
 
     conexion.commit()
     conexion.close()
+
+
+def crear_tabla_alumnos():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS alumnos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER UNIQUE,
+            nombre TEXT NOT NULL,
+            email TEXT,
+            fecha_nacimiento TEXT,
+            telefono TEXT,
+            direccion TEXT,
+            certificado_medico TEXT,
+            activo INTEGER DEFAULT 1,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
