@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 
 from database import conectar
@@ -52,6 +52,73 @@ def inicio():
 
     return render_template("login.html")
 
+@app.route("/registro", methods=["GET", "POST"])
+def registro():
+
+    if request.method == "POST":
+
+        nombre = request.form["nombre"]
+        email = request.form["email"]
+        fecha_nacimiento = request.form["fecha_nacimiento"]
+        telefono = request.form["telefono"]
+        direccion = request.form["direccion"]
+        usuario = request.form["usuario"]
+        password = request.form["password"]
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        try:
+
+            # Crear usuario
+            password_segura = generate_password_hash(password)
+
+            cursor.execute("""
+                INSERT INTO usuarios (usuario, password, rol)
+                VALUES (?, ?, ?)
+            """, (
+                usuario,
+                password_segura,
+                "alumno"
+            ))
+
+            usuario_id = cursor.lastrowid
+
+            # Crear perfil del alumno
+            cursor.execute("""
+                INSERT INTO alumnos (
+                    usuario_id,
+                    nombre,
+                    email,
+                    fecha_nacimiento,
+                    telefono,
+                    direccion
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                usuario_id,
+                nombre,
+                email,
+                fecha_nacimiento,
+                telefono,
+                direccion
+            ))
+
+            conexion.commit()
+
+        except Exception as error:
+
+            conexion.rollback()
+            conexion.close()
+
+            return f"Error al crear la cuenta: {error}"
+
+        conexion.close()
+
+        return redirect(url_for("inicio"))
+
+    return render_template("registro.html")
+
 @app.route("/panel")
 def panel():
 
@@ -71,6 +138,8 @@ def perfil_alumno():
         return redirect(url_for("inicio"))
 
     conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    
     cursor = conexion.cursor()
 
     cursor.execute("""
