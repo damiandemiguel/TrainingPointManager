@@ -98,8 +98,41 @@
             color: #c00;
 
             margin-bottom: 15px;
-        }
+    }
 
+    .password-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-container input {
+        padding-right: 50px;
+    }
+
+    .mostrar-password {
+        position: absolute;
+        right: 10px;
+        top: 0;
+
+        width: 40px;
+        height: 48px;
+
+        padding: 0;
+
+        background: none;
+        color: #666;
+
+        border: none;
+
+        font-size: 20px;
+
+        cursor: pointer;
+    }
+
+    .mostrar-password:hover {
+        background: none;
+        color: #222;
+    }
     </style>
 
 </head>
@@ -133,12 +166,26 @@
                 required
             >
 
-            <input
-                type="password"
-                name="password"
-                placeholder="Tu contraseña"
-                required
-            >
+    <div class="password-container">
+
+        <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Tu contraseña"
+            required
+        >
+
+        <button
+            type="button"
+            class="mostrar-password"
+            onclick="mostrarPassword()"
+            aria-label="Mostrar contraseña"
+        >
+            👁
+        </button>
+
+    </div>
 
             <button type="submit">
                 Ingresar
@@ -153,13 +200,29 @@
                 ¿No tenés una cuenta?
             </p>
 
-            <a href="#">
-                Crear usuario
+            <a href="{{ url_for('registro') }}">
+                Crear mi cuenta
             </a>
 
         </div>
 
     </div>
+
+    <script>
+
+    function mostrarPassword() {
+
+        const password = document.getElementById("password");
+
+        if (password.type === "password") {
+            password.type = "text";
+        } else {
+            password.type = "password";
+        }
+
+    }
+
+    </script>
 
 </body>
 

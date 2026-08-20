@@ -104,7 +104,38 @@
             font-size: 14px;
             color: #555;
         }
+    .password-container {
+    position: relative;
+    width: 100%;
+    }
 
+    .password-container input {
+        padding-right: 50px;
+    }
+
+    .mostrar-password {
+        position: absolute;
+        right: 10px;
+        top: 0;
+
+        width: 40px;
+        height: 100%;
+
+        padding: 0;
+
+        background: none;
+        color: #666;
+
+        border: none;
+
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .mostrar-password:hover {
+        background: none;
+        color: #222;
+    }    
     </style>
 
 </head>
@@ -222,6 +253,8 @@
                     Contraseña
                 </label>
 
+                <div class="password-container">
+
                 <input
                     type="password"
                     id="password"
@@ -229,7 +262,47 @@
                     required
                 >
 
+                <button
+                    type="button"
+                    class="mostrar-password"
+                    onclick="mostrarPassword('password')"
+                    aria-label="Mostrar contraseña"
+                >
+                    👁
+                </button>
+
             </div>
+
+        </div>
+
+
+        <div class="campo">
+
+            <label for="confirmar_password">
+                Confirmar contraseña
+            </label>
+
+            <div class="password-container">
+
+                <input
+                    type="password"
+                    id="confirmar_password"
+                    name="confirmar_password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="mostrar-password"
+                    onclick="mostrarPassword('confirmar_password')"
+                    aria-label="Mostrar confirmación de contraseña"
+                >
+                    👁
+                </button>
+
+            </div>
+
+        </div>
 
 
             <button type="submit" class="boton">
@@ -251,6 +324,21 @@
         </a>
 
     </div>
+<script>
+
+function mostrarPassword(id) {
+
+    const password = document.getElementById(id);
+
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+
+}
+
+</script>
 
 </body>
 
