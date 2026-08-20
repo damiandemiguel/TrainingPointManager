@@ -88,6 +88,38 @@ def perfil_alumno():
 
     return render_template("perfil_alumno.html", alumno=alumno)
 
+@app.route("/alumnos/<int:alumno_id>")
+def perfil_alumno_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre, email, fecha_nacimiento,
+               telefono, direccion, certificado_medico, activo
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+
+    conexion.close()
+
+    if alumno is None:
+        return "Alumno no encontrado."
+
+    return render_template(
+        "perfil_alumno.html",
+        alumno=alumno
+    )
 
 @app.route("/alumnos")
 def mostrar_alumnos():

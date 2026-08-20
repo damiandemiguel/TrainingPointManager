@@ -71,6 +71,7 @@
                 <th>Nombre</th>
                 <th>E-mail</th>
                 <th>Fecha de nacimiento</th>
+                <th>Acciones</th>
             </tr>
 
             {% for alumno in alumnos %}
@@ -80,6 +81,12 @@
                 <td>{{ alumno.nombre }}</td>
                 <td>{{ alumno.email }}</td>
                 <td>{{ alumno.fecha_nacimiento }}</td>
+
+                <td>
+                    <a href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.id) }}">
+                        Ver perfil
+                    </a>
+                </td>
             </tr>
 
             {% endfor %}

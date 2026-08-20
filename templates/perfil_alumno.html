@@ -80,38 +80,43 @@
 
         <div class="dato">
             <span class="etiqueta">Nombre</span>
-            {{ alumno[0] }}
+            {{ alumno.nombre }}
         </div>
 
         <div class="dato">
             <span class="etiqueta">Email</span>
-            {{ alumno[1] }}
+            {{ alumno.email }}
         </div>
 
         <div class="dato">
             <span class="etiqueta">Fecha de nacimiento</span>
-            {{ alumno[2] }}
+            {{ alumno.fecha_nacimiento }}
         </div>
 
         <div class="dato">
             <span class="etiqueta">Teléfono</span>
-            {{ alumno[3] }}
+            {{ alumno.telefono }}
         </div>
 
         <div class="dato">
             <span class="etiqueta">Dirección</span>
-            {{ alumno[4] }}
+            {{ alumno.direccion }}
         </div>
 
         <div class="dato">
             <span class="etiqueta">Certificado médico</span>
-            {{ alumno[5] or "No informado" }}
+
+            {% if alumno.certificado_medico %}
+                Presentado
+            {% else %}
+                No presentado
+            {% endif %}
         </div>
 
         <div class="dato">
             <span class="etiqueta">Estado</span>
 
-            {% if alumno[6] == 1 %}
+            {% if alumno.activo == 1 %}
                 Activo
             {% else %}
                 Inactivo
