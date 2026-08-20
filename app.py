@@ -16,6 +16,13 @@ def inicio():
 
         usuario = request.form["usuario"]
         password = request.form["password"]
+        confirmar_password = request.form["confirmar_password"]
+
+        if password != confirmar_password:
+            return render_template(
+                "registro.html",
+                error="Las contraseñas no coinciden."
+            )
 
         conexion = conectar()
         cursor = conexion.cursor()
@@ -64,6 +71,14 @@ def registro():
         direccion = request.form["direccion"]
         usuario = request.form["usuario"]
         password = request.form["password"]
+        confirmar_password = request.form["confirmar_password"]
+
+        if password != confirmar_password:
+            return render_template(
+                "registro.html",
+                error="Las contraseñas no coinciden.",
+                datos=request.form
+            )
 
         conexion = conectar()
         cursor = conexion.cursor()
@@ -139,7 +154,7 @@ def perfil_alumno():
 
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
-    
+
     cursor = conexion.cursor()
 
     cursor.execute("""

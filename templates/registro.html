@@ -150,6 +150,14 @@
             Registrate en Training Point
         </p>
 
+        {% if error %}
+
+            <p style="color: #c00; text-align: center;">
+                {{ error }}
+            </p>
+
+        {% endif %}
+
         <form method="POST">
 
             <div class="campo">
@@ -162,6 +170,7 @@
                     type="text"
                     id="nombre"
                     name="nombre"
+                    value="{{ datos.nombre if datos else '' }}"
                     required
                 >
 
@@ -178,6 +187,7 @@
                     type="email"
                     id="email"
                     name="email"
+                    value="{{ datos.email if datos else '' }}"
                     required
                 >
 
@@ -194,6 +204,7 @@
                     type="date"
                     id="fecha_nacimiento"
                     name="fecha_nacimiento"
+                    value="{{ datos.fecha_nacimiento if datos else '' }}"
                     required
                 >
 
@@ -210,6 +221,7 @@
                     type="tel"
                     id="telefono"
                     name="telefono"
+                    value="{{ datos.telefono if datos else '' }}"
                     required
                 >
 
@@ -226,6 +238,7 @@
                     type="text"
                     id="direccion"
                     name="direccion"
+                    value="{{ datos.direccion if datos else '' }}"
                 >
 
             </div>
@@ -241,6 +254,7 @@
                     type="text"
                     id="usuario"
                     name="usuario"
+                    value="{{ datos.usuario if datos else '' }}"
                     required
                 >
 
