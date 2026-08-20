@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash
-import json
+import sqlite3
 
 from database import conectar
 
@@ -99,10 +99,12 @@ def mostrar_alumnos():
         return "Acceso no autorizado."
 
     conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+
     cursor = conexion.cursor()
 
     cursor.execute("""
-        SELECT id, nombre, email, telefono, activo
+        SELECT id, nombre, email, fecha_nacimiento, telefono, activo
         FROM alumnos
         ORDER BY nombre
     """)
