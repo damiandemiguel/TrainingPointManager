@@ -65,6 +65,90 @@
         .volver:hover {
             background-color: #444;
         }
+
+        .foto-perfil {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .foto-perfil img,
+        .silueta {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+        }
+
+        .foto-perfil img {
+            object-fit: cover;
+        }
+
+        .silueta {
+            background-color: #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            color: #888;
+        }
+
+        .form-foto {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-foto label {
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: #222;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .form-foto input[type="file"] {
+            display: block;
+            margin: 10px auto 15px;
+        }
+
+        .form-foto button {
+            padding: 10px 18px;
+            background-color: #222;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .form-foto button:hover {
+    background-color: #444;
+        }
+
+        .foto-perfil {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .foto-perfil img,
+        .silueta {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .silueta {
+            margin: 0 auto;
+            background-color: #ddd;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 70px;
+        }
+    
     </style>
 </head>
 
@@ -73,6 +157,49 @@
     <div class="contenedor">
 
         <h1>Mi perfil</h1>
+
+        <div class="foto-perfil">
+
+            <div class="foto-perfil">
+
+                {% if alumno.foto_perfil %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/perfiles/' + alumno.foto_perfil) }}"
+                        alt="Foto de perfil"
+                    >
+
+                {% else %}
+
+                    <div class="silueta">
+                        👤
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="form-foto">
+
+            <label for="foto">
+                Elegir foto
+            </label>
+
+            <input
+                type="file"
+                id="foto"
+                name="foto"
+                accept=".jpg,.jpeg,.png,.webp"
+                required
+            >
+
+            <button type="submit">
+                Guardar foto
+            </button>
+
+        </form>
 
         <p class="subtitulo">
             Información personal

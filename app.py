@@ -1,13 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 import sqlite3
+import os
 
 from database import conectar
 
 app = Flask(__name__)
 
+UPLOAD_FOLDER = "static/uploads/perfiles"
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+
 app.secret_key = "clave-temporal-training-point"
 
+def archivo_permitido(nombre):
+
+    return (
+        "." in nombre
+        and nombre.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 @app.route("/", methods=["GET", "POST"])
 def inicio():
@@ -16,13 +30,6 @@ def inicio():
 
         usuario = request.form["usuario"]
         password = request.form["password"]
-        confirmar_password = request.form["confirmar_password"]
-
-        if password != confirmar_password:
-            return render_template(
-                "registro.html",
-                error="Las contraseñas no coinciden."
-            )
 
         conexion = conectar()
         cursor = conexion.cursor()
@@ -146,11 +153,41 @@ def panel():
     return redirect(url_for("perfil_alumno"))
 
 
-@app.route("/perfil")
+@app.route("/perfil", methods=["GET", "POST"])
 def perfil_alumno():
 
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
+
+    if request.method == "POST":
+
+        archivo = request.files.get("foto")
+
+        if archivo and archivo_permitido(archivo.filename):
+
+            nombre_archivo = secure_filename(archivo.filename)
+
+            archivo.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    nombre_archivo
+                )
+            )
+
+            conexion = conectar()
+            cursor = conexion.cursor()
+
+            cursor.execute("""
+                UPDATE alumnos
+                SET foto_perfil = ?
+                WHERE usuario_id = ?
+            """, (
+                nombre_archivo,
+                session["usuario_id"]
+            ))
+
+            conexion.commit()
+            conexion.close()
 
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
@@ -158,7 +195,8 @@ def perfil_alumno():
     cursor = conexion.cursor()
 
     cursor.execute("""
-        SELECT nombre, email, fecha_nacimiento, telefono, direccion, certificado_medico, activo
+        SELECT nombre, email, fecha_nacimiento, telefono, direccion,
+               certificado_medico, activo, foto_perfil
         FROM alumnos
         WHERE usuario_id = ?
     """, (session["usuario_id"],))
