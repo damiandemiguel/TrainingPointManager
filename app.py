@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
@@ -152,6 +153,63 @@ def panel():
 
     return redirect(url_for("perfil_alumno"))
 
+@app.route("/editar-perfil", methods=["GET", "POST"])
+def editar_perfil():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    if request.method == "POST":
+
+        nombre = request.form["nombre"]
+        email = request.form["email"]
+        fecha_nacimiento = request.form["fecha_nacimiento"]
+        telefono = request.form["telefono"]
+        direccion = request.form["direccion"]
+
+        cursor.execute("""
+            UPDATE alumnos
+            SET nombre = ?,
+                email = ?,
+                fecha_nacimiento = ?,
+                telefono = ?,
+                direccion = ?
+            WHERE usuario_id = ?
+        """, (
+            nombre,
+            email,
+            fecha_nacimiento,
+            telefono,
+            direccion,
+            session["usuario_id"]
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(url_for("perfil_alumno"))
+
+    cursor.execute("""
+        SELECT nombre, email, fecha_nacimiento, telefono, direccion
+        FROM alumnos
+        WHERE usuario_id = ?
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    conexion.close()
+
+    if alumno is None:
+        return "No se encontró el perfil del alumno."
+
+    return render_template(
+        "editar_perfil.html",
+        alumno=alumno
+    )
 
 @app.route("/perfil", methods=["GET", "POST"])
 def perfil_alumno():
