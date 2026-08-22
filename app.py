@@ -211,6 +211,76 @@ def editar_perfil():
         alumno=alumno
     )
 
+@app.route("/salud", methods=["GET", "POST"])
+def ficha_salud():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id FROM alumnos WHERE usuario_id = ?", (session["usuario_id"],))
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el perfil del alumno."
+
+    alumno_id = alumno["id"]
+
+    if request.method == "POST":
+
+        contacto_emergencia = request.form.get("contacto_emergencia", "")
+        telefono_emergencia = request.form.get("telefono_emergencia", "")
+        lesiones = request.form.get("lesiones", "")
+        antecedentes = request.form.get("antecedentes", "")
+        observaciones = request.form.get("observaciones", "")
+
+        cursor.execute("""
+            INSERT INTO salud (
+                alumno_id,
+                contacto_emergencia,
+                telefono_emergencia,
+                lesiones,
+                antecedentes,
+                observaciones
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(alumno_id) DO UPDATE SET
+                contacto_emergencia = excluded.contacto_emergencia,
+                telefono_emergencia = excluded.telefono_emergencia,
+                lesiones = excluded.lesiones,
+                antecedentes = excluded.antecedentes,
+                observaciones = excluded.observaciones
+        """, (
+            alumno_id,
+            contacto_emergencia,
+            telefono_emergencia,
+            lesiones,
+            antecedentes,
+            observaciones
+        ))
+
+        conexion.commit()
+
+    cursor.execute("""
+        SELECT contacto_emergencia,
+               telefono_emergencia,
+               lesiones,
+               antecedentes,
+               observaciones
+        FROM salud
+        WHERE alumno_id = ?
+    """, (alumno_id,))
+
+    salud = cursor.fetchone()
+
+    conexion.close()
+
+    return render_template("salud.html", salud=salud)
+
 @app.route("/perfil", methods=["GET", "POST"])
 def perfil_alumno():
 
