@@ -46,6 +46,45 @@
             color: white;
         }
 
+        .buscador {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .buscador input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .buscador button {
+            padding: 12px 20px;
+            background-color: #222;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .buscador a {
+            padding: 12px 15px;
+            color: #222;
+            text-decoration: none;
+        }
+
+        .estado-activo {
+            color: green;
+            font-weight: bold;
+        }
+
+        .estado-inactivo {
+            color: red;
+            font-weight: bold;
+        }
+
         .volver {
             display: inline-block;
             margin-top: 25px;
@@ -64,6 +103,23 @@
 
         <h1>Lista de alumnos</h1>
 
+        <form method="GET" action="{{ url_for('mostrar_alumnos') }}" class="buscador">
+
+            <input
+                type="text"
+                name="busqueda"
+                placeholder="Buscar por ID, nombre o e-mail..."
+                value="{{ busqueda }}"
+            >
+
+            <button type="submit">Buscar</button>
+
+            {% if busqueda %}
+                <a href="{{ url_for('mostrar_alumnos') }}">Limpiar</a>
+            {% endif %}
+
+        </form>
+
         <table>
 
             <tr>
@@ -71,6 +127,7 @@
                 <th>Nombre</th>
                 <th>E-mail</th>
                 <th>Fecha de nacimiento</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
 
@@ -83,6 +140,14 @@
                 <td>{{ alumno.fecha_nacimiento }}</td>
 
                 <td>
+                    {% if alumno.activo == 1 %}
+                        <span class="estado-activo">Activo</span>
+                    {% else %}
+                        <span class="estado-inactivo">Inactivo</span>
+                    {% endif %}
+                </td>
+
+                <td>
                     <a href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.id) }}">
                         Ver perfil
                     </a>
@@ -93,8 +158,8 @@
 
         </table>
 
-        <a href="/" class="volver">
-            Volver al inicio
+        <a href="{{ url_for('panel') }}" class="volver">
+            Volver al panel
         </a>
 
     </div>

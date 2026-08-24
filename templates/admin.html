@@ -57,6 +57,37 @@
             margin-top: 0;
         }
 
+        .estadisticas {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .estadistica {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .estadistica-icono {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .estadistica-numero {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .estadistica-titulo {
+            margin-top: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
         .menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -119,7 +150,21 @@
 
         @media (max-width: 600px) {
 
+            .estadisticas {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .menu {
+                grid-template-columns: 1fr;
+            }
+
+            .contenedor {
+                width: 92%;
+            }
+
+        }
+
+        .menu {
                 grid-template-columns: 1fr;
             }
 
@@ -154,6 +199,35 @@
                 Bienvenido al panel de administración
                 de Training Point.
             </p>
+
+        </section>
+
+
+        <section class="estadisticas">
+
+            <div class="estadistica">
+                <div class="estadistica-icono">👥</div>
+                <div class="estadistica-numero">{{ total_alumnos }}</div>
+                <div class="estadistica-titulo">Alumnos</div>
+            </div>
+
+            <div class="estadistica">
+                <div class="estadistica-icono">✅</div>
+                <div class="estadistica-numero">{{ alumnos_activos }}</div>
+                <div class="estadistica-titulo">Activos</div>
+            </div>
+
+            <div class="estadistica">
+                <div class="estadistica-icono">⚠️</div>
+                <div class="estadistica-numero">{{ alumnos_inactivos }}</div>
+                <div class="estadistica-titulo">Inactivos</div>
+            </div>
+
+            <div class="estadistica">
+                <div class="estadistica-icono">🩺</div>
+                <div class="estadistica-numero">{{ fichas_salud }}</div>
+                <div class="estadistica-titulo">Fichas de salud</div>
+            </div>
 
         </section>
 

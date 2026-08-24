@@ -149,7 +149,31 @@ def panel():
         return redirect(url_for("inicio"))
 
     if session["rol"] == "administrador":
-        return render_template("admin.html")
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM alumnos")
+        total_alumnos = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM alumnos WHERE activo = 1")
+        alumnos_activos = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM alumnos WHERE activo = 0")
+        alumnos_inactivos = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM salud")
+        fichas_salud = cursor.fetchone()[0]
+
+        conexion.close()
+
+        return render_template(
+            "admin.html",
+            total_alumnos=total_alumnos,
+            alumnos_activos=alumnos_activos,
+            alumnos_inactivos=alumnos_inactivos,
+            fichas_salud=fichas_salud
+        )
 
     return redirect(url_for("perfil_alumno"))
 
@@ -354,7 +378,7 @@ def perfil_alumno_admin(alumno_id):
 
     cursor.execute("""
         SELECT id, nombre, email, fecha_nacimiento,
-               telefono, direccion, certificado_medico, activo
+               telefono, direccion, certificado_medico, activo, foto_perfil
         FROM alumnos
         WHERE id = ?
     """, (alumno_id,))
@@ -367,7 +391,7 @@ def perfil_alumno_admin(alumno_id):
         return "Alumno no encontrado."
 
     return render_template(
-        "perfil_alumno.html",
+        "perfil_alumno_admin.html",
         alumno=alumno
     )
 
@@ -380,22 +404,45 @@ def mostrar_alumnos():
     if session["rol"] != "administrador":
         return "Acceso no autorizado."
 
+    busqueda = request.args.get("busqueda", "").strip()
+
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
 
     cursor = conexion.cursor()
 
-    cursor.execute("""
-        SELECT id, nombre, email, fecha_nacimiento, telefono, activo
-        FROM alumnos
-        ORDER BY nombre
-    """)
+    if busqueda:
+
+        cursor.execute("""
+            SELECT id, nombre, email, fecha_nacimiento, telefono, activo
+            FROM alumnos
+            WHERE CAST(id AS TEXT) LIKE ?
+               OR nombre LIKE ?
+               OR email LIKE ?
+            ORDER BY nombre
+        """, (
+            f"%{busqueda}%",
+            f"%{busqueda}%",
+            f"%{busqueda}%"
+        ))
+
+    else:
+
+        cursor.execute("""
+            SELECT id, nombre, email, fecha_nacimiento, telefono, activo
+            FROM alumnos
+            ORDER BY nombre
+        """)
 
     alumnos = cursor.fetchall()
 
     conexion.close()
 
-    return render_template("alumnos.html", alumnos=alumnos)
+    return render_template(
+        "alumnos.html",
+        alumnos=alumnos,
+        busqueda=busqueda
+    )
 
 
 @app.route("/agregar")

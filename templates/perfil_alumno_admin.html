@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Perfil del alumno - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 700px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .foto {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .foto img,
+        .silueta {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .silueta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ddd;
+            font-size: 70px;
+        }
+
+        .dato {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .etiqueta {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .activo {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactivo {
+            color: red;
+            font-weight: bold;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .boton {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 18px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 92%;
+                padding: 25px;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>Perfil del alumno</h1>
+
+    <div class="foto">
+
+        {% if alumno.foto_perfil %}
+
+            <img
+                src="{{ url_for("static", filename="uploads/perfiles/" + alumno.foto_perfil) }}"
+                alt="Foto del alumno"
+            >
+
+        {% else %}
+
+            <div class="silueta">👤</div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">Nombre</span>
+        {{ alumno.nombre }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">E-mail</span>
+        {{ alumno.email }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">Fecha de nacimiento</span>
+        {{ alumno.fecha_nacimiento }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">Teléfono</span>
+        {{ alumno.telefono }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">Dirección</span>
+        {{ alumno.direccion }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">Certificado médico</span>
+
+        {% if alumno.certificado_medico %}
+            Presentado
+        {% else %}
+            No presentado
+        {% endif %}
+
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">Estado</span>
+
+        {% if alumno.activo == 1 %}
+            <span class="activo">Activo</span>
+        {% else %}
+            <span class="inactivo">Inactivo</span>
+        {% endif %}
+
+    </div>
+
+    <div class="botones">
+
+        <a href="#" class="boton">
+            📝 Editar alumno
+        </a>
+
+        <a href="#" class="boton">
+            🩺 Ficha de salud
+        </a>
+
+        <a href="{{ url_for("mostrar_alumnos") }}" class="boton">
+            ⬅️ Volver
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
