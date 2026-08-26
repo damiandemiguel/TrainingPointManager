@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ficha de salud - {{ ficha.nombre }} - Training Point</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        color: #222;
+    }
+
+    .contenedor {
+        width: 92%;
+        max-width: 800px;
+        margin: 40px auto;
+        background-color: white;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .subtitulo {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .seccion {
+        margin-top: 25px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fafafa;
+    }
+
+    .seccion h2 {
+        margin-top: 0;
+        margin-bottom: 18px;
+        font-size: 20px;
+    }
+
+    .dato {
+        padding: 12px 0;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .dato:last-child {
+        border-bottom: none;
+    }
+
+    .etiqueta {
+        display: block;
+        font-weight: bold;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .valor {
+        font-size: 16px;
+    }
+
+    .si {
+        color: #b00020;
+        font-weight: bold;
+    }
+
+    .no {
+        color: #16803c;
+        font-weight: bold;
+    }
+
+    .presentado {
+        color: #16803c;
+        font-weight: bold;
+    }
+
+    .no-presentado {
+        color: #b00020;
+        font-weight: bold;
+    }
+
+    .observaciones {
+        white-space: pre-line;
+    }
+
+    .botones {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    .boton {
+        flex: 1;
+        min-width: 180px;
+        padding: 13px 18px;
+        background-color: #222;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .boton:hover {
+        background-color: #444;
+    }
+
+    .nota {
+        color: #666;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    @media (max-width: 600px) {
+
+        .contenedor {
+            width: 94%;
+            padding: 22px;
+            margin: 20px auto;
+        }
+
+        .botones {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+```
+<h1>Ficha de salud</h1>
+
+<div class="subtitulo">
+    Alumno: <strong>{{ ficha.nombre }}</strong>
+</div>
+
+
+<!-- CERTIFICADO MÉDICO -->
+
+<div class="seccion">
+
+    <h2>🩺 Certificado médico</h2>
+
+    {% if ficha.certificado_medico %}
+
+        <div class="dato">
+
+            <span class="etiqueta">Estado</span>
+
+            <span class="presentado">
+                🟢 Presentado
+            </span>
+
+        </div>
+
+        <div class="dato">
+
+            <span class="etiqueta">Archivo</span>
+
+            {{ ficha.certificado_medico }}
+
+        </div>
+
+        {% if ficha.fecha_certificado %}
+
+        <div class="dato">
+
+            <span class="etiqueta">Fecha de carga</span>
+
+            {{ ficha.fecha_certificado[:10] | replace("-", "/") }}
+
+        </div>
+
+        {% endif %}
+
+        <div style="margin-top: 15px;">
+
+            <a
+                href="{{ url_for('static', filename='uploads/certificados/' + ficha.certificado_medico) }}"
+                target="_blank"
+                class="boton"
+            >
+                📄 Ver certificado
+            </a>
+
+        </div>
+
+    {% else %}
+
+        <div class="dato">
+
+            <span class="etiqueta">Estado</span>
+
+            <span class="no-presentado">
+                🔴 No presentado
+            </span>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- CONTACTO DE EMERGENCIA -->
+
+<div class="seccion">
+
+    <h2>🚨 Contacto de emergencia</h2>
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Nombre / contacto
+        </span>
+
+        <span class="valor">
+            {{ ficha.contacto_emergencia or "No informado" }}
+        </span>
+
+    </div>
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Teléfono
+        </span>
+
+        <span class="valor">
+            {{ ficha.telefono_emergencia or "No informado" }}
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ANTECEDENTES DE SALUD -->
+
+<div class="seccion">
+
+    <h2>❤️ Antecedentes de salud</h2>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Enfermedad diagnosticada
+        </span>
+
+        {% if ficha.enfermedad_diagnosticada %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_enfermedad %}
+                <div class="nota">
+                    {{ ficha.detalle_enfermedad }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Antecedentes cardíacos
+        </span>
+
+        {% if ficha.antecedentes_cardiacos %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_cardiaco %}
+                <div class="nota">
+                    {{ ficha.detalle_cardiaco }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Problemas respiratorios
+        </span>
+
+        {% if ficha.problemas_respiratorios %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_respiratorio %}
+                <div class="nota">
+                    {{ ficha.detalle_respiratorio }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Presión arterial
+        </span>
+
+        {% if ficha.presion_arterial %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_presion %}
+                <div class="nota">
+                    {{ ficha.detalle_presion }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Diabetes
+        </span>
+
+        {% if ficha.diabetes %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_diabetes %}
+                <div class="nota">
+                    {{ ficha.detalle_diabetes }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Alergias
+        </span>
+
+        {% if ficha.alergias %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_alergias %}
+                <div class="nota">
+                    {{ ficha.detalle_alergias }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Medicación
+        </span>
+
+        {% if ficha.medicacion %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_medicacion %}
+                <div class="nota">
+                    {{ ficha.detalle_medicacion }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- LESIONES Y MOVIMIENTO -->
+
+<div class="seccion">
+
+    <h2>🏃 Lesiones y movimiento</h2>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Lesión actual
+        </span>
+
+        {% if ficha.lesion_actual %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_lesion_actual %}
+                <div class="nota">
+                    {{ ficha.detalle_lesion_actual }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Lesión anterior
+        </span>
+
+        {% if ficha.lesion_anterior %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_lesion_anterior %}
+                <div class="nota">
+                    {{ ficha.detalle_lesion_anterior }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Dolores frecuentes
+        </span>
+
+        {% if ficha.dolores_frecuentes %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_dolores %}
+                <div class="nota">
+                    {{ ficha.detalle_dolores }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Limitaciones de movimiento
+        </span>
+
+        {% if ficha.limitaciones_movimiento %}
+            <span class="si">Sí</span>
+
+            {% if ficha.detalle_limitaciones %}
+                <div class="nota">
+                    {{ ficha.detalle_limitaciones }}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <span class="no">No</span>
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- OBSERVACIONES -->
+
+<div class="seccion">
+
+    <h2>📝 Observaciones</h2>
+
+    <div class="dato">
+
+        <span class="valor observaciones">
+            {{ ficha.observaciones or "Sin observaciones." }}
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- DECLARACIÓN -->
+
+<div class="seccion">
+
+    <h2>✅ Declaración</h2>
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Estado
+        </span>
+
+        {% if ficha.declaracion_aceptada %}
+
+            <span class="no">
+                🟢 Aceptada
+            </span>
+
+        {% else %}
+
+            <span class="si">
+                🔴 No aceptada
+            </span>
+
+        {% endif %}
+
+    </div>
+
+    {% if ficha.fecha_actualizacion %}
+
+    <div class="dato">
+
+        <span class="etiqueta">
+            Última actualización
+        </span>
+
+        {{ ficha.fecha_actualizacion[:10] | replace("-", "/") }}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- BOTONES -->
+
+<div class="botones">
+
+    <a
+        href="{{ url_for('perfil_alumno_admin', alumno_id=ficha.id) }}"
+        class="boton"
+    >
+        ⬅️ Volver al perfil
+    </a>
+
+    <a
+        href="{{ url_for('mostrar_alumnos') }}"
+        class="boton"
+    >
+        👥 Lista de alumnos
+    </a>
+
+</div>
+```
+
+</div>
+
+</body>
+
+</html>

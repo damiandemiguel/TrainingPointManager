@@ -10,10 +10,13 @@ from database import conectar
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "static/uploads/perfiles"
+CERTIFICADOS_FOLDER = "static/uploads/certificados"
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["CERTIFICADOS_FOLDER"] = CERTIFICADOS_FOLDER
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+ALLOWED_CERTIFICADO_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
 
 app.secret_key = "clave-temporal-training-point"
 
@@ -22,6 +25,14 @@ def archivo_permitido(nombre):
     return (
         "." in nombre
         and nombre.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+
+def certificado_permitido(nombre):
+
+    return (
+        "." in nombre
+        and nombre.rsplit(".", 1)[1].lower() in ALLOWED_CERTIFICADO_EXTENSIONS
     )
 
 @app.route("/", methods=["GET", "POST"])
@@ -165,6 +176,23 @@ def panel():
         cursor.execute("SELECT COUNT(*) FROM salud")
         fichas_salud = cursor.fetchone()[0]
 
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM alumnos
+            WHERE certificado_medico IS NULL
+                OR certificado_medico = ''
+        """)
+        alumnos_sin_certificado = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM alumnos
+            LEFT JOIN salud
+                ON alumnos.id = salud.alumno_id
+            WHERE salud.id IS NULL
+        """)
+        alumnos_sin_ficha = cursor.fetchone()[0]
+
         conexion.close()
 
         return render_template(
@@ -172,7 +200,9 @@ def panel():
             total_alumnos=total_alumnos,
             alumnos_activos=alumnos_activos,
             alumnos_inactivos=alumnos_inactivos,
-            fichas_salud=fichas_salud
+            fichas_salud=fichas_salud,
+            alumnos_sin_certificado=alumnos_sin_certificado,
+            alumnos_sin_ficha=alumnos_sin_ficha
         )
 
     return redirect(url_for("perfil_alumno"))
@@ -245,7 +275,11 @@ def ficha_salud():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
-    cursor.execute("SELECT id FROM alumnos WHERE usuario_id = ?", (session["usuario_id"],))
+    cursor.execute(
+        "SELECT id FROM alumnos WHERE usuario_id = ?",
+        (session["usuario_id"],)
+    )
+
     alumno = cursor.fetchone()
 
     if alumno is None:
@@ -256,54 +290,226 @@ def ficha_salud():
 
     if request.method == "POST":
 
-        contacto_emergencia = request.form.get("contacto_emergencia", "")
-        telefono_emergencia = request.form.get("telefono_emergencia", "")
-        lesiones = request.form.get("lesiones", "")
-        antecedentes = request.form.get("antecedentes", "")
-        observaciones = request.form.get("observaciones", "")
+        certificado = request.files.get("certificado_medico")
+
+        if certificado and certificado.filename:
+
+            if not certificado_permitido(certificado.filename):
+                conexion.close()
+                return "Tipo de archivo no permitido."
+
+        campos = [
+            "contacto_emergencia",
+            "telefono_emergencia",
+            "enfermedad_diagnosticada",
+            "detalle_enfermedad",
+            "antecedentes_cardiacos",
+            "detalle_cardiaco",
+            "problemas_respiratorios",
+            "detalle_respiratorio",
+            "presion_arterial",
+            "detalle_presion",
+            "diabetes",
+            "detalle_diabetes",
+            "alergias",
+            "detalle_alergias",
+            "medicacion",
+            "detalle_medicacion",
+            "lesion_actual",
+            "detalle_lesion_actual",
+            "lesion_anterior",
+            "detalle_lesion_anterior",
+            "dolores_frecuentes",
+            "detalle_dolores",
+            "limitaciones_movimiento",
+            "detalle_limitaciones",
+            "observaciones",
+            "declaracion_aceptada"
+        ]
+
+        datos = {}
+
+        for campo in campos:
+
+            if campo in [
+                "enfermedad_diagnosticada",
+                "antecedentes_cardiacos",
+                "problemas_respiratorios",
+                "presion_arterial",
+                "diabetes",
+                "alergias",
+                "medicacion",
+                "lesion_actual",
+                "lesion_anterior",
+                "dolores_frecuentes",
+                "limitaciones_movimiento",
+                "declaracion_aceptada"
+            ]:
+                datos[campo] = int(request.form.get(campo, "0"))
+            else:
+                datos[campo] = request.form.get(campo, "").strip()
 
         cursor.execute("""
             INSERT INTO salud (
                 alumno_id,
                 contacto_emergencia,
                 telefono_emergencia,
-                lesiones,
-                antecedentes,
-                observaciones
+                enfermedad_diagnosticada,
+                detalle_enfermedad,
+                antecedentes_cardiacos,
+                detalle_cardiaco,
+                problemas_respiratorios,
+                detalle_respiratorio,
+                presion_arterial,
+                detalle_presion,
+                diabetes,
+                detalle_diabetes,
+                alergias,
+                detalle_alergias,
+                medicacion,
+                detalle_medicacion,
+                lesion_actual,
+                detalle_lesion_actual,
+                lesion_anterior,
+                detalle_lesion_anterior,
+                dolores_frecuentes,
+                detalle_dolores,
+                limitaciones_movimiento,
+                detalle_limitaciones,
+                observaciones,
+                declaracion_aceptada,
+                fecha_actualizacion
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now','localtime')
+            )
             ON CONFLICT(alumno_id) DO UPDATE SET
                 contacto_emergencia = excluded.contacto_emergencia,
                 telefono_emergencia = excluded.telefono_emergencia,
-                lesiones = excluded.lesiones,
-                antecedentes = excluded.antecedentes,
-                observaciones = excluded.observaciones
+                enfermedad_diagnosticada = excluded.enfermedad_diagnosticada,
+                detalle_enfermedad = excluded.detalle_enfermedad,
+                antecedentes_cardiacos = excluded.antecedentes_cardiacos,
+                detalle_cardiaco = excluded.detalle_cardiaco,
+                problemas_respiratorios = excluded.problemas_respiratorios,
+                detalle_respiratorio = excluded.detalle_respiratorio,
+                presion_arterial = excluded.presion_arterial,
+                detalle_presion = excluded.detalle_presion,
+                diabetes = excluded.diabetes,
+                detalle_diabetes = excluded.detalle_diabetes,
+                alergias = excluded.alergias,
+                detalle_alergias = excluded.detalle_alergias,
+                medicacion = excluded.medicacion,
+                detalle_medicacion = excluded.detalle_medicacion,
+                lesion_actual = excluded.lesion_actual,
+                detalle_lesion_actual = excluded.detalle_lesion_actual,
+                lesion_anterior = excluded.lesion_anterior,
+                detalle_lesion_anterior = excluded.detalle_lesion_anterior,
+                dolores_frecuentes = excluded.dolores_frecuentes,
+                detalle_dolores = excluded.detalle_dolores,
+                limitaciones_movimiento = excluded.limitaciones_movimiento,
+                detalle_limitaciones = excluded.detalle_limitaciones,
+                observaciones = excluded.observaciones,
+                declaracion_aceptada = excluded.declaracion_aceptada,
+                fecha_actualizacion = excluded.fecha_actualizacion
         """, (
             alumno_id,
-            contacto_emergencia,
-            telefono_emergencia,
-            lesiones,
-            antecedentes,
-            observaciones
+            datos["contacto_emergencia"],
+            datos["telefono_emergencia"],
+            datos["enfermedad_diagnosticada"],
+            datos["detalle_enfermedad"],
+            datos["antecedentes_cardiacos"],
+            datos["detalle_cardiaco"],
+            datos["problemas_respiratorios"],
+            datos["detalle_respiratorio"],
+            datos["presion_arterial"],
+            datos["detalle_presion"],
+            datos["diabetes"],
+            datos["detalle_diabetes"],
+            datos["alergias"],
+            datos["detalle_alergias"],
+            datos["medicacion"],
+            datos["detalle_medicacion"],
+            datos["lesion_actual"],
+            datos["detalle_lesion_actual"],
+            datos["lesion_anterior"],
+            datos["detalle_lesion_anterior"],
+            datos["dolores_frecuentes"],
+            datos["detalle_dolores"],
+            datos["limitaciones_movimiento"],
+            datos["detalle_limitaciones"],
+            datos["observaciones"],
+            datos["declaracion_aceptada"]
         ))
 
         conexion.commit()
 
+        if certificado and certificado.filename:
+
+            nombre_original = secure_filename(certificado.filename)
+            extension = nombre_original.rsplit(".", 1)[1].lower()
+            nombre_archivo = f"certificado_medico_alumno_{alumno_id}.{extension}"
+
+            cursor.execute("""
+                SELECT certificado_medico
+                FROM alumnos
+                WHERE id = ?
+            """, (alumno_id,))
+
+            certificado_anterior = cursor.fetchone()
+
+            if certificado_anterior and certificado_anterior["certificado_medico"]:
+                ruta_anterior = os.path.join(
+                    app.config["CERTIFICADOS_FOLDER"],
+                    certificado_anterior["certificado_medico"]
+                )
+
+                if os.path.exists(ruta_anterior):
+                    os.remove(ruta_anterior)
+
+            ruta_certificado = os.path.join(
+                app.config["CERTIFICADOS_FOLDER"],
+                nombre_archivo
+            )
+
+            certificado.save(ruta_certificado)
+
+            cursor.execute("""
+                UPDATE alumnos
+                SET certificado_medico = ?,
+                    fecha_certificado = datetime('now','localtime')
+                WHERE id = ?
+            """, (nombre_archivo, alumno_id))
+
+            conexion.commit()
+
     cursor.execute("""
-        SELECT contacto_emergencia,
-               telefono_emergencia,
-               lesiones,
-               antecedentes,
-               observaciones
+        SELECT *
         FROM salud
         WHERE alumno_id = ?
     """, (alumno_id,))
 
     salud = cursor.fetchone()
 
+    cursor.execute("""
+        SELECT certificado_medico, fecha_certificado
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    certificado_datos = cursor.fetchone()
+
+    certificado_medico = certificado_datos["certificado_medico"] if certificado_datos else None
+    fecha_certificado = certificado_datos["fecha_certificado"] if certificado_datos else None
+
     conexion.close()
 
-    return render_template("salud.html", salud=salud)
+    return render_template(
+        "salud.html",
+        salud=salud,
+        certificado_medico=certificado_medico,
+        fecha_certificado=fecha_certificado
+    )
 
 @app.route("/perfil", methods=["GET", "POST"])
 def perfil_alumno():
@@ -378,7 +584,7 @@ def perfil_alumno_admin(alumno_id):
 
     cursor.execute("""
         SELECT id, nombre, email, fecha_nacimiento,
-               telefono, direccion, certificado_medico, activo, foto_perfil
+               telefono, direccion, certificado_medico, fecha_certificado, activo, foto_perfil
         FROM alumnos
         WHERE id = ?
     """, (alumno_id,))
@@ -394,6 +600,110 @@ def perfil_alumno_admin(alumno_id):
         "perfil_alumno_admin.html",
         alumno=alumno
     )
+
+@app.route("/alumnos/<int:alumno_id>/salud")
+def ficha_salud_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            alumnos.id,
+            alumnos.nombre,
+            alumnos.certificado_medico,
+            alumnos.fecha_certificado,
+            salud.*
+        FROM alumnos
+        LEFT JOIN salud
+            ON alumnos.id = salud.alumno_id
+        WHERE alumnos.id = ?
+    """, (alumno_id,))
+
+    ficha = cursor.fetchone()
+
+    conexion.close()
+
+    if ficha is None:
+        return "Alumno no encontrado."
+
+    return render_template(
+        "ficha_salud_admin.html",
+        ficha=ficha
+    )
+
+
+@app.route("/alumnos/<int:alumno_id>/editar", methods=["GET", "POST"])
+def editar_alumno_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    if request.method == "POST":
+
+        nombre = request.form.get("nombre", "").strip()
+        email = request.form.get("email", "").strip()
+        fecha_nacimiento = request.form.get("fecha_nacimiento", "").strip()
+        telefono = request.form.get("telefono", "").strip()
+        direccion = request.form.get("direccion", "").strip()
+        activo = request.form.get("activo", "0")
+
+        cursor.execute("""
+            UPDATE alumnos
+            SET nombre = ?,
+                email = ?,
+                fecha_nacimiento = ?,
+                telefono = ?,
+                direccion = ?,
+                activo = ?
+            WHERE id = ?
+        """, (
+            nombre,
+            email,
+            fecha_nacimiento,
+            telefono,
+            direccion,
+            int(activo),
+            alumno_id
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(url_for("perfil_alumno_admin", alumno_id=alumno_id))
+
+    cursor.execute("""
+        SELECT id, nombre, email, fecha_nacimiento,
+               telefono, direccion, activo
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+    conexion.close()
+
+    if alumno is None:
+        return "Alumno no encontrado."
+
+    return render_template(
+        "editar_alumno_admin.html",
+        alumno=alumno
+    )
+
 
 @app.route("/alumnos")
 def mostrar_alumnos():

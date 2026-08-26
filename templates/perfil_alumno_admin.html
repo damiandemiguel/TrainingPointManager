@@ -169,9 +169,39 @@
         <span class="etiqueta">Certificado médico</span>
 
         {% if alumno.certificado_medico %}
-            Presentado
+
+            <strong style="display: block; margin-bottom: 8px;">
+                🟢 Estado: Presentado
+            </strong>
+
+            <div style="margin-top: 8px;">
+                📄 <strong>Archivo:</strong>
+                {{ alumno.certificado_medico }}
+            </div>
+
+            {% if alumno.fecha_certificado %}
+            <div style="margin-top: 6px;">
+                📅 <strong>Fecha de carga:</strong>
+                {{ alumno.fecha_certificado[:10] | replace("-", "/") }}
+            </div>
+            {% endif %}
+
+            <div style="margin-top: 12px;">
+                <a
+                    href="{{ url_for('static', filename='uploads/certificados/' + alumno.certificado_medico) }}"
+                    target="_blank"
+                    class="boton"
+                >
+                    📄 Ver certificado
+                </a>
+            </div>
+
         {% else %}
-            No presentado
+
+            <span style="color: #b00020;">
+                🔴 No presentado
+            </span>
+
         {% endif %}
 
     </div>
@@ -189,11 +219,14 @@
 
     <div class="botones">
 
-        <a href="#" class="boton">
+        <a href="{{ url_for("editar_alumno_admin", alumno_id=alumno.id) }}" class="boton">
             📝 Editar alumno
         </a>
 
-        <a href="#" class="boton">
+        <a
+            href="{{ url_for('ficha_salud_admin', alumno_id=alumno.id) }}"
+            class="boton"
+        >
             🩺 Ficha de salud
         </a>
 

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Editar alumno - Training Point</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 700px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #222;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .boton {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .guardar {
+            background-color: #222;
+            color: white;
+        }
+
+        .cancelar {
+            background-color: #ddd;
+            color: #222;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 92%;
+                padding: 25px;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>Editar alumno</h1>
+
+    <p class="subtitulo">
+        Modificá los datos del alumno
+    </p>
+
+    <form method="POST">
+
+        <div class="campo">
+            <label for="nombre">Nombre y apellido</label>
+            <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value="{{ alumno.nombre }}"
+                required
+            >
+        </div>
+
+        <div class="campo">
+            <label for="email">E-mail</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ alumno.email or '' }}"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="fecha_nacimiento">Fecha de nacimiento</label>
+            <input
+                type="date"
+                id="fecha_nacimiento"
+                name="fecha_nacimiento"
+                value="{{ alumno.fecha_nacimiento or '' }}"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="telefono">Teléfono</label>
+            <input
+                type="text"
+                id="telefono"
+                name="telefono"
+                value="{{ alumno.telefono or '' }}"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="direccion">Dirección</label>
+            <input
+                type="text"
+                id="direccion"
+                name="direccion"
+                value="{{ alumno.direccion or '' }}"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="activo">Estado</label>
+
+            <select id="activo" name="activo">
+
+                <option value="1"
+                    {% if alumno.activo == 1 %}selected{% endif %}>
+                    Activo
+                </option>
+
+                <option value="0"
+                    {% if alumno.activo == 0 %}selected{% endif %}>
+                    Inactivo
+                </option>
+
+            </select>
+        </div>
+
+        <div class="botones">
+
+            <button type="submit" class="boton guardar">
+                Guardar cambios
+            </button>
+
+            <a
+                href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.id) }}"
+                class="boton cancelar"
+            >
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

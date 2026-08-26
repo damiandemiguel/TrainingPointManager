@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -17,19 +18,16 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
+            color: #222;
         }
 
         .contenedor {
             width: 90%;
-            max-width: 650px;
+            max-width: 700px;
             margin: 40px auto;
-
             background-color: white;
-
             padding: 35px;
-
             border-radius: 12px;
-
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
@@ -44,6 +42,17 @@
             margin-bottom: 30px;
         }
 
+        .seccion {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #ddd;
+        }
+
+        .seccion h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
         .campo {
             margin-bottom: 20px;
         }
@@ -54,14 +63,13 @@
             margin-bottom: 7px;
         }
 
-        input,
+        input[type="text"],
+        input[type="tel"],
         textarea {
             width: 100%;
             padding: 12px;
-
             border: 1px solid #ccc;
             border-radius: 7px;
-
             font-size: 15px;
             font-family: Arial, sans-serif;
         }
@@ -77,16 +85,97 @@
             border-color: #222;
         }
 
+        .pregunta {
+            margin-bottom: 22px;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+        }
+
+        .pregunta-texto {
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .opciones {
+            display: flex;
+            gap: 10px;
+        }
+
+        .opciones input[type="radio"] {
+            display: none;
+        }
+
+        .opcion {
+            flex: 1;
+            padding: 11px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            cursor: pointer;
+            background-color: white;
+            font-weight: bold;
+        }
+
+        .opciones input[type="radio"]:checked + .opcion {
+            background-color: #222;
+            color: white;
+            border-color: #222;
+        }
+
+        .detalle {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .detalle.mostrar {
+            display: block;
+        }
+
+        .nota {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .declaracion {
+            padding: 18px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+            line-height: 1.6;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .aceptacion {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .aceptacion input {
+            margin-top: 4px;
+        }
+
+        .archivo {
+            padding: 15px;
+            border: 1px dashed #aaa;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
         .boton {
             width: 100%;
             padding: 14px;
-
             background-color: #222;
             color: white;
-
             border: none;
             border-radius: 8px;
-
             font-size: 16px;
             cursor: pointer;
         }
@@ -98,22 +187,9 @@
         .volver {
             display: block;
             text-align: center;
-
             margin-top: 20px;
-
             color: #222;
             text-decoration: none;
-        }
-
-        .nota {
-            margin-bottom: 25px;
-            padding: 15px;
-
-            background-color: #f2f2f2;
-            border-radius: 8px;
-
-            color: #555;
-            font-size: 14px;
         }
 
     </style>
@@ -122,26 +198,31 @@
 
 <body>
 
-    <div class="contenedor">
+<div class="contenedor">
 
-        <h1>Ficha de salud</h1>
+    <h1>Ficha de salud</h1>
 
-        <p class="subtitulo">
-            Completá tu información para realizar actividad física.
-        </p>
+    <p class="subtitulo">
+        Completá esta información antes de comenzar la actividad física.
+    </p>
 
-        <div class="nota">
-            Esta información será utilizada por Training Point
-            para conocer aspectos importantes relacionados con
-            tu actividad física.
-        </div>
+    <div class="nota">
+        La información proporcionada será utilizada por Training Point
+        para conocer aspectos importantes relacionados con tu actividad física.
+    </div>
 
-        <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
+
+        <!-- CONTACTO DE EMERGENCIA -->
+
+        <div class="seccion">
+
+            <h2>1. Contacto de emergencia</h2>
 
             <div class="campo">
 
                 <label for="contacto_emergencia">
-                    Contacto de emergencia
+                    Nombre y apellido
                 </label>
 
                 <input
@@ -153,11 +234,10 @@
 
             </div>
 
-
             <div class="campo">
 
                 <label for="telefono_emergencia">
-                    Teléfono de emergencia
+                    Teléfono
                 </label>
 
                 <input
@@ -169,62 +249,895 @@
 
             </div>
 
+        </div>
 
-            <div class="campo">
 
-                <label for="lesiones">
-                    Lesiones
-                </label>
+        <!-- ANTECEDENTES DE SALUD -->
 
-                <textarea
-                    id="lesiones"
-                    name="lesiones"
-                    placeholder="Indicar lesiones actuales o anteriores">{{ salud.lesiones or '' }}</textarea>
+        <div class="seccion">
+
+            <h2>2. Antecedentes de salud</h2>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés alguna enfermedad diagnosticada?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="enfermedad_no"
+                        name="enfermedad_diagnosticada"
+                        value="0"
+                        {% if not salud or not salud.enfermedad_diagnosticada %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="enfermedad_no">
+                        NO
+                    </label>
+
+
+                    <input
+                        type="radio"
+                        id="enfermedad_si"
+                        name="enfermedad_diagnosticada"
+                        value="1"
+                        {% if salud and salud.enfermedad_diagnosticada %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="enfermedad_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    id="detalle_enfermedad"
+                    {% if salud and salud.enfermedad_diagnosticada %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_enfermedad_input">
+                        Especificá cuál
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_enfermedad_input"
+                        name="detalle_enfermedad"
+                        value="{{ salud.detalle_enfermedad or '' }}"
+                    >
+
+                </div>
 
             </div>
 
 
-            <div class="campo">
+            <div class="pregunta">
 
-                <label for="antecedentes">
-                    Antecedentes relevantes
-                </label>
+                <div class="pregunta-texto">
+                    ¿Tenés antecedentes cardíacos?
+                </div>
 
-                <textarea
-                    id="antecedentes"
-                    name="antecedentes"
-                    placeholder="Información relevante para la práctica de actividad física">{{ salud.antecedentes or '' }}</textarea>
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="cardiaco_no"
+                        name="antecedentes_cardiacos"
+                        value="0"
+                        {% if not salud or not salud.antecedentes_cardiacos %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="cardiaco_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="cardiaco_si"
+                        name="antecedentes_cardiacos"
+                        value="1"
+                        {% if salud and salud.antecedentes_cardiacos %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="cardiaco_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.antecedentes_cardiacos %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_cardiaco">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_cardiaco"
+                        name="detalle_cardiaco"
+                        value="{{ salud.detalle_cardiaco or '' }}"
+                    >
+
+                </div>
 
             </div>
 
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés problemas respiratorios?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="respiratorio_no"
+                        name="problemas_respiratorios"
+                        value="0"
+                        {% if not salud or not salud.problemas_respiratorios %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="respiratorio_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="respiratorio_si"
+                        name="problemas_respiratorios"
+                        value="1"
+                        {% if salud and salud.problemas_respiratorios %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="respiratorio_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.problemas_respiratorios %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_respiratorio">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_respiratorio"
+                        name="detalle_respiratorio"
+                        value="{{ salud.detalle_respiratorio or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés presión arterial elevada o controlás tu presión?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="presion_no"
+                        name="presion_arterial"
+                        value="0"
+                        {% if not salud or not salud.presion_arterial %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="presion_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="presion_si"
+                        name="presion_arterial"
+                        value="1"
+                        {% if salud and salud.presion_arterial %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="presion_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.presion_arterial %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_presion">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_presion"
+                        name="detalle_presion"
+                        value="{{ salud.detalle_presion or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés diabetes?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="diabetes_no"
+                        name="diabetes"
+                        value="0"
+                        {% if not salud or not salud.diabetes %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="diabetes_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="diabetes_si"
+                        name="diabetes"
+                        value="1"
+                        {% if salud and salud.diabetes %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="diabetes_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.diabetes %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_diabetes">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_diabetes"
+                        name="detalle_diabetes"
+                        value="{{ salud.detalle_diabetes or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés alergias?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="alergias_no"
+                        name="alergias"
+                        value="0"
+                        {% if not salud or not salud.alergias %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="alergias_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="alergias_si"
+                        name="alergias"
+                        value="1"
+                        {% if salud and salud.alergias %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="alergias_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.alergias %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_alergias">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_alergias"
+                        name="detalle_alergias"
+                        value="{{ salud.detalle_alergias or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tomás alguna medicación?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="medicacion_no"
+                        name="medicacion"
+                        value="0"
+                        {% if not salud or not salud.medicacion %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="medicacion_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="medicacion_si"
+                        name="medicacion"
+                        value="1"
+                        {% if salud and salud.medicacion %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="medicacion_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.medicacion %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_medicacion">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_medicacion"
+                        name="detalle_medicacion"
+                        value="{{ salud.detalle_medicacion or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LESIONES Y MOVIMIENTO -->
+
+        <div class="seccion">
+
+            <h2>3. Lesiones y movimiento</h2>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés actualmente alguna lesión?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="lesion_actual_no"
+                        name="lesion_actual"
+                        value="0"
+                        {% if not salud or not salud.lesion_actual %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="lesion_actual_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="lesion_actual_si"
+                        name="lesion_actual"
+                        value="1"
+                        {% if salud and salud.lesion_actual %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="lesion_actual_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.lesion_actual %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_lesion_actual">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_lesion_actual"
+                        name="detalle_lesion_actual"
+                        value="{{ salud.detalle_lesion_actual or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tuviste alguna lesión importante anteriormente?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="lesion_anterior_no"
+                        name="lesion_anterior"
+                        value="0"
+                        {% if not salud or not salud.lesion_anterior %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="lesion_anterior_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="lesion_anterior_si"
+                        name="lesion_anterior"
+                        value="1"
+                        {% if salud and salud.lesion_anterior %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="lesion_anterior_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.lesion_anterior %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_lesion_anterior">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_lesion_anterior"
+                        name="detalle_lesion_anterior"
+                        value="{{ salud.detalle_lesion_anterior or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés dolores frecuentes durante la actividad física?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="dolores_no"
+                        name="dolores_frecuentes"
+                        value="0"
+                        {% if not salud or not salud.dolores_frecuentes %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="dolores_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="dolores_si"
+                        name="dolores_frecuentes"
+                        value="1"
+                        {% if salud and salud.dolores_frecuentes %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="dolores_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.dolores_frecuentes %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_dolores">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_dolores"
+                        name="detalle_dolores"
+                        value="{{ salud.detalle_dolores or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="pregunta">
+
+                <div class="pregunta-texto">
+                    ¿Tenés alguna limitación de movimiento?
+                </div>
+
+                <div class="opciones">
+
+                    <input
+                        type="radio"
+                        id="limitaciones_no"
+                        name="limitaciones_movimiento"
+                        value="0"
+                        {% if not salud or not salud.limitaciones_movimiento %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="limitaciones_no">
+                        NO
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="limitaciones_si"
+                        name="limitaciones_movimiento"
+                        value="1"
+                        {% if salud and salud.limitaciones_movimiento %}checked{% endif %}
+                    >
+
+                    <label class="opcion" for="limitaciones_si">
+                        SÍ
+                    </label>
+
+                </div>
+
+                <div
+                    class="detalle"
+                    {% if salud and salud.limitaciones_movimiento %}style="display:block;"{% endif %}
+                >
+
+                    <label for="detalle_limitaciones">
+                        Especificá
+                    </label>
+
+                    <input
+                        type="text"
+                        id="detalle_limitaciones"
+                        name="detalle_limitaciones"
+                        value="{{ salud.detalle_limitaciones or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OBSERVACIONES -->
+
+        <div class="seccion">
+
+            <h2>4. Observaciones</h2>
 
             <div class="campo">
 
                 <label for="observaciones">
-                    Observaciones
+                    ¿Hay alguna otra información que consideres importante?
                 </label>
 
                 <textarea
                     id="observaciones"
                     name="observaciones"
-                    placeholder="Otra información que consideres importante">{{ salud.observaciones or '' }}</textarea>
+                    placeholder="Escribí aquí cualquier información adicional..."
+                >{{ salud.observaciones or '' }}</textarea>
 
             </div>
 
-
-            <button type="submit" class="boton">
-                Guardar ficha de salud
-            </button>
-
-        </form>
+        </div>
 
 
-        <a href="{{ url_for('perfil_alumno') }}" class="volver">
-            Volver a mi perfil
-        </a>
+                <!-- CERTIFICADO -->
 
-    </div>
+        <div class="seccion">
+
+            <h2>5. Certificado médico</h2>
+
+            <div class="nota">
+                Podés adjuntar un certificado médico que acredite tu aptitud
+                para realizar actividad física.
+            </div>
+
+            {% if certificado_medico %}
+
+            <div class="archivo" style="margin-top: 15px;">
+
+                <strong style="display: block; margin-bottom: 12px;">
+                    🟢 Estado: Presentado
+                </strong>
+
+                <p style="margin: 8px 0;">
+                    <strong>📄 Archivo:</strong>
+                    {{ certificado_medico }}
+                </p>
+
+                {% if fecha_certificado %}
+                <p style="margin: 8px 0;">
+                    <strong>📅 Fecha de carga:</strong>
+                    {{ fecha_certificado[:10] | replace("-", "/") }}
+                </p>
+                {% endif %}
+
+                <a
+                    href="{{ url_for('static', filename='uploads/certificados/' + certificado_medico) }}"
+                    target="_blank"
+                    style="display: inline-block; padding: 10px 16px; border-radius: 8px; text-decoration: none;"
+                >
+                    Ver certificado
+                </a>
+
+            </div>
+
+            <div class="archivo" style="margin-top: 15px;">
+
+                <strong style="display: block; margin-bottom: 8px;">
+                    🔄 Actualizar certificado
+                </strong>
+
+                <p style="margin: 8px 0;">
+                    Si tenés un certificado nuevo, podés seleccionarlo
+                    para reemplazar el actual.
+                </p>
+
+                <label for="certificado_medico">
+                    Seleccionar nuevo certificado
+                </label>
+
+                <input
+                    type="file"
+                    id="certificado_medico"
+                    name="certificado_medico"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+
+            </div>
+
+            {% else %}
+
+            <div class="archivo" style="margin-top: 15px;">
+
+                <strong style="display: block; margin-bottom: 12px;">
+                    🔴 Estado: No presentado
+                </strong>
+
+                <label for="certificado_medico">
+                    Adjuntar certificado
+                </label>
+
+                <input
+                    type="file"
+                    id="certificado_medico"
+                    name="certificado_medico"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+<!-- DECLARACION -->
+
+        <div class="seccion">
+
+            <h2>6. Declaración</h2>
+
+            <div class="declaracion">
+
+                Habiendo certificado que me encuentro en buenas condiciones
+                de salud, entiendo que es conveniente realizar un chequeo
+                médico por parte de un profesional, haciéndome responsable
+                del control periódico de salud y notificaré al profesor
+                cualquier anomalía que se presente.
+
+            </div>
+
+            <div class="aceptacion">
+
+                <input
+                    type="checkbox"
+                    id="declaracion_aceptada"
+                    name="declaracion_aceptada"
+                    value="1"
+                    {% if salud and salud.declaracion_aceptada %}checked{% endif %}
+                    required
+                >
+
+                <label for="declaracion_aceptada">
+                    Declaro que leí y acepto la declaración anterior.
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <button type="submit" class="boton">
+            Guardar ficha de salud
+        </button>
+
+    </form>
+
+
+    <a href="{{ url_for('perfil_alumno') }}" class="volver">
+        Volver a mi perfil
+    </a>
+
+</div>
+
+
+<script>
+
+    function configurarPregunta(nombre, detalleId) {
+
+        const radios = document.querySelectorAll(
+            'input[name="' + nombre + '"]'
+        );
+
+        const detalle = document.getElementById(detalleId);
+
+        if (!detalle) {
+            return;
+        }
+
+        function actualizar() {
+
+            const seleccionado = document.querySelector(
+                'input[name="' + nombre + '"]:checked'
+            );
+
+            if (seleccionado && seleccionado.value === "1") {
+                detalle.style.display = "block";
+            } else {
+                detalle.style.display = "none";
+            }
+
+        }
+
+        radios.forEach(function(radio) {
+
+            radio.addEventListener("change", actualizar);
+
+        });
+
+        actualizar();
+
+    }
+
+
+    configurarPregunta(
+        "enfermedad_diagnosticada",
+        "detalle_enfermedad"
+    );
+
+    configurarPregunta(
+        "antecedentes_cardiacos",
+        "detalle_cardiaco"
+    );
+
+    configurarPregunta(
+        "problemas_respiratorios",
+        "detalle_respiratorio"
+    );
+
+    configurarPregunta(
+        "presion_arterial",
+        "detalle_presion"
+    );
+
+    configurarPregunta(
+        "diabetes",
+        "detalle_diabetes"
+    );
+
+    configurarPregunta(
+        "alergias",
+        "detalle_alergias"
+    );
+
+    configurarPregunta(
+        "medicacion",
+        "detalle_medicacion"
+    );
+
+    configurarPregunta(
+        "lesion_actual",
+        "detalle_lesion_actual"
+    );
+
+    configurarPregunta(
+        "lesion_anterior",
+        "detalle_lesion_anterior"
+    );
+
+    configurarPregunta(
+        "dolores_frecuentes",
+        "detalle_dolores"
+    );
+
+    configurarPregunta(
+        "limitaciones_movimiento",
+        "detalle_limitaciones"
+    );
+
+</script>
 
 </body>
 
 </html>
+```
