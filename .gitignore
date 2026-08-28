@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+
+trainingpoint.db
+*_backup*.db
+static/uploads/certificados/
+app_backup*.py
+templates/*backup*.html

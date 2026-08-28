@@ -214,6 +214,26 @@ def panel():
         alumnos_sin_certificado = cursor.fetchone()[0]
 
         cursor.execute("""
+            SELECT fecha_certificado
+            FROM alumnos
+            WHERE certificado_medico IS NOT NULL
+                AND certificado_medico != ''
+        """)
+
+        certificados = cursor.fetchall()
+
+        certificados_vigentes = 0
+        certificados_vencidos = 0
+
+        for certificado in certificados:
+
+            if fecha_vencida(certificado[0]):
+                certificados_vencidos += 1
+            else:
+                certificados_vigentes += 1
+
+
+        cursor.execute("""
             SELECT COUNT(*)
             FROM alumnos
             LEFT JOIN salud
@@ -221,6 +241,27 @@ def panel():
             WHERE salud.id IS NULL
         """)
         alumnos_sin_ficha = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT fecha_certificado
+            FROM alumnos
+            WHERE certificado_medico IS NOT NULL
+                AND certificado_medico != ''
+        """)
+
+        certificados = cursor.fetchall()
+
+        certificados_vigentes = 0
+        certificados_vencidos = 0
+
+        for certificado in certificados:
+
+            fecha = certificado[0]
+
+            if fecha_vencida(fecha):
+                certificados_vencidos += 1
+            else:
+                certificados_vigentes += 1
 
         conexion.close()
 
@@ -231,7 +272,9 @@ def panel():
             alumnos_inactivos=alumnos_inactivos,
             fichas_salud=fichas_salud,
             alumnos_sin_certificado=alumnos_sin_certificado,
-            alumnos_sin_ficha=alumnos_sin_ficha
+            alumnos_sin_ficha=alumnos_sin_ficha,
+            certificados_vigentes=certificados_vigentes,
+            certificados_vencidos=certificados_vencidos
         )
 
     return redirect(url_for("perfil_alumno"))
