@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
+from datetime import datetime
 
 from database import conectar
 
@@ -34,6 +35,34 @@ def certificado_permitido(nombre):
         "." in nombre
         and nombre.rsplit(".", 1)[1].lower() in ALLOWED_CERTIFICADO_EXTENSIONS
     )
+
+
+def fecha_vencida(fecha):
+
+    if not fecha:
+        return True
+
+    try:
+        fecha_dt = datetime.strptime(fecha[:10], "%Y-%m-%d").date()
+        hoy = datetime.now().date()
+
+        try:
+            fecha_vencimiento = fecha_dt.replace(
+                year=fecha_dt.year + 1
+            )
+        except ValueError:
+            fecha_vencimiento = fecha_dt.replace(
+                year=fecha_dt.year + 1,
+                day=28
+            )
+
+        return hoy >= fecha_vencimiento
+
+    except ValueError:
+        return True
+
+
+@app.route("/", methods=["GET", "POST"])
 
 @app.route("/", methods=["GET", "POST"])
 def inicio():
@@ -504,11 +533,21 @@ def ficha_salud():
 
     conexion.close()
 
+    ficha_vencida = fecha_vencida(
+        salud["fecha_actualizacion"] if salud else None
+    )
+
+    certificado_vencido = fecha_vencida(
+        fecha_certificado
+    )
+
     return render_template(
         "salud.html",
         salud=salud,
         certificado_medico=certificado_medico,
-        fecha_certificado=fecha_certificado
+        fecha_certificado=fecha_certificado,
+        ficha_vencida=ficha_vencida,
+        certificado_vencido=certificado_vencido
     )
 
 @app.route("/perfil", methods=["GET", "POST"])
