@@ -170,9 +170,19 @@
 
         {% if alumno.certificado_medico %}
 
-            <strong style="display: block; margin-bottom: 8px;">
-                🟢 Estado: Presentado
+            {% if alumno.fecha_certificado and not certificado_vencido %}
+
+            <strong style="display: block; margin-bottom: 8px; color: #16803c;">
+                🟢 Estado: Vigente
             </strong>
+
+        {% else %}
+
+            <strong style="display: block; margin-bottom: 8px; color: #b00020;">
+                🔴 Estado: Vencido
+            </strong>
+
+        {% endif %}
 
             <div style="margin-top: 8px;">
                 📄 <strong>Archivo:</strong>

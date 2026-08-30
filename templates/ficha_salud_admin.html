@@ -89,8 +89,13 @@
         font-weight: bold;
     }
 
-    .presentado {
+    .vigente {
         color: #16803c;
+        font-weight: bold;
+    }
+
+    .vencido {
+        color: #b00020;
         font-weight: bold;
     }
 
@@ -174,9 +179,19 @@
 
             <span class="etiqueta">Estado</span>
 
-            <span class="presentado">
-                🟢 Presentado
-            </span>
+            {% if ficha.fecha_certificado and not certificado_vencido %}
+
+                <span class="vigente">
+                    🟢 Vigente
+                </span>
+
+            {% else %}
+
+                <span class="vencido">
+                    🔴 Vencido
+                </span>
+
+            {% endif %}
 
         </div>
 

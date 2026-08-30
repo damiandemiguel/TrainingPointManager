@@ -678,9 +678,12 @@ def perfil_alumno_admin(alumno_id):
     if alumno is None:
         return "Alumno no encontrado."
 
+    certificado_vencido = fecha_vencida(alumno["fecha_certificado"])
+
     return render_template(
         "perfil_alumno_admin.html",
-        alumno=alumno
+        alumno=alumno,
+        certificado_vencido=certificado_vencido
     )
 
 @app.route("/alumnos/<int:alumno_id>/salud")
@@ -716,9 +719,12 @@ def ficha_salud_admin(alumno_id):
     if ficha is None:
         return "Alumno no encontrado."
 
+    certificado_vencido = fecha_vencida(ficha["fecha_certificado"])
+
     return render_template(
         "ficha_salud_admin.html",
-        ficha=ficha
+        ficha=ficha,
+        certificado_vencido=certificado_vencido
     )
 
 
