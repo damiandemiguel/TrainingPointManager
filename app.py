@@ -4,9 +4,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from database import conectar
+from database import (
+    conectar,
+    crear_tabla_tipos_bono,
+    crear_tabla_bonos,
+    crear_tabla_movimientos_creditos
+)
 
 app = Flask(__name__)
 
@@ -20,6 +25,35 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 ALLOWED_CERTIFICADO_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
 
 app.secret_key = "clave-temporal-training-point"
+
+def calcular_vencimiento_bono(fecha_inicio, cantidad_clases):
+
+    fecha = datetime.strptime(
+        fecha_inicio,
+        "%Y-%m-%d"
+    )
+
+    clases_contadas = 0
+
+    while clases_contadas < cantidad_clases:
+
+        # 0 = lunes
+        # 2 = miércoles
+        # 4 = viernes
+
+        if fecha.weekday() in [0, 2, 4]:
+            clases_contadas += 1
+
+            if clases_contadas == cantidad_clases:
+                return fecha.strftime("%Y-%m-%d")
+
+        fecha += timedelta(days=1)
+
+    return fecha.strftime("%Y-%m-%d")
+
+crear_tabla_tipos_bono()
+crear_tabla_bonos()
+crear_tabla_movimientos_creditos()
 
 def archivo_permitido(nombre):
 
@@ -684,6 +718,194 @@ def perfil_alumno_admin(alumno_id):
         "perfil_alumno_admin.html",
         alumno=alumno,
         certificado_vencido=certificado_vencido
+    )
+
+@app.route("/alumnos/<int:alumno_id>/bonos/nuevo", methods=["GET", "POST"])
+def nuevo_bono_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "Alumno no encontrado."
+
+    cursor.execute("""
+        SELECT *
+        FROM tipos_bono
+        WHERE activo = 1
+        ORDER BY id
+    """)
+
+    tipos_bono = cursor.fetchall()
+
+    if request.method == "POST":
+
+        tipo_bono_id = request.form.get("tipo_bono_id")
+        fecha_inicio = request.form.get("fecha_inicio")
+        forma_pago = request.form.get("forma_pago")
+
+        if not tipo_bono_id or not fecha_inicio or not forma_pago:
+            conexion.close()
+            return "Faltan datos obligatorios."
+
+        cursor.execute("""
+            SELECT *
+            FROM tipos_bono
+            WHERE id = ?
+              AND activo = 1
+        """, (tipo_bono_id,))
+
+        tipo_bono = cursor.fetchone()
+
+        if tipo_bono is None:
+            conexion.close()
+            return "Tipo de bono no válido."
+
+        creditos_iniciales = tipo_bono["creditos"]
+        precio = tipo_bono["precio"]
+        duracion_dias = tipo_bono["duracion_dias"]
+
+        if creditos_iniciales == 1:
+
+            fecha_vencimiento_original = fecha_inicio
+
+        else:
+
+            fecha_vencimiento_original = calcular_vencimiento_bono(
+                fecha_inicio,
+                creditos_iniciales
+            )
+
+        cursor.execute("""
+            INSERT INTO bonos (
+                alumno_id,
+                tipo_bono_id,
+                fecha_inicio,
+                fecha_vencimiento_original,
+                fecha_vencimiento,
+                creditos_iniciales,
+                creditos_disponibles,
+                precio,
+                forma_pago,
+                fecha_pago,
+                extension_dias,
+                estado
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            alumno_id,
+            tipo_bono_id,
+            fecha_inicio,
+            fecha_vencimiento_original,
+            fecha_vencimiento_original,
+            creditos_iniciales,
+            creditos_iniciales,
+            precio,
+            forma_pago,
+            fecha_inicio,
+            0,
+            "Activo"
+        ))
+
+        bono_id = cursor.lastrowid
+
+        cursor.execute("""
+            INSERT INTO movimientos_creditos (
+                bono_id,
+                alumno_id,
+                fecha,
+                tipo,
+                cantidad,
+                descripcion
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            bono_id,
+            alumno_id,
+            fecha_inicio,
+            "carga",
+            creditos_iniciales,
+            "Carga inicial de créditos por compra de bono"
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "bonos_alumno_admin",
+                alumno_id=alumno_id
+            )
+        )
+
+    conexion.close()
+
+    return render_template(
+        "nuevo_bono_admin.html",
+        alumno=alumno,
+        tipos_bono=tipos_bono
+    )
+
+@app.route("/alumnos/<int:alumno_id>/bonos")
+def bonos_alumno_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "Alumno no encontrado."
+
+    cursor.execute("""
+        SELECT
+            bonos.*,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.alumno_id = ?
+        ORDER BY bonos.fecha_inicio DESC
+    """, (alumno_id,))
+
+    bonos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "bonos_alumno_admin.html",
+        alumno=alumno,
+        bonos=bonos
     )
 
 @app.route("/alumnos/<int:alumno_id>/salud")

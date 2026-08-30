@@ -240,6 +240,13 @@
             🩺 Ficha de salud
         </a>
 
+        <a
+            href="{{ url_for('bonos_alumno_admin', alumno_id=alumno.id) }}"
+            class="boton"
+        >
+            🎟️ Bonos y créditos
+        </a>
+
         <a href="{{ url_for("mostrar_alumnos") }}" class="boton">
             ⬅️ Volver
         </a>

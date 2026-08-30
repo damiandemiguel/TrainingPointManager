@@ -90,3 +90,75 @@ def crear_alumno(usuario_id, nombre, email, fecha_nacimiento, telefono, direccio
 
     conexion.commit()
     conexion.close()
+
+def crear_tabla_tipos_bono():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tipos_bono (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            creditos INTEGER NOT NULL,
+            precio REAL NOT NULL,
+            duracion_dias INTEGER,
+            activo INTEGER DEFAULT 1
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
+
+def crear_tabla_bonos():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS bonos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            alumno_id INTEGER NOT NULL,
+            tipo_bono_id INTEGER NOT NULL,
+            fecha_inicio TEXT NOT NULL,
+            fecha_vencimiento_original TEXT,
+            fecha_vencimiento TEXT,
+            creditos_iniciales INTEGER NOT NULL,
+            creditos_disponibles INTEGER NOT NULL,
+            precio REAL NOT NULL,
+            forma_pago TEXT NOT NULL,
+            fecha_pago TEXT,
+            extension_dias INTEGER DEFAULT 0,
+            motivo_extension TEXT,
+            estado TEXT DEFAULT 'Activo',
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id),
+            FOREIGN KEY (tipo_bono_id) REFERENCES tipos_bono(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
+
+def crear_tabla_movimientos_creditos():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS movimientos_creditos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bono_id INTEGER NOT NULL,
+            alumno_id INTEGER NOT NULL,
+            fecha TEXT NOT NULL,
+            tipo TEXT NOT NULL,
+            cantidad INTEGER NOT NULL,
+            descripcion TEXT,
+            FOREIGN KEY (bono_id) REFERENCES bonos(id),
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()

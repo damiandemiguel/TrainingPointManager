@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bonos y créditos - {{ alumno.nombre }} - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 850px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .boton-nuevo {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 25px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .boton-nuevo:hover {
+            background-color: #444;
+        }
+
+        .bono {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+        }
+
+        .bono h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        .dato {
+            padding: 8px 0;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .creditos {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .sin-bonos {
+            text-align: center;
+            color: #666;
+            padding: 30px 0;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .boton {
+            flex: 1;
+            min-width: 180px;
+            padding: 13px 18px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                padding: 22px;
+                margin: 20px auto;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>🎟️ Bonos y créditos</h1>
+
+    <div class="subtitulo">
+        Alumno: <strong>{{ alumno.nombre }}</strong>
+    </div>
+
+
+    <a
+        href="{{ url_for('nuevo_bono_admin', alumno_id=alumno.id) }}"
+        class="boton-nuevo"
+    >
+        ➕ Registrar nuevo bono
+    </a>
+
+
+    {% if bonos %}
+
+        {% for bono in bonos %}
+
+            <div class="bono">
+
+                <h2>🎟️ {{ bono.nombre_bono }}</h2>
+
+                <div class="dato">
+                    <span class="etiqueta">📅 Inicio:</span>
+                    {{ bono.fecha_inicio }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">📅 Vencimiento original:</span>
+                    {{ bono.fecha_vencimiento_original or "No informado" }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">📅 Vencimiento actual:</span>
+                    {{ bono.fecha_vencimiento or "No informado" }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">💳 Forma de pago:</span>
+                    {{ bono.forma_pago }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">💰 Precio:</span>
+                    ${{ bono.precio }}
+                </div>
+
+                <div class="creditos">
+                    🎟️ Créditos:
+                    {{ bono.creditos_disponibles }}
+                    /
+                    {{ bono.creditos_iniciales }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">Estado:</span>
+                    {{ bono.estado }}
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="sin-bonos">
+            <p>Este alumno todavía no tiene bonos registrados.</p>
+        </div>
+
+    {% endif %}
+
+
+    <div class="botones">
+
+        <a
+            href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.id) }}"
+            class="boton"
+        >
+            ⬅️ Volver al perfil
+        </a>
+
+        <a
+            href="{{ url_for('mostrar_alumnos') }}"
+            class="boton"
+        >
+            👥 Lista de alumnos
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
