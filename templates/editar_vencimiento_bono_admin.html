@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Modificar vencimiento - Training Point</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        color: #222;
+    }
+
+    .contenedor {
+        width: 92%;
+        max-width: 650px;
+        margin: 40px auto;
+        background-color: white;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .subtitulo {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .resumen {
+        background-color: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .dato {
+        padding: 8px 0;
+    }
+
+    .etiqueta {
+        font-weight: bold;
+        color: #666;
+    }
+
+    .aviso {
+        background-color: #fff8e1;
+        border: 1px solid #f0d98c;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    input[type="date"],
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    .campo {
+        margin-bottom: 22px;
+    }
+
+    .botones {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    button,
+    .boton {
+        flex: 1;
+        min-width: 180px;
+        padding: 13px 18px;
+        border: none;
+        background-color: #222;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    button:hover,
+    .boton:hover {
+        background-color: #444;
+    }
+
+    @media (max-width: 600px) {
+
+        .contenedor {
+            width: 94%;
+            padding: 22px;
+            margin: 20px auto;
+        }
+
+        .botones {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+```
+<h1>✏️ Modificar vencimiento</h1>
+
+<div class="subtitulo">
+    Alumno:
+    <strong>{{ bono.nombre_alumno }}</strong>
+</div>
+
+
+<div class="resumen">
+
+    <div class="dato">
+        <span class="etiqueta">🎟️ Bono:</span>
+        {{ bono.nombre_bono }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">📅 Vencimiento original:</span>
+        {{ bono.fecha_vencimiento_original }}
+    </div>
+
+    <div class="dato">
+        <span class="etiqueta">📅 Vencimiento actual:</span>
+        {{ bono.fecha_vencimiento }}
+    </div>
+
+</div>
+
+
+<div class="aviso">
+
+    💡 <strong>Importante:</strong>
+
+    La fecha de vencimiento original se conserva.
+    Solo se modificará la fecha actual del bono.
+
+    <br><br>
+
+    Podés utilizar esta opción cuando una clase se suspende,
+    se reprograma o necesitás compensar días.
+
+</div>
+
+
+<form method="POST">
+
+    <div class="campo">
+
+        <label for="fecha_vencimiento">
+            📅 Nueva fecha de vencimiento
+        </label>
+
+        <input
+            type="date"
+            id="fecha_vencimiento"
+            name="fecha_vencimiento"
+            value="{{ bono.fecha_vencimiento }}"
+            required
+        >
+
+    </div>
+
+
+    <div class="campo">
+
+        <label for="motivo_extension">
+            📝 Motivo de la modificación
+        </label>
+
+        <textarea
+            id="motivo_extension"
+            name="motivo_extension"
+            rows="4"
+            placeholder="Ej.: Feriado, clase suspendida, clase reprogramada..."
+        >{{ bono.motivo_extension or "" }}</textarea>
+
+    </div>
+
+
+    <div class="botones">
+
+        <button type="submit">
+            💾 Guardar modificación
+        </button>
+
+        <a
+            href="{{ url_for('bonos_alumno_admin', alumno_id=bono.alumno_id) }}"
+            class="boton"
+        >
+            ⬅️ Cancelar
+        </a>
+
+    </div>
+
+</form>
+```
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Clases - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            color: #ccc;
+            margin-bottom: 0;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        .clase {
+            background-color: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 18px;
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .clase h2 {
+            margin-top: 0;
+        }
+
+        .dato {
+            padding: 6px 0;
+            color: #555;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .sin-clases {
+            background-color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .acciones {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>📅 Clases</h1>
+
+        <p>Crear y gestionar las clases de Training Point</p>
+
+    </div>
+
+
+    <div class="acciones">
+
+        <a href="#" class="boton">
+            ➕ Crear nueva clase
+        </a>
+
+        <a href="{{ url_for('panel') }}" class="boton">
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+
+    {% if clases %}
+
+        {% for clase in clases %}
+
+            <div class="clase">
+
+                <h2>
+                    📅 {{ clase.fecha }}
+                </h2>
+
+                <div class="dato">
+                    <span class="etiqueta">🕐 Horario:</span>
+                    {{ clase.hora_inicio }} - {{ clase.hora_fin }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">👥 Cupo máximo:</span>
+                    {{ clase.cupo_maximo }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">📌 Estado:</span>
+                    {{ clase.estado }}
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="sin-clases">
+
+            <h2>📅 No hay clases creadas</h2>
+
+            <p>
+                Todavía no se han generado clases.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

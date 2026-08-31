@@ -162,3 +162,69 @@ def crear_tabla_movimientos_creditos():
 
     conexion.commit()
     conexion.close()
+
+def crear_tabla_clases():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS clases (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fecha TEXT NOT NULL,
+            hora_inicio TEXT NOT NULL,
+            hora_fin TEXT NOT NULL,
+            cupo_maximo INTEGER DEFAULT 30,
+            estado TEXT DEFAULT 'Disponible'
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
+
+def crear_tabla_inscripciones():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS inscripciones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            clase_id INTEGER NOT NULL,
+            alumno_id INTEGER NOT NULL,
+            fecha_inscripcion TEXT NOT NULL,
+            estado TEXT DEFAULT 'Inscripto',
+            FOREIGN KEY (clase_id) REFERENCES clases(id),
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id),
+            UNIQUE (clase_id, alumno_id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
+
+def crear_tabla_asistencias():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS asistencias (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            clase_id INTEGER NOT NULL,
+            alumno_id INTEGER NOT NULL,
+            bono_id INTEGER NOT NULL,
+            fecha_hora TEXT NOT NULL,
+            metodo TEXT NOT NULL,
+            credito_descontado INTEGER DEFAULT 1,
+            FOREIGN KEY (clase_id) REFERENCES clases(id),
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id),
+            FOREIGN KEY (bono_id) REFERENCES bonos(id),
+            UNIQUE (clase_id, alumno_id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()

@@ -313,6 +313,34 @@ def panel():
 
     return redirect(url_for("perfil_alumno"))
 
+@app.route("/clases")
+def gestionar_clases():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        ORDER BY fecha ASC, hora_inicio ASC
+    """)
+
+    clases = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "clases_admin.html",
+        clases=clases
+    )
+
 @app.route("/editar-perfil", methods=["GET", "POST"])
 def editar_perfil():
 
@@ -906,6 +934,104 @@ def bonos_alumno_admin(alumno_id):
         "bonos_alumno_admin.html",
         alumno=alumno,
         bonos=bonos
+    )
+
+@app.route("/bonos/<int:bono_id>/editar-vencimiento", methods=["GET", "POST"])
+def editar_vencimiento_bono_admin(bono_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            bonos.*,
+            alumnos.nombre AS nombre_alumno,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN alumnos
+            ON bonos.alumno_id = alumnos.id
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.id = ?
+    """, (bono_id,))
+
+    bono = cursor.fetchone()
+
+    if bono is None:
+        conexion.close()
+        return "Bono no encontrado."
+
+    if request.method == "POST":
+
+        nueva_fecha = request.form.get(
+            "fecha_vencimiento",
+            ""
+        ).strip()
+
+        motivo = request.form.get(
+            "motivo_extension",
+            ""
+        ).strip()
+
+        if not nueva_fecha:
+            conexion.close()
+            return "Debe indicar una fecha de vencimiento."
+
+        try:
+            fecha_nueva = datetime.strptime(
+                nueva_fecha,
+                "%Y-%m-%d"
+            )
+
+            fecha_original = datetime.strptime(
+                bono["fecha_vencimiento_original"],
+                "%Y-%m-%d"
+            )
+
+        except ValueError:
+            conexion.close()
+            return "La fecha indicada no es válida."
+
+        extension_dias = (
+            fecha_nueva - fecha_original
+        ).days
+
+        cursor.execute("""
+            UPDATE bonos
+            SET
+                fecha_vencimiento = ?,
+                extension_dias = ?,
+                motivo_extension = ?
+            WHERE id = ?
+        """, (
+            nueva_fecha,
+            extension_dias,
+            motivo,
+            bono_id
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "bonos_alumno_admin",
+                alumno_id=bono["alumno_id"]
+            )
+        )
+
+    conexion.close()
+
+    return render_template(
+        "editar_vencimiento_bono_admin.html",
+        bono=bono
     )
 
 @app.route("/alumnos/<int:alumno_id>/salud")

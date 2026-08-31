@@ -176,6 +176,24 @@
                     {{ bono.fecha_vencimiento or "No informado" }}
                 </div>
 
+                {% if bono.extension_dias and bono.extension_dias > 0 %}
+
+                    <div class="dato">
+                        <span class="etiqueta">➕ Extensión:</span>
+                        {{ bono.extension_dias }} días
+                    </div>
+
+                    {% if bono.motivo_extension %}
+
+                        <div class="dato">
+                            <span class="etiqueta">📝 Motivo:</span>
+                            {{ bono.motivo_extension }}
+                         </div>
+
+                    {% endif %}
+
+                {% endif %}
+
                 <div class="dato">
                     <span class="etiqueta">💳 Forma de pago:</span>
                     {{ bono.forma_pago }}
@@ -197,6 +215,14 @@
                     <span class="etiqueta">Estado:</span>
                     {{ bono.estado }}
                 </div>
+
+                <a
+                    href="{{ url_for('editar_vencimiento_bono_admin', bono_id=bono.id) }}"
+                    class="boton"
+                    style="display: block; margin-top: 15px;"
+                >
+                    ✏️ Modificar vencimiento
+                </a>
 
             </div>
 

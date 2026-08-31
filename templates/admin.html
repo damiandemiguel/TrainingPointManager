@@ -164,7 +164,13 @@
 
         }
 
-        .menu {
+        @media (max-width: 600px) {
+
+            .estadisticas {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .menu {
                 grid-template-columns: 1fr;
             }
 
@@ -253,7 +259,7 @@
         <section class="menu">
 
 
-            <a href="#" class="boton">
+            <a href="{{ url_for('gestionar_clases') }}" class="boton">
 
                 <div class="icono">📅</div>
 
