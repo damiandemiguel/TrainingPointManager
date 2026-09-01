@@ -66,6 +66,33 @@
             background-color: #444;
         }
 
+        .boton-clase {
+            width: 150px;
+            flex: none;
+        }
+
+        .boton-eliminar {
+            width: 150px;
+            flex: none;
+        }
+
+        .boton-editar {
+            display: block;
+            width: fit-content;
+            margin: 15px auto 0;
+            padding: 9px 16px;
+            background-color: #222;
+            color: white;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .boton-editar:hover {
+            background-color: #444;
+        }
+
         .clase {
             background-color: white;
             border-radius: 12px;
@@ -130,7 +157,7 @@
 
     <div class="acciones">
 
-        <a href="#" class="boton">
+        <a href="{{ url_for('nueva_clase') }}" class="boton">
             ➕ Crear nueva clase
         </a>
 
@@ -148,7 +175,7 @@
             <div class="clase">
 
                 <h2>
-                    📅 {{ clase.fecha }}
+                    📅 {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
                 </h2>
 
                 <div class="dato">
@@ -164,6 +191,28 @@
                 <div class="dato">
                     <span class="etiqueta">📌 Estado:</span>
                     {{ clase.estado }}
+                </div>
+
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+
+                    <a
+                        href="{{ url_for('editar_clase', clase_id=clase.id) }}"
+                        class="boton boton-clase"
+                    >
+                        ✏️ Editar clase
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('eliminar_clase', clase_id=clase.id) }}"
+                        style="margin: 0;"
+                        onsubmit="return confirm('⚠️ ¿Estás seguro de que querés eliminar esta clase?');"
+                    >
+                        <button type="submit" class="boton boton-eliminar">
+                            🗑️ Eliminar
+                        </button>
+                    </form>
+
                 </div>
 
             </div>

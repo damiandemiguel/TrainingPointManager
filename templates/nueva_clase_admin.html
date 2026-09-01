@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nueva clase - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 650px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            color: #ccc;
+            margin-bottom: 0;
+        }
+
+        .formulario {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .modo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .modo label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .modo input {
+            display: none;
+        }
+
+        .modo-opcion {
+            display: block;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .modo input:checked + .modo-opcion {
+            border-color: #222;
+            background-color: #eee;
+        }
+
+        .seccion {
+            display: none;
+        }
+
+        .seccion.activa {
+            display: block;
+        }
+
+        .campo {
+            margin-bottom: 20px;
+        }
+
+        label.titulo-campo {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .dias {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .dia {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .dia input {
+            width: auto;
+        }
+
+        .ayuda {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button,
+        .boton {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #222;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #444;
+        }
+
+        .boton {
+            background-color: #ddd;
+            color: #222;
+        }
+
+        .boton:hover {
+            background-color: #ccc;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .formulario {
+                padding: 22px;
+            }
+
+            .modo {
+                grid-template-columns: 1fr;
+            }
+
+            .dias {
+                grid-template-columns: 1fr;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>➕ Nueva clase</h1>
+
+        <p>Crear una nueva clase de Training Point</p>
+
+    </div>
+
+
+    <div class="formulario">
+
+        <form method="POST">
+
+            <div class="campo">
+
+                <label class="titulo-campo">
+                    ¿Cómo querés crear la clase?
+                </label>
+
+                <div class="modo">
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="modo"
+                            value="individual"
+                            checked
+                            onchange="mostrarModo()"
+                        >
+
+                        <span class="modo-opcion">
+                            📅 Individual
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="modo"
+                            value="recurrente"
+                            onchange="mostrarModo()"
+                        >
+
+                        <span class="modo-opcion">
+                            🔁 Recurrente
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- CREACIÓN INDIVIDUAL -->
+
+            <div
+                id="individual"
+                class="seccion activa"
+            >
+
+                <div class="campo">
+
+                    <label
+                        class="titulo-campo"
+                        for="fecha"
+                    >
+                        📅 Fecha
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fecha"
+                        name="fecha"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CREACIÓN RECURRENTE -->
+
+            <div
+                id="recurrente"
+                class="seccion"
+            >
+
+                <div class="ayuda">
+
+                    💡 Seleccioná un período y los días de la semana.
+                    Training Point generará automáticamente una clase
+                    para cada día seleccionado dentro de ese período.
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label
+                        class="titulo-campo"
+                        for="fecha_desde"
+                    >
+                        📅 Desde
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fecha_desde"
+                        name="fecha_desde"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label
+                        class="titulo-campo"
+                        for="fecha_hasta"
+                    >
+                        📅 Hasta
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fecha_hasta"
+                        name="fecha_hasta"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label class="titulo-campo">
+                        📆 Días de la semana
+                    </label>
+
+                    <div class="dias">
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="0"
+                            >
+                            Lunes
+                        </label>
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="1"
+                            >
+                            Martes
+                        </label>
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="2"
+                            >
+                            Miércoles
+                        </label>
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="3"
+                            >
+                            Jueves
+                        </label>
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="4"
+                            >
+                            Viernes
+                        </label>
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="5"
+                            >
+                            Sábado
+                        </label>
+
+                        <label class="dia">
+                            <input
+                                type="checkbox"
+                                name="dias"
+                                value="6"
+                            >
+                            Domingo
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DATOS COMUNES -->
+
+            <div class="campo">
+
+                <label
+                    class="titulo-campo"
+                    for="hora_inicio"
+                >
+                    🕐 Hora de inicio
+                </label>
+
+                <input
+                    type="time"
+                    id="hora_inicio"
+                    name="hora_inicio"
+                    required
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label
+                    class="titulo-campo"
+                    for="hora_fin"
+                >
+                    🕐 Hora de finalización
+                </label>
+
+                <input
+                    type="time"
+                    id="hora_fin"
+                    name="hora_fin"
+                    required
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label
+                    class="titulo-campo"
+                    for="cupo_maximo"
+                >
+                    👥 Cupo máximo
+                </label>
+
+                <input
+                    type="number"
+                    id="cupo_maximo"
+                    name="cupo_maximo"
+                    value="30"
+                    min="1"
+                    required
+                >
+
+            </div>
+
+
+            <div class="botones">
+
+                <button type="submit">
+                    💾 Crear clase
+                </button>
+
+                <a
+                    href="{{ url_for('gestionar_clases') }}"
+                    class="boton"
+                >
+                    ⬅️ Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function mostrarModo() {
+
+    const modo = document.querySelector(
+        'input[name="modo"]:checked'
+    ).value;
+
+    const individual = document.getElementById("individual");
+    const recurrente = document.getElementById("recurrente");
+
+    if (modo === "individual") {
+
+        individual.classList.add("activa");
+        recurrente.classList.remove("activa");
+
+        document.getElementById("fecha").required = true;
+
+        document.getElementById("fecha_desde").required = false;
+        document.getElementById("fecha_hasta").required = false;
+
+    } else {
+
+        individual.classList.remove("activa");
+        recurrente.classList.add("activa");
+
+        document.getElementById("fecha").required = false;
+
+        document.getElementById("fecha_desde").required = true;
+        document.getElementById("fecha_hasta").required = true;
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

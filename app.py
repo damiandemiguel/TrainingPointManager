@@ -97,8 +97,6 @@ def fecha_vencida(fecha):
 
 
 @app.route("/", methods=["GET", "POST"])
-
-@app.route("/", methods=["GET", "POST"])
 def inicio():
 
     if request.method == "POST":
@@ -340,6 +338,200 @@ def gestionar_clases():
         "clases_admin.html",
         clases=clases
     )
+
+@app.route("/clases/nueva", methods=["GET", "POST"])
+def nueva_clase():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    if request.method == "POST":
+
+        modo = request.form["modo"]
+
+        hora_inicio = request.form["hora_inicio"]
+        hora_fin = request.form["hora_fin"]
+        cupo_maximo = int(request.form["cupo_maximo"])
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        try:
+
+            if modo == "individual":
+
+                fecha = request.form["fecha"]
+
+                cursor.execute("""
+                    INSERT INTO clases (
+                        fecha,
+                        hora_inicio,
+                        hora_fin,
+                        cupo_maximo,
+                        estado
+                    )
+                    VALUES (?, ?, ?, ?, ?)
+                """, (
+                    fecha,
+                    hora_inicio,
+                    hora_fin,
+                    cupo_maximo,
+                    "Disponible"
+                ))
+
+            elif modo == "recurrente":
+
+                from datetime import datetime, timedelta
+
+                fecha_desde = datetime.strptime(
+                    request.form["fecha_desde"],
+                    "%Y-%m-%d"
+                ).date()
+
+                fecha_hasta = datetime.strptime(
+                    request.form["fecha_hasta"],
+                    "%Y-%m-%d"
+                ).date()
+
+                dias = request.form.getlist("dias")
+
+                if fecha_desde > fecha_hasta:
+                    conexion.close()
+                    return "La fecha de inicio no puede ser posterior a la fecha de finalización."
+
+                if not dias:
+                    conexion.close()
+                    return "Debés seleccionar al menos un día de la semana."
+
+                dias = [int(dia) for dia in dias]
+
+                fecha_actual = fecha_desde
+
+                while fecha_actual <= fecha_hasta:
+
+                    if fecha_actual.weekday() in dias:
+
+                        cursor.execute("""
+                            INSERT INTO clases (
+                                fecha,
+                                hora_inicio,
+                                hora_fin,
+                                cupo_maximo,
+                                estado
+                            )
+                            VALUES (?, ?, ?, ?, ?)
+                        """, (
+                            fecha_actual.strftime("%Y-%m-%d"),
+                            hora_inicio,
+                            hora_fin,
+                            cupo_maximo,
+                            "Disponible"
+                        ))
+
+                    fecha_actual += timedelta(days=1)
+
+            conexion.commit()
+
+        except Exception as error:
+
+            conexion.rollback()
+            conexion.close()
+
+            return f"Error al crear la clase: {error}"
+
+        conexion.close()
+
+        return redirect(url_for("gestionar_clases"))
+
+    return render_template("nueva_clase_admin.html")
+
+@app.route("/clases/<int:clase_id>/editar", methods=["GET", "POST"])
+def editar_clase(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "No se encontró la clase."
+
+    if request.method == "POST":
+
+        fecha = request.form["fecha"]
+        hora_inicio = request.form["hora_inicio"]
+        hora_fin = request.form["hora_fin"]
+        cupo_maximo = int(request.form["cupo_maximo"])
+        estado = request.form["estado"]
+
+        cursor.execute("""
+            UPDATE clases
+            SET fecha = ?,
+                hora_inicio = ?,
+                hora_fin = ?,
+                cupo_maximo = ?,
+                estado = ?
+            WHERE id = ?
+        """, (
+            fecha,
+            hora_inicio,
+            hora_fin,
+            cupo_maximo,
+            estado,
+            clase_id
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(url_for("gestionar_clases"))
+
+    conexion.close()
+
+    return render_template(
+        "editar_clase_admin.html",
+        clase=clase
+    )
+
+@app.route("/clases/<int:clase_id>/eliminar", methods=["POST"])
+def eliminar_clase(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        DELETE FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(url_for("gestionar_clases"))
+
 
 @app.route("/editar-perfil", methods=["GET", "POST"])
 def editar_perfil():
