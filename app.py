@@ -1712,6 +1712,59 @@ def mi_bono():
         creditos_utilizados=creditos_utilizados
     )
 
+@app.route("/pagos")
+def pagos():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno correspondiente al usuario
+    cursor.execute("""
+        SELECT id
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    # Buscar los pagos asociados a los bonos del alumno
+    cursor.execute("""
+        SELECT
+            bonos.id,
+            bonos.precio,
+            bonos.forma_pago,
+            bonos.fecha_pago,
+            bonos.fecha_inicio,
+            bonos.fecha_vencimiento,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.alumno_id = ?
+        ORDER BY bonos.fecha_pago DESC
+    """, (alumno["id"],))
+
+    pagos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "pagos.html",
+        pagos=pagos
+    )
+
 @app.route("/mis-asistencias")
 def mis_asistencias():
 

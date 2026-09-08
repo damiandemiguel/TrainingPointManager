@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mis pagos - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .lista {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .pago {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .dato {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .etiqueta {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .valor {
+            font-weight: bold;
+        }
+
+        .importe {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .sin-pagos {
+            text-align: center;
+            color: #666;
+            padding: 30px 20px;
+        }
+
+        .volver {
+            display: block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .volver:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+
+            .pago {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media (max-width: 450px) {
+
+            .pago {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>💳 Mis pagos</h1>
+
+        <p>
+            Historial de tus pagos
+        </p>
+
+    </div>
+
+    <div class="lista">
+
+        {% if pagos %}
+
+            {% for pago in pagos %}
+
+                <div class="pago">
+
+                    <div class="dato">
+
+                        <span class="etiqueta">
+                            📅 Fecha de pago
+                        </span>
+
+                        <span class="valor">
+                            {{ pago.fecha_pago }}
+                        </span>
+
+                    </div>
+
+                    <div class="dato">
+
+                        <span class="etiqueta">
+                            🎫 Bono
+                        </span>
+
+                        <span class="valor">
+                            {{ pago.nombre_bono }}
+                        </span>
+
+                    </div>
+
+                    <div class="dato">
+
+                        <span class="etiqueta">
+                            💰 Importe
+                        </span>
+
+                        <span class="importe">
+                            ${{ "%.2f"|format(pago.precio) }}
+                        </span>
+
+                    </div>
+
+                    <div class="dato">
+
+                        <span class="etiqueta">
+                            💵 Forma de pago
+                        </span>
+
+                        <span class="valor">
+                            {{ pago.forma_pago }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="sin-pagos">
+
+                Todavía no tenés pagos registrados.
+
+            </div>
+
+        {% endif %}
+
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="volver"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
