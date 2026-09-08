@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inscribir alumno - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            color: #ccc;
+            margin-bottom: 0;
+        }
+
+        .clase {
+            background-color: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 18px;
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .dato {
+            padding: 6px 0;
+            color: #555;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #222;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .boton {
+            flex: 1;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        .sin-alumnos {
+            background-color: #f7f7f7;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+
+            .botones {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>➕ Inscribir alumno</h1>
+
+        <p>
+            Clase del
+            {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
+            — {{ clase.hora_inicio }} a {{ clase.hora_fin }}
+        </p>
+
+    </div>
+
+
+    <div class="clase">
+
+        <div class="dato">
+            <span class="etiqueta">👥 Cupo máximo:</span>
+            {{ clase.cupo_maximo }}
+        </div>
+
+        <div class="dato">
+            <span class="etiqueta">📌 Estado:</span>
+            {{ clase.estado }}
+        </div>
+
+
+        {% if alumnos %}
+
+            <form method="POST">
+
+                <label for="alumno_id">
+                    Seleccioná el alumno:
+                </label>
+
+                <select name="alumno_id" id="alumno_id" required>
+
+                    <option value="">
+                        -- Seleccionar alumno --
+                    </option>
+
+                    {% for alumno in alumnos %}
+
+                        <option value="{{ alumno.id }}">
+                            {{ alumno.nombre }}
+                            {% if alumno.email %}
+                                — {{ alumno.email }}
+                            {% endif %}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <div class="botones">
+
+                    <button type="submit" class="boton">
+                        ➕ Inscribir alumno
+                    </button>
+
+                    <a
+                        href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
+                        class="boton"
+                    >
+                        ⬅️ Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        {% else %}
+
+            <div class="sin-alumnos">
+
+                <h2>👥 No hay alumnos disponibles</h2>
+
+                <p>
+                    Todos los alumnos activos ya están inscriptos
+                    o no hay alumnos activos registrados.
+                </p>
+
+                <a
+                    href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
+                    class="boton"
+                >
+                    ⬅️ Volver a inscriptos
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

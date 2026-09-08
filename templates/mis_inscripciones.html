@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mis inscripciones - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .inscripciones {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .inscripcion {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .inscripcion h2 {
+            margin-top: 0;
+        }
+
+        .dato {
+            padding: 6px 0;
+            color: #555;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .estado {
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .sin-inscripciones {
+            background-color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: #666;
+        }
+
+        .boton {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+
+            .inscripciones {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        .boton-cancelar {
+            width: 100%;
+            height: 45px;
+            margin-top: 15px;
+            padding: 0 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e5e5e5;
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-cancelar:hover {
+            background-color: #ccc;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>📋 Mis inscripciones</h1>
+
+        <p>
+            Clases en las que estás inscripto
+        </p>
+
+    </div>
+
+
+    {% if inscripciones %}
+
+        <div class="inscripciones">
+
+            {% for inscripcion in inscripciones %}
+
+                <div class="inscripcion">
+
+                    <h2>
+                        📅
+                        {{ inscripcion.fecha[8:10] }}/{{ inscripcion.fecha[5:7] }}/{{ inscripcion.fecha[0:4] }}
+                    </h2>
+
+
+                    <div class="dato">
+
+                        <span class="etiqueta">
+                            🕐 Horario:
+                        </span>
+
+                        {{ inscripcion.hora_inicio }}
+                        a
+                        {{ inscripcion.hora_fin }}
+
+                    </div>
+
+
+                    <div class="dato">
+
+                        <span class="etiqueta">
+                            📝 Fecha de inscripción:
+                        </span>
+
+                        {{ inscripcion.fecha_inscripcion[8:10] }}/{{ inscripcion.fecha_inscripcion[5:7] }}/{{ inscripcion.fecha_inscripcion[0:4] }}
+
+                    </div>
+
+
+                    <form
+                        action="{{ url_for('cancelar_inscripcion_desde_mis_inscripciones', inscripcion_id=inscripcion.inscripcion_id) }}"
+                        method="POST"
+                        onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
+                    >
+
+                        <button
+                            type="submit"
+                            class="boton-cancelar"
+                        >
+                            ❌ Cancelar inscripción
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-inscripciones">
+
+            <h2>📋 No tenés inscripciones</h2>
+
+            <p>
+                Actualmente no estás inscripto en ninguna clase.
+            </p>
+
+            <a
+                href="{{ url_for('mis_clases') }}"
+                class="boton"
+            >
+                📅 Ver clases disponibles
+            </a>
+
+        </div>
+
+    {% endif %}
+
+
+    <a
+        href="{{ url_for('panel_alumno') }}"
+        class="boton"
+    >
+        ⬅️ Volver al panel
+    </a>
+
+</div>
+
+</body>
+
+</html>

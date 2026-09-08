@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inscriptos - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .datos-clase {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .dato {
+            padding: 6px 0;
+            color: #555;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .lista-inscriptos {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .inscripto {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .sin-inscriptos {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+        }
+
+        .boton {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+
+            .lista-inscriptos {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>👥 Inscriptos</h1>
+
+        <p>
+            Personas inscriptas en esta clase
+        </p>
+
+    </div>
+
+
+    <div class="datos-clase">
+
+        <div class="dato">
+
+            <span class="etiqueta">📅 Fecha:</span>
+
+            {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
+
+        </div>
+
+
+        <div class="dato">
+
+            <span class="etiqueta">🕐 Horario:</span>
+
+            {{ clase.hora_inicio }} a {{ clase.hora_fin }}
+
+        </div>
+
+
+        <div class="dato">
+
+            <span class="etiqueta">👥 Inscriptos:</span>
+
+            {{ inscriptos|length }} / {{ clase.cupo_maximo }}
+
+        </div>
+
+
+        <div class="dato">
+
+            <span class="etiqueta">🟢 Cupos disponibles:</span>
+
+            {{ clase.cupo_maximo - inscriptos|length }}
+
+        </div>
+
+    </div>
+
+
+    {% if inscriptos %}
+
+        <div class="lista-inscriptos">
+
+            {% for alumno in inscriptos %}
+
+                <div class="inscripto">
+
+                    {{ alumno.nombre }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-inscriptos">
+
+            <h2>👥 No hay inscriptos</h2>
+
+            <p>
+                Actualmente no hay alumnos inscriptos en esta clase.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <a
+        href="{{ url_for('mis_clases') }}"
+        class="boton"
+    >
+        ⬅️ Volver a mis clases
+    </a>
+
+</div>
+
+</body>
+
+</html>

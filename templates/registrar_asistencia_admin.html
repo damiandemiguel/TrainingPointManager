@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registrar asistencia - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .clase {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            margin-bottom: 20px;
+        }
+
+        .clase p {
+            margin: 8px 0;
+        }
+
+        .lista {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .alumno {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .nombre {
+            font-weight: bold;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .boton {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        .sin-alumnos {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        @media (max-width: 700px) {
+
+            .acciones {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>🏃 Registrar asistencia</h1>
+
+        <p>
+            Seleccioná los alumnos que asistieron a la clase
+        </p>
+
+    </div>
+
+    {% if mensaje %}
+
+        <div class="mensaje">
+            ✅ {{ mensaje }}
+        </div>
+
+    {% endif %}
+
+    <div class="clase">
+
+        <h2>
+            📅 Clase
+        </h2>
+
+        <p>
+            <strong>Fecha:</strong>
+            {{ clase.fecha }}
+        </p>
+
+        <p>
+            <strong>Horario:</strong>
+            {{ clase.hora_inicio }} - {{ clase.hora_fin }}
+        </p>
+
+        <p>
+            <strong>Cupo:</strong>
+            {{ clase.cupo_maximo }}
+        </p>
+
+    </div>
+
+
+    <div class="lista">
+
+        <h2>
+            👥 Alumnos inscriptos
+        </h2>
+
+
+        {% if inscriptos %}
+
+            <form method="POST">
+
+                {% for alumno in inscriptos %}
+
+                    <label class="alumno">
+
+                        <span class="nombre">
+                            {{ alumno.nombre }}
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            name="alumnos_presentes"
+                            value="{{ alumno.alumno_id }}"
+                            class="checkbox"
+                        >
+
+                    </label>
+
+                {% endfor %}
+
+
+                <div class="acciones">
+
+                    <button
+                        type="submit"
+                        class="boton"
+                    >
+                        💾 Registrar asistencias
+                    </button>
+
+                    <a
+                        href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
+                        class="boton"
+                    >
+                        ⬅️ Volver
+                    </a>
+
+                </div>
+
+            </form>
+
+        {% else %}
+
+            <div class="sin-alumnos">
+
+                No hay alumnos inscriptos en esta clase.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

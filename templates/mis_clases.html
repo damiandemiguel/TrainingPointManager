@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mis clases - Training Point</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        color: #222;
+    }
+
+    .contenedor {
+        width: 92%;
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .encabezado {
+        background-color: #222;
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .encabezado h1 {
+        margin: 0;
+    }
+
+    .clases {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .clase {
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.10);
+    }
+
+    .clase h2 {
+        margin-top: 0;
+    }
+
+    .dato {
+        padding: 6px 0;
+        color: #555;
+    }
+
+    .etiqueta {
+        font-weight: bold;
+        color: #222;
+    }
+
+    .sin-clases {
+        background-color: white;
+        padding: 40px;
+        text-align: center;
+        border-radius: 12px;
+        color: #666;
+    }
+
+    .boton {
+        display: inline-block;
+        margin-top: 25px;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        background-color: #222;
+        color: white;
+    }
+
+    .boton:hover {
+        background-color: #444;
+    }
+
+    .mensaje {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .acciones-clase {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .acciones-clase form {
+        margin: 0;
+        width: 100%;
+    }
+
+    .boton-inscribirme,
+    .boton-inscriptos {
+        width: 100%;
+        height: 45px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .boton-inscribirme {
+        border: none;
+        background-color: #222;
+        color: white;
+    }
+
+    .boton-inscribirme:hover {
+        background-color: #444;
+    }
+
+    .boton-inscriptos {
+        display: block;
+        background-color: #e5e5e5;
+        color: #333;
+    }
+
+    .boton-inscriptos:hover {
+        background-color: #ccc;
+    }
+
+    @media (max-width: 700px) {
+
+        .clases {
+            grid-template-columns: 1fr;
+        }
+
+        .acciones-clase {
+            flex-direction: column;
+        }
+
+    }
+
+    .boton-cancelar {
+        width: 100%;
+        height: 45px;
+        padding: 0 10px;
+        border: none;
+        border-radius: 8px;
+        background-color: #e5e5e5;
+        color: #333;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .boton-cancelar:hover {
+        background-color: #ccc;
+    }
+
+</style>
+
+<script>
+
+    setTimeout(function() {
+
+        const mensaje = document.getElementById("mensaje");
+
+        if (mensaje) {
+            mensaje.style.display = "none";
+        }
+
+    }, 4000);
+
+</script>
+```
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+```
+<div class="encabezado">
+
+    <h1>📅 Mis clases</h1>
+
+    <p>
+        Próximas clases disponibles
+    </p>
+
+</div>
+
+
+{% if mensaje %}
+
+    <div class="mensaje" id="mensaje">
+
+        ⚠️ {{ mensaje }}
+
+    </div>
+
+{% endif %}
+
+
+{% if clases %}
+
+    <div class="clases">
+
+        {% for clase in clases %}
+
+            <div class="clase">
+
+                <h2>
+                    📅
+                    {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
+                </h2>
+
+                <div class="dato">
+                    <span class="etiqueta">🕐 Horario:</span>
+                    {{ clase.hora_inicio }} a {{ clase.hora_fin }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">👥 Inscriptos:</span>
+                    {{ clase.cantidad_inscriptos }} / {{ clase.cupo_maximo }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">🟢 Cupos disponibles:</span>
+                    {{ clase.cupo_maximo - clase.cantidad_inscriptos }}
+                </div>
+
+                <div class="dato">
+                    <span class="etiqueta">📌 Estado:</span>
+                    {{ clase.estado }}
+                </div>
+
+
+                <div class="acciones-clase">
+
+                    {% if clase.alumno_inscripto %}
+
+                        <form
+                            action="{{ url_for('cancelar_inscripcion_alumno', clase_id=clase.id) }}"
+                            method="POST"
+                            onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="boton-cancelar"
+                            >
+                                ❌ Cancelar inscripción
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <form
+                            action="{{ url_for('inscribirme_clase', clase_id=clase.id) }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="boton-inscribirme"
+                            >
+                                ➕ Inscribirme
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+
+                    <a
+                        href="{{ url_for('ver_inscriptos_alumno', clase_id=clase.id) }}"
+                        class="boton-inscriptos"
+                    >
+                        👥 Ver inscriptos
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="sin-clases">
+
+        <h2>📅 No hay clases disponibles</h2>
+
+        <p>
+            Actualmente no hay próximas clases disponibles.
+        </p>
+
+    </div>
+
+{% endif %}
+
+
+<a
+    href="{{ url_for('panel_alumno') }}"
+    class="boton"
+>
+    ⬅️ Volver al panel
+</a>
+```
+
+</div>
+
+</body>
+
+</html>

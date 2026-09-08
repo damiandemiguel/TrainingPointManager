@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Panel del alumno</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .contenedor {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .tarjeta {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .tarjeta:hover {
+            transform: translateY(-3px);
+        }
+
+        .icono {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .titulo {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .descripcion {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .qr {
+            grid-column: span 3;
+        }
+
+        .volver {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            padding: 10px 18px;
+            background-color: #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>🏋️ Training Point</h1>
+
+    <p class="subtitulo">
+        Panel del alumno
+    </p>
+
+
+    <div class="panel">
+
+
+        <a
+            href="{{ url_for('perfil_alumno') }}"
+            class="tarjeta"
+        >
+
+            <div class="icono">👤</div>
+
+            <div class="titulo">
+                Mi perfil
+            </div>
+
+            <div class="descripcion">
+                Mis datos personales
+            </div>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('mis_clases') }}"
+            class="tarjeta"
+        >
+
+            <div class="icono">📅</div>
+
+            <div class="titulo">
+                Clases
+            </div>
+
+            <div class="descripcion">
+                Ver próximas clases
+            </div>
+
+        </a>
+
+        <a href="{{ url_for('mis_inscripciones') }}" class="tarjeta">
+
+            <div class="icono">📋</div>
+
+            <div class="titulo">
+                Mis inscripciones
+            </div>
+
+            <div class="descripcion">
+                Ver mis clases reservadas
+            </div>
+
+        </a>
+
+        <a href="{{ url_for('mi_bono') }}" class="tarjeta">
+
+            <div class="icono">🎫</div>
+
+            <div class="titulo">
+                Mi bono
+            </div>
+
+            <div class="descripcion">
+                Créditos y clases disponibles
+            </div>
+
+        </a>
+
+        <div class="tarjeta">
+
+            <div class="icono">🏃</div>
+
+            <div class="titulo">
+                Mis asistencias
+            </div>
+
+            <div class="descripcion">
+                Historial de asistencia
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta">
+
+            <div class="icono">💳</div>
+
+            <div class="titulo">
+                Pagos
+            </div>
+
+            <div class="descripcion">
+                Pagos y vencimientos
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta">
+
+            <div class="icono">🔔</div>
+
+            <div class="titulo">
+                Notificaciones
+            </div>
+
+            <div class="descripcion">
+                Avisos y novedades
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta">
+
+            <div class="icono">🏋️</div>
+
+            <div class="titulo">
+                Rutinas
+            </div>
+
+            <div class="descripcion">
+                Mis rutinas de entrenamiento
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta qr">
+
+            <div class="icono">📱</div>
+
+            <div class="titulo">
+                Lector QR
+            </div>
+
+            <div class="descripcion">
+                Registrar asistencia
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <a
+        href="{{ url_for('inicio') }}"
+        class="volver"
+    >
+        🚪 Cerrar sesión
+    </a>
+
+</div>
+
+</body>
+
+</html>

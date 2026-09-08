@@ -202,6 +202,20 @@
                         ✏️ Editar clase
                     </a>
 
+                    <a
+                        href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
+                        class="boton boton-clase"
+                    >
+                        👥 Ver inscriptos
+                    </a>
+
+                    <a
+                        href="{{ url_for('registrar_asistencia_admin', clase_id=clase.id) }}"
+                        class="boton boton-clase"
+                    >
+                        🏃 Registrar asistencia
+                    </a>
+
                     <form
                         method="POST"
                         action="{{ url_for('eliminar_clase', clase_id=clase.id) }}"

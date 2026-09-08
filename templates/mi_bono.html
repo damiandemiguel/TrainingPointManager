@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi bono - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .bono {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .bono h2 {
+            margin-top: 0;
+        }
+
+        .dato {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .creditos {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f7f7f7;
+            text-align: center;
+        }
+
+        .creditos-numero {
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .resumen-creditos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .resumen-item {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .resumen-item span {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .resumen-item strong {
+            font-size: 24px;
+        }
+
+        .estado {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .sin-bono {
+            background-color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: #666;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .boton {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+
+            .botones {
+                flex-direction: column;
+            }
+
+            .resumen-creditos {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        .historial {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .historial h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .movimientos {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .movimiento {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .movimiento-fecha {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .movimiento-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cantidad {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .movimiento-descripcion {
+            margin-top: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .sin-movimientos {
+            color: #666;
+            text-align: center;
+            padding: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>🎫 Mi bono</h1>
+
+        <p>
+            Información de tu bono actual
+        </p>
+
+    </div>
+
+
+    {% if bono %}
+
+        <div class="bono">
+
+            <h2>
+                🎫 {{ bono.nombre_bono }}
+            </h2>
+
+
+            <div class="creditos">
+
+    <div>
+        Créditos disponibles
+    </div>
+
+    <div class="creditos-numero">
+        {{ bono.creditos_disponibles }}
+    </div>
+
+    <div>
+        de {{ bono.creditos_iniciales }} créditos
+    </div>
+
+</div>
+
+
+<div class="resumen-creditos">
+
+    <div class="resumen-item">
+
+        <span>
+            📦 Créditos iniciales
+        </span>
+
+        <strong>
+            {{ bono.creditos_iniciales }}
+        </strong>
+
+    </div>
+
+
+    <div class="resumen-item">
+
+        <span>
+            ✅ Créditos utilizados
+        </span>
+
+        <strong>
+            {{ creditos_utilizados }}
+        </strong>
+
+    </div>
+
+
+    <div class="resumen-item">
+
+        <span>
+            🎫 Créditos disponibles
+        </span>
+
+        <strong>
+            {{ bono.creditos_disponibles }}
+        </strong>
+
+    </div>
+
+</div>
+
+
+            <div class="dato">
+
+                <span class="etiqueta">
+                    📅 Fecha de inicio:
+                </span>
+
+                {{ bono.fecha_inicio }}
+
+            </div>
+
+
+            <div class="dato">
+
+                <span class="etiqueta">
+                    📅 Fecha de vencimiento:
+                </span>
+
+                {{ bono.fecha_vencimiento }}
+
+            </div>
+
+
+            <div class="estado">
+
+                🟢 {{ bono.estado }}
+
+            </div>
+
+            <div class="historial">
+
+                <h3>
+                    📋 Historial de movimientos
+                </h3>
+
+                {% if movimientos %}
+
+                    <div class="movimientos">
+
+                        {% for movimiento in movimientos %}
+
+                            <div class="movimiento">
+
+                                <div class="movimiento-fecha">
+                                    📅 {{ movimiento.fecha }}
+                                </div>
+
+                                <div class="movimiento-info">
+
+                                    <strong>
+                                        {{ movimiento.tipo|capitalize }}
+                                    </strong>
+
+                                    <span class="cantidad">
+                                        {% if movimiento.cantidad > 0 %}
+                                            +{{ movimiento.cantidad }}
+                                        {% else %}
+                                            {{ movimiento.cantidad }}
+                                        {% endif %}
+                                    </span>
+
+                                </div>
+
+                                {% if movimiento.descripcion %}
+
+                                    <div class="movimiento-descripcion">
+                                        {{ movimiento.descripcion }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <p class="sin-movimientos">
+                        Todavía no hay movimientos registrados.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-bono">
+
+            <h2>🎫 No tenés un bono activo</h2>
+
+            <p>
+                Actualmente no tenés ningún bono activo.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="botones">
+
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

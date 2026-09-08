@@ -10,7 +10,8 @@ from database import (
     conectar,
     crear_tabla_tipos_bono,
     crear_tabla_bonos,
-    crear_tabla_movimientos_creditos
+    crear_tabla_movimientos_creditos,
+    crear_tabla_inscripciones
 )
 
 app = Flask(__name__)
@@ -54,6 +55,7 @@ def calcular_vencimiento_bono(fecha_inicio, cantidad_clases):
 crear_tabla_tipos_bono()
 crear_tabla_bonos()
 crear_tabla_movimientos_creditos()
+crear_tabla_inscripciones()
 
 def archivo_permitido(nombre):
 
@@ -309,7 +311,18 @@ def panel():
             certificados_vencidos=certificados_vencidos
         )
 
-    return redirect(url_for("perfil_alumno"))
+    return redirect(url_for("panel_alumno"))
+
+@app.route("/panel-alumno")
+def panel_alumno():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    return render_template("panel_alumno.html")
 
 @app.route("/clases")
 def gestionar_clases():
@@ -531,6 +544,381 @@ def eliminar_clase(clase_id):
     conexion.close()
 
     return redirect(url_for("gestionar_clases"))
+
+
+@app.route("/clases/<int:clase_id>/inscriptos")
+def ver_inscriptos(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "No se encontró la clase."
+
+    cursor.execute("""
+        SELECT
+            inscripciones.id,
+            inscripciones.fecha_inscripcion,
+            inscripciones.estado,
+            alumnos.id AS alumno_id,
+            alumnos.nombre,
+            alumnos.email
+        FROM inscripciones
+        INNER JOIN alumnos
+            ON inscripciones.alumno_id = alumnos.id
+        WHERE inscripciones.clase_id = ?
+          AND inscripciones.estado = 'Inscripto'
+        ORDER BY alumnos.nombre ASC
+    """, (clase_id,))
+
+    inscriptos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "inscriptos_clase_admin.html",
+        clase=clase,
+        inscriptos=inscriptos
+    )
+
+@app.route("/clases/<int:clase_id>/inscriptos/<int:inscripcion_id>/cancelar", methods=["POST"])
+def cancelar_inscripcion_admin(clase_id, inscripcion_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id
+        FROM inscripciones
+        WHERE id = ?
+          AND clase_id = ?
+          AND estado = 'Inscripto'
+    """, (inscripcion_id, clase_id))
+
+    inscripcion = cursor.fetchone()
+
+    if inscripcion is None:
+        conexion.close()
+        return "No se encontró la inscripción."
+
+    cursor.execute("""
+        UPDATE inscripciones
+        SET estado = 'Cancelado'
+        WHERE id = ?
+    """, (inscripcion_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for(
+            "ver_inscriptos",
+            clase_id=clase_id
+        )
+    )
+
+@app.route("/clases/<int:clase_id>/asistencia", methods=["GET", "POST"])
+def registrar_asistencia_admin(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    mensaje = request.args.get("mensaje")
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar la clase
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "No se encontró la clase."
+
+    if request.method == "POST":
+
+        alumnos_presentes = request.form.getlist("alumnos_presentes")
+
+        for alumno_id in alumnos_presentes:
+
+            alumno_id = int(alumno_id)
+
+            cursor.execute("""
+                SELECT
+                    id,
+                    creditos_disponibles,
+                    fecha_vencimiento
+                FROM bonos
+                WHERE alumno_id = ?
+                   AND estado = 'Activo'
+                   AND creditos_disponibles > 0
+                   AND fecha_vencimiento >= ?
+                ORDER BY fecha_vencimiento ASC
+                LIMIT 1
+            """, (
+                alumno_id,
+                datetime.now().strftime("%Y-%m-%d")
+            ))
+
+            bono = cursor.fetchone()
+
+            print("Bono encontrado:", bono)
+
+            cursor.execute("""
+                SELECT id
+                FROM asistencias
+                WHERE clase_id = ?
+                  AND alumno_id = ?
+            """, (clase_id, alumno_id))
+
+            asistencia_existente = cursor.fetchone()
+
+            if asistencia_existente:
+                print("La asistencia ya estaba registrada para este alumno.")
+                continue
+
+            if bono is None:
+                print("El alumno no tiene un bono disponible.")
+                continue
+
+            cursor.execute("""
+                INSERT INTO asistencias (
+                    clase_id,
+                    alumno_id,
+                    bono_id,
+                    fecha_hora,
+                    metodo,
+                    credito_descontado
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                clase_id,
+                alumno_id,
+                bono["id"],
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "Manual",
+                1
+            ))
+
+            cursor.execute("""
+                UPDATE bonos
+                SET creditos_disponibles = creditos_disponibles - 1
+                WHERE id = ?
+            """, (bono["id"],))
+
+            cursor.execute("""
+                INSERT INTO movimientos_creditos (
+                    bono_id,
+                    alumno_id,
+                    fecha,
+                    tipo,
+                    cantidad,
+                    descripcion
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                bono["id"],
+                alumno_id,
+                datetime.now().strftime("%Y-%m-%d"),
+                "consumo",
+                -1,
+                "Consumo de crédito por asistencia a clase"
+            ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "registrar_asistencia_admin",
+                clase_id=clase_id,
+                mensaje="Asistencia registrada correctamente. Los créditos fueron descontados."
+            )
+        )
+
+    # Buscar alumnos inscriptos
+
+    # Buscar alumnos inscriptos
+    cursor.execute("""
+        SELECT
+            alumnos.id AS alumno_id,
+            alumnos.nombre,
+            alumnos.email
+        FROM inscripciones
+        INNER JOIN alumnos
+            ON inscripciones.alumno_id = alumnos.id
+        WHERE inscripciones.clase_id = ?
+          AND inscripciones.estado = 'Inscripto'
+        ORDER BY alumnos.nombre ASC
+    """, (clase_id,))
+
+    inscriptos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "registrar_asistencia_admin.html",
+        clase=clase,
+        inscriptos=inscriptos,
+        mensaje=mensaje
+    )
+
+@app.route("/clases/<int:clase_id>/inscribir", methods=["GET", "POST"])
+def inscribir_alumno_admin(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "No se encontró la clase."
+
+    cursor.execute("""
+        SELECT
+            alumnos.id,
+            alumnos.nombre,
+            alumnos.email
+        FROM alumnos
+        WHERE alumnos.activo = 1
+          AND alumnos.id NOT IN (
+              SELECT alumno_id
+              FROM inscripciones
+              WHERE clase_id = ?
+                AND estado = 'Inscripto'
+          )
+        ORDER BY alumnos.nombre ASC
+    """, (clase_id,))
+
+    alumnos_disponibles = cursor.fetchall()
+
+    if request.method == "POST":
+
+        alumno_id = request.form.get("alumno_id")
+
+        if not alumno_id:
+            conexion.close()
+            return "Debés seleccionar un alumno."
+
+        cursor.execute("""
+            SELECT id
+            FROM alumnos
+            WHERE id = ?
+              AND activo = 1
+        """, (alumno_id,))
+
+        alumno = cursor.fetchone()
+
+        if alumno is None:
+            conexion.close()
+            return "El alumno no existe o está inactivo."
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM inscripciones
+            WHERE clase_id = ?
+              AND estado = 'Inscripto'
+        """, (clase_id,))
+
+        cantidad_inscriptos = cursor.fetchone()[0]
+
+        if cantidad_inscriptos >= clase["cupo_maximo"]:
+            conexion.close()
+            return "No hay cupos disponibles para esta clase."
+
+        cursor.execute("""
+            SELECT id
+            FROM inscripciones
+            WHERE clase_id = ?
+              AND alumno_id = ?
+        """, (clase_id, alumno_id))
+
+        inscripcion_existente = cursor.fetchone()
+
+        if inscripcion_existente is not None:
+            conexion.close()
+            return "El alumno ya tiene una inscripción para esta clase."
+
+        fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        cursor.execute("""
+            INSERT INTO inscripciones (
+                clase_id,
+                alumno_id,
+                fecha_inscripcion,
+                estado
+            )
+            VALUES (?, ?, ?, ?)
+        """, (
+            clase_id,
+            alumno_id,
+            fecha_inscripcion,
+            "Inscripto"
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "ver_inscriptos",
+                clase_id=clase_id
+            )
+        )
+
+    conexion.close()
+
+    return render_template(
+        "inscribir_alumno_admin.html",
+        clase=clase,
+        alumnos=alumnos_disponibles
+    )
 
 
 @app.route("/editar-perfil", methods=["GET", "POST"])
@@ -903,6 +1291,540 @@ def perfil_alumno():
         return "No se encontró el perfil del alumno."
 
     return render_template("perfil_alumno.html", alumno=alumno)
+
+@app.route("/mis-clases")
+def mis_clases():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            clases.*,
+            (
+                SELECT COUNT(*)
+                FROM inscripciones
+                WHERE inscripciones.clase_id = clases.id
+                  AND inscripciones.estado = 'Inscripto'
+            ) AS cantidad_inscriptos,
+
+            (
+                SELECT COUNT(*)
+                FROM inscripciones
+                INNER JOIN alumnos
+                    ON inscripciones.alumno_id = alumnos.id
+                WHERE inscripciones.clase_id = clases.id
+                  AND alumnos.usuario_id = ?
+                  AND inscripciones.estado = 'Inscripto'
+            ) AS alumno_inscripto
+
+        FROM clases
+
+        WHERE clases.estado = 'Disponible'
+
+        ORDER BY clases.fecha ASC, clases.hora_inicio ASC
+    """, (session["usuario_id"],))
+
+    clases = cursor.fetchall()
+
+    conexion.close()
+
+    mensaje = request.args.get("mensaje")
+
+    return render_template(
+        "mis_clases.html",
+        clases=clases,
+        mensaje=mensaje
+    )
+
+@app.route("/mis-clases/<int:clase_id>/inscribirme", methods=["POST"])
+def inscribirme_clase(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar la clase
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+          AND estado = 'Disponible'
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "No se encontró la clase o no está disponible."
+
+    # Buscar al alumno correspondiente al usuario que inició sesión
+    cursor.execute("""
+        SELECT id, activo
+        FROM alumnos
+        WHERE usuario_id = ?
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    if alumno["activo"] != 1:
+        conexion.close()
+        return "El alumno está inactivo."
+
+    # Verificar cupos
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM inscripciones
+        WHERE clase_id = ?
+          AND estado = 'Inscripto'
+    """, (clase_id,))
+
+    cantidad_inscriptos = cursor.fetchone()[0]
+
+    if cantidad_inscriptos >= clase["cupo_maximo"]:
+        conexion.close()
+        return "No hay cupos disponibles para esta clase."
+
+    # Verificar si ya existe una inscripción
+    cursor.execute("""
+        SELECT id, estado
+        FROM inscripciones
+        WHERE clase_id = ?
+           AND alumno_id = ?
+    """, (clase_id, alumno["id"]))
+
+    inscripcion_existente = cursor.fetchone()
+
+    if inscripcion_existente is not None:
+
+        if inscripcion_existente["estado"] == "Inscripto":
+
+            conexion.close()
+
+            return redirect(
+                url_for(
+                    "mis_clases",
+                    mensaje="Ya estás inscripto en esta clase."
+                )
+            )
+
+        elif inscripcion_existente["estado"] == "Cancelado":
+
+            fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            cursor.execute("""
+                UPDATE inscripciones
+                SET estado = 'Inscripto',
+                    fecha_inscripcion = ?
+                WHERE id = ?
+            """, (
+                fecha_inscripcion,
+                inscripcion_existente["id"]
+            ))
+
+            conexion.commit()
+            conexion.close()
+
+            return redirect(url_for("mis_clases"))
+
+    # Registrar inscripción
+    fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    cursor.execute("""
+        INSERT INTO inscripciones (
+            clase_id,
+            alumno_id,
+            fecha_inscripcion,
+            estado
+        )
+        VALUES (?, ?, ?, ?)
+    """, (
+        clase_id,
+        alumno["id"],
+        fecha_inscripcion,
+        "Inscripto"
+    ))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(url_for("mis_clases"))
+
+@app.route("/mis-clases/<int:clase_id>/cancelar", methods=["POST"])
+def cancelar_inscripcion_alumno(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno correspondiente al usuario
+    cursor.execute("""
+        SELECT id
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    # Buscar la inscripción activa
+    cursor.execute("""
+        SELECT id
+        FROM inscripciones
+        WHERE clase_id = ?
+          AND alumno_id = ?
+          AND estado = 'Inscripto'
+    """, (clase_id, alumno["id"]))
+
+    inscripcion = cursor.fetchone()
+
+    if inscripcion is None:
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mis_clases",
+                mensaje="No estás inscripto en esta clase."
+            )
+        )
+
+    # Cancelar inscripción
+    cursor.execute("""
+        UPDATE inscripciones
+        SET estado = 'Cancelado'
+        WHERE id = ?
+    """, (inscripcion["id"],))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for(
+            "mis_clases",
+            mensaje="Tu inscripción fue cancelada correctamente."
+        )
+    )
+
+@app.route("/mis-clases/<int:clase_id>/inscriptos")
+def ver_inscriptos_alumno(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar la clase
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+          AND estado = 'Disponible'
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "No se encontró la clase o no está disponible."
+
+    # Buscar alumnos inscriptos
+    cursor.execute("""
+        SELECT alumnos.nombre
+        FROM inscripciones
+        INNER JOIN alumnos
+            ON inscripciones.alumno_id = alumnos.id
+        WHERE inscripciones.clase_id = ?
+          AND inscripciones.estado = 'Inscripto'
+        ORDER BY alumnos.nombre ASC
+    """, (clase_id,))
+
+    inscriptos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "inscriptos_clase_alumno.html",
+        clase=clase,
+        inscriptos=inscriptos
+    )
+
+@app.route("/mis-inscripciones")
+def mis_inscripciones():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            inscripciones.id AS inscripcion_id,
+            inscripciones.fecha_inscripcion,
+            inscripciones.estado,
+
+            clases.id AS clase_id,
+            clases.fecha,
+            clases.hora_inicio,
+            clases.hora_fin,
+            clases.cupo_maximo
+
+        FROM inscripciones
+
+        INNER JOIN alumnos
+            ON inscripciones.alumno_id = alumnos.id
+
+        INNER JOIN clases
+            ON inscripciones.clase_id = clases.id
+
+        WHERE alumnos.usuario_id = ?
+           AND inscripciones.estado = 'Inscripto'
+
+        ORDER BY clases.fecha ASC, clases.hora_inicio ASC
+    """, (session["usuario_id"],))
+
+    inscripciones = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "mis_inscripciones.html",
+        inscripciones=inscripciones
+    )
+
+@app.route("/mi-bono")
+def mi_bono():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno correspondiente al usuario
+    cursor.execute("""
+        SELECT id
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    # Buscar el bono activo del alumno
+    cursor.execute("""
+        SELECT
+            bonos.id,
+            bonos.alumno_id,
+            bonos.tipo_bono_id,
+            bonos.creditos_iniciales,
+            bonos.creditos_disponibles,
+            bonos.fecha_inicio,
+            bonos.fecha_vencimiento,
+            bonos.estado,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.alumno_id = ?
+          AND bonos.estado = 'Activo'
+        ORDER BY bonos.fecha_vencimiento ASC
+        LIMIT 1
+    """, (alumno["id"],))
+
+    bono = cursor.fetchone()
+
+        # Calcular créditos utilizados e historial del bono
+    movimientos = []
+
+    if bono:
+
+        cursor.execute("""
+            SELECT
+                fecha,
+                tipo,
+                cantidad,
+                descripcion
+            FROM movimientos_creditos
+            WHERE bono_id = ?
+            ORDER BY fecha ASC, id ASC
+        """, (bono["id"],))
+
+        movimientos = cursor.fetchall()
+
+    creditos_utilizados = 0
+
+    for movimiento in movimientos:
+
+        if movimiento["tipo"] == "consumo":
+            creditos_utilizados += abs(movimiento["cantidad"])
+
+    conexion.close()
+
+    return render_template(
+        "mi_bono.html",
+        bono=bono,
+        movimientos=movimientos,
+        creditos_utilizados=creditos_utilizados
+    )
+
+@app.route("/mis-asistencias")
+def mis_asistencias():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    cursor.execute("""
+        SELECT
+            asistencias.id,
+            asistencias.fecha_hora,
+            asistencias.metodo,
+            asistencias.credito_descontado,
+            clases.fecha,
+            clases.hora_inicio,
+            clases.hora_fin
+        FROM asistencias
+        INNER JOIN clases
+            ON asistencias.clase_id = clases.id
+        WHERE asistencias.alumno_id = ?
+        ORDER BY asistencias.fecha_hora DESC
+    """, (alumno["id"],))
+
+    asistencias = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "mis_asistencias.html",
+        asistencias=asistencias
+    )
+
+@app.route("/mis-inscripciones/<int:inscripcion_id>/cancelar", methods=["POST"])
+def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno correspondiente al usuario
+    cursor.execute("""
+        SELECT id
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    # Buscar la inscripción y comprobar que pertenece al alumno
+    cursor.execute("""
+        SELECT id
+        FROM inscripciones
+        WHERE id = ?
+          AND alumno_id = ?
+          AND estado = 'Inscripto'
+    """, (inscripcion_id, alumno["id"]))
+
+    inscripcion = cursor.fetchone()
+
+    if inscripcion is None:
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mis_inscripciones"
+            )
+        )
+
+    # Cancelar inscripción
+    cursor.execute("""
+        UPDATE inscripciones
+        SET estado = 'Cancelado'
+        WHERE id = ?
+    """, (inscripcion_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for(
+            "mis_inscripciones"
+        )
+    )
 
 @app.route("/alumnos/<int:alumno_id>")
 def perfil_alumno_admin(alumno_id):

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inscriptos - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            color: #ccc;
+            margin-bottom: 0;
+        }
+
+        .clase {
+            background-color: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 18px;
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .dato {
+            padding: 6px 0;
+            color: #555;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .inscripto {
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 12px;
+        }
+
+        .inscripto h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .sin-inscriptos {
+            background-color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: #666;
+        }
+
+        .boton {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton:hover {
+            background-color: #444;
+        }
+
+    </style>
+
+    <style>
+
+            .lista-inscriptos {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .inscripto {
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .boton-cancelar {
+            margin-top: 10px;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #ddd;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .boton-cancelar:hover {
+            background-color: #bbb;
+        }
+
+    </style>
+
+</style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>👥 Inscriptos</h1>
+
+        <p>
+            Clase del
+            {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
+            — {{ clase.hora_inicio }} a {{ clase.hora_fin }}
+        </p>
+
+    </div>
+
+
+    <div class="clase">
+
+        <div class="dato">
+            <span class="etiqueta">👥 Cupo máximo:</span>
+            {{ clase.cupo_maximo }}
+        </div>
+
+        <div class="dato">
+            <span class="etiqueta">📌 Estado:</span>
+            {{ clase.estado }}
+        </div>
+
+        {% if inscriptos %}
+
+            <h2>
+                👥 Inscriptos: {{ inscriptos|length }} / {{ clase.cupo_maximo }}
+            </h2>
+
+            <p>
+                🟢 Cupos disponibles:
+                {{ clase.cupo_maximo - inscriptos|length }}
+            </p>
+        
+        <div class="lista-inscriptos">
+
+            {% for inscripto in inscriptos %}
+
+                <div class="inscripto">
+
+                    <div>
+                        👤 {{ inscripto.nombre }}
+                    </div>
+
+                    <form
+                        action="{{ url_for('cancelar_inscripcion_admin', clase_id=clase.id, inscripcion_id=inscripto.id) }}"
+                        method="POST"
+                        onsubmit="return confirm('¿Querés cancelar la inscripción de este alumno?');"
+                    >
+                        <button type="submit" class="boton-cancelar">
+                            ❌ Cancelar
+                        </button>
+                    </form>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+            <div class="sin-inscriptos">
+
+                <h2>👥 No hay alumnos inscriptos</h2>
+
+                <p>
+                    Todavía no hay inscripciones para esta clase.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+        <a
+            href="{{ url_for('inscribir_alumno_admin', clase_id=clase.id) }}"
+            class="boton boton-clase"
+        >
+            ➕ Inscribir alumno
+        </a>
+
+        <a
+            href="{{ url_for('gestionar_clases') }}"
+            class="boton boton-clase"
+        >
+            ⬅️ Volver a clases
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
