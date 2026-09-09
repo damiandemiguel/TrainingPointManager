@@ -72,7 +72,7 @@
         }
 
     </style>
-    
+
 </head>
 
 <body>
@@ -91,11 +91,13 @@
                     <th>Bono activo</th>
                     <th>Fecha de pago</th>
                     <th>Vencimiento</th>
+                    <th>Días para vencer</th>
                     <th>Importe</th>
                     <th>Créditos iniciales</th>
                     <th>Créditos usados</th>
                     <th>Créditos disponibles</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
 
@@ -128,6 +130,14 @@
                     <td>
                         {% if alumno["fecha_vencimiento"] %}
                             {{ alumno["fecha_vencimiento"] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["dias_para_vencer"] is not none %}
+                            {{ alumno["dias_para_vencer"] }} días
                         {% else %}
                             —
                         {% endif %}
@@ -175,6 +185,12 @@
                                 Sin bono
                             </span>
                         {% endif %}
+                    </td>
+
+                    <td>
+                        <a href="{{ url_for('perfil_alumno_admin', alumno_id=alumno['id']) }}">
+                            👤 Ver perfil
+                        </a>
                     </td>
 
                 </tr>

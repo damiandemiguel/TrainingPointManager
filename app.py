@@ -2354,6 +2354,20 @@ def estado_alumnos():
 
     alumnos = cursor.fetchall()
 
+    hoy = datetime.now().date()
+
+    alumnos = [
+        {
+            **dict(alumno),
+            "dias_para_vencer": (
+                datetime.strptime(alumno["fecha_vencimiento"], "%Y-%m-%d").date() - hoy
+            ).days
+            if alumno["fecha_vencimiento"]
+            else None
+        }
+        for alumno in alumnos
+    ]
+
     conexion.close()
 
     return render_template(
