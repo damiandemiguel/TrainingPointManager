@@ -2307,6 +2307,52 @@ def editar_alumno_admin(alumno_id):
         alumno=alumno
     )
 
+@app.route("/estado-alumnos")
+def estado_alumnos():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            alumnos.id,
+            alumnos.nombre,
+            bonos.id AS bono_id,
+            tipos_bono.nombre AS nombre_bono,
+            bonos.fecha_pago,
+            bonos.fecha_vencimiento,
+            bonos.precio,
+            bonos.creditos_iniciales,
+            bonos.creditos_disponibles,
+            bonos.estado
+        FROM alumnos
+        LEFT JOIN bonos
+            ON alumnos.id = bonos.alumno_id
+            AND bonos.estado = 'Activo'
+        LEFT JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE alumnos.activo = 1
+        ORDER BY
+            bonos.fecha_vencimiento IS NULL,
+            bonos.fecha_vencimiento ASC
+    """)
+
+    alumnos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "estado_alumnos.html",
+        alumnos=alumnos
+    )
 
 @app.route("/alumnos")
 def mostrar_alumnos():

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Estado de alumnos</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .contenedor {
+            max-width: 1400px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #222;
+            color: white;
+        }
+
+        .activo {
+            color: green;
+            font-weight: bold;
+        }
+
+        .sin-bono {
+            color: #777;
+            font-style: italic;
+        }
+
+        .volver {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 20px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+    </style>
+    
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>📊 Estado de alumnos</h1>
+
+    <div class="tabla-contenedor">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Bono activo</th>
+                    <th>Fecha de pago</th>
+                    <th>Vencimiento</th>
+                    <th>Importe</th>
+                    <th>Créditos iniciales</th>
+                    <th>Créditos usados</th>
+                    <th>Créditos disponibles</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for alumno in alumnos %}
+
+                <tr>
+
+                    <td>
+                        {{ alumno["nombre"] }}
+                    </td>
+
+                    <td>
+                        {% if alumno["bono_id"] %}
+                            {{ alumno["nombre_bono"] }}
+                        {% else %}
+                            <span class="sin-bono">Sin bono</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["fecha_pago"] %}
+                            {{ alumno["fecha_pago"] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["fecha_vencimiento"] %}
+                            {{ alumno["fecha_vencimiento"] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["precio"] is not none %}
+                            ${{ "%.2f"|format(alumno["precio"]) }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["creditos_iniciales"] is not none %}
+                            {{ alumno["creditos_iniciales"] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["creditos_iniciales"] is not none %}
+                            {{ alumno["creditos_iniciales"] - alumno["creditos_disponibles"] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["creditos_disponibles"] is not none %}
+                            {{ alumno["creditos_disponibles"] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if alumno["estado"] %}
+                            <span class="activo">
+                                {{ alumno["estado"] }}
+                            </span>
+                        {% else %}
+                            <span class="sin-bono">
+                                Sin bono
+                            </span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <a href="{{ url_for('panel') }}" class="volver">
+        ← Volver al panel
+    </a>
+
+</div>
+
+</body>
+</html>
