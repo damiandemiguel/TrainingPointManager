@@ -1976,6 +1976,13 @@ def nuevo_bono_admin(alumno_id):
         precio = tipo_bono["precio"]
         duracion_dias = tipo_bono["duracion_dias"]
 
+        cursor.execute("""
+            UPDATE bonos
+            SET estado = 'Finalizado'
+            WHERE alumno_id = ?
+              AND estado = 'Activo'
+        """, (alumno_id,))
+
         if creditos_iniciales == 1:
 
             fecha_vencimiento_original = fecha_inicio
