@@ -86,6 +86,48 @@
             font-weight: bold;
         }
 
+        .resumen-estados {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .resumen {
+            background-color: #f8f8f8;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .resumen-numero {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .resumen-titulo {
+            margin-top: 6px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .resumen.vigente {
+            border-top: 4px solid green;
+        }
+
+        .resumen.por-vencer {
+            border-top: 4px solid #b8860b;
+        }
+
+        .resumen.vencido {
+            border-top: 4px solid red;
+        }
+
+        .resumen.sin-bono {
+            border-top: 4px solid #888;
+        }
+
     </style>
 
 </head>
@@ -95,6 +137,30 @@
 <div class="contenedor">
 
     <h1>📊 Estado de alumnos</h1>
+
+<div class="resumen-estados">
+
+    <div class="resumen vigente">
+        <div class="resumen-numero">{{ bonos_vigentes }}</div>
+        <div class="resumen-titulo">🟢 Bonos vigentes</div>
+    </div>
+
+    <div class="resumen por-vencer">
+        <div class="resumen-numero">{{ bonos_por_vencer }}</div>
+        <div class="resumen-titulo">🟡 Por vencer</div>
+    </div>
+
+    <div class="resumen vencido">
+        <div class="resumen-numero">{{ bonos_vencidos }}</div>
+        <div class="resumen-titulo">🔴 Vencidos</div>
+    </div>
+
+    <div class="resumen sin-bono">
+        <div class="resumen-numero">{{ alumnos_sin_bono }}</div>
+        <div class="resumen-titulo">⚪ Sin bono</div>
+    </div>
+
+</div>
 
     <div class="tabla-contenedor">
 

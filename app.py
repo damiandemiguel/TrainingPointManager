@@ -2368,11 +2368,33 @@ def estado_alumnos():
         for alumno in alumnos
     ]
 
+    bonos_vigentes = 0
+    bonos_por_vencer = 0
+    bonos_vencidos = 0
+    alumnos_sin_bono = 0
+
+    for alumno in alumnos:
+
+        dias = alumno["dias_para_vencer"]
+
+        if dias is None:
+            alumnos_sin_bono += 1
+        elif dias <= 0:
+            bonos_vencidos += 1
+        elif dias <= 7:
+            bonos_por_vencer += 1
+        else:
+            bonos_vigentes += 1
+
     conexion.close()
 
     return render_template(
         "estado_alumnos.html",
-        alumnos=alumnos
+        alumnos=alumnos,
+        bonos_vigentes=bonos_vigentes,
+        bonos_por_vencer=bonos_por_vencer,
+        bonos_vencidos=bonos_vencidos,
+        alumnos_sin_bono=alumnos_sin_bono
     )
 
 @app.route("/alumnos")
