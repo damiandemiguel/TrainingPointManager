@@ -71,6 +71,21 @@
             border-radius: 8px;
         }
 
+        .vigente {
+            color: green;
+            font-weight: bold;
+        }
+
+        .por-vencer {
+            color: #b8860b;
+            font-weight: bold;
+        }
+
+        .vencido {
+            color: red;
+            font-weight: bold;
+        }
+
     </style>
 
 </head>
@@ -136,10 +151,20 @@
                     </td>
 
                     <td>
-                        {% if alumno["dias_para_vencer"] is not none %}
-                            {{ alumno["dias_para_vencer"] }} días
-                        {% else %}
+                        {% if alumno["dias_para_vencer"] is none %}
                             —
+                        {% elif alumno["dias_para_vencer"] <= 0 %}
+                            <span class="vencido">
+                                🔴 {{ alumno["dias_para_vencer"] }} días
+                            </span>
+                        {% elif alumno["dias_para_vencer"] <= 7 %}
+                            <span class="por-vencer">
+                                🟡 {{ alumno["dias_para_vencer"] }} días
+                            </span>
+                        {% else %}
+                            <span class="vigente">
+                                🟢 {{ alumno["dias_para_vencer"] }} días
+                            </span>
                         {% endif %}
                     </td>
 
