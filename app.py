@@ -11,7 +11,8 @@ from database import (
     crear_tabla_tipos_bono,
     crear_tabla_bonos,
     crear_tabla_movimientos_creditos,
-    crear_tabla_inscripciones
+    crear_tabla_inscripciones,
+    crear_tabla_asistencias
 )
 
 app = Flask(__name__)
@@ -56,6 +57,7 @@ crear_tabla_tipos_bono()
 crear_tabla_bonos()
 crear_tabla_movimientos_creditos()
 crear_tabla_inscripciones()
+crear_tabla_asistencias()
 
 def archivo_permitido(nombre):
 
