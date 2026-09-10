@@ -2379,10 +2379,19 @@ def estado_alumnos():
 
         if dias is None:
             alumnos_sin_bono += 1
+
         elif dias <= 0:
             bonos_vencidos += 1
+
         elif dias <= 7:
             bonos_por_vencer += 1
+
+        elif dias <= 0:
+            bonos_vencidos += 1
+
+        elif dias <= 7:
+            bonos_por_vencer += 1
+
         else:
             bonos_vigentes += 1
 
