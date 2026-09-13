@@ -1395,6 +1395,58 @@ def mis_clases():
 
     clases = cursor.fetchall()
 
+    clases_por_fecha = {}
+
+    for clase in clases:
+
+        fecha_clase = clase["fecha"]
+
+        if fecha_clase not in clases_por_fecha:
+            clases_por_fecha[fecha_clase] = []
+
+        clases_por_fecha[fecha_clase].append(clase)
+
+
+    nombres_dias = [
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+        "Domingo"
+    ]
+
+    semanas = []
+
+    inicio_calendario = hoy - timedelta(days=hoy.weekday())
+
+    inicio = inicio_calendario
+
+    while inicio <= fecha_limite:
+
+        dias = []
+
+        for numero_dia in range(7):
+
+            fecha_dia = inicio + timedelta(days=numero_dia)
+            fecha_texto = fecha_dia.strftime("%Y-%m-%d")
+
+            dias.append({
+                "nombre": nombres_dias[numero_dia],
+                "fecha": fecha_dia,
+                "fecha_texto": fecha_texto,
+                "clases": clases_por_fecha.get(fecha_texto, [])
+            })
+
+        semanas.append({
+            "inicio": inicio,
+            "fin": inicio + timedelta(days=6),
+            "dias": dias
+        })
+
+        inicio = inicio + timedelta(days=7)
+
     conexion.close()
 
     mensaje = request.args.get("mensaje")
@@ -1402,6 +1454,7 @@ def mis_clases():
     return render_template(
         "mis_clases.html",
         clases=clases,
+        semanas=semanas,
         mensaje=mensaje,
         hoy=hoy,
         fecha_limite=fecha_limite
