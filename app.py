@@ -879,13 +879,37 @@ def inscribir_alumno_admin(clase_id):
             FROM inscripciones
             WHERE clase_id = ?
               AND alumno_id = ?
+              AND estado = 'Inscripto'
         """, (clase_id, alumno_id))
 
         inscripcion_existente = cursor.fetchone()
 
         if inscripcion_existente is not None:
             conexion.close()
-            return "El alumno ya tiene una inscripción para esta clase."
+            return "El alumno ya está inscripto en esta clase."
+
+        # Verificar que el alumno no esté inscripto
+        # en otra clase del mismo día
+        cursor.execute("""
+            SELECT inscripciones.id
+            FROM inscripciones
+            INNER JOIN clases
+                ON clases.id = inscripciones.clase_id
+            WHERE inscripciones.alumno_id = ?
+              AND inscripciones.estado = 'Inscripto'
+              AND clases.fecha = ?
+              AND clases.id != ?
+        """, (
+            alumno_id,
+            clase["fecha"],
+            clase_id
+        ))
+
+        otra_clase_mismo_dia = cursor.fetchone()
+
+        if otra_clase_mismo_dia is not None:
+            conexion.close()
+            return "El alumno ya está inscripto en otra clase de ese día."
 
         fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
