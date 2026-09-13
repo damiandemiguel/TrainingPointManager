@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lector QR - Training Point</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .contenedor {
+            max-width: 500px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .icono {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .descripcion {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .lector {
+            width: 100%;
+            height: 280px;
+            background-color: #222;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .volver {
+            display: inline-block;
+            position: relative;
+            z-index: 10;
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .lector span {
+            font-size: 18px;
+        }
+
+        .volver {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+    </style>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <div class="icono">
+            📱
+        </div>
+
+        <h1>Lector QR</h1>
+
+        <div class="descripcion">
+            Escaneá el código QR de Training Point para registrar tu asistencia.
+        </div>
+
+        <div id="lector" class="lector"></div>
+
+        <a href="{{ url_for('panel_alumno') }}" class="volver">
+            ← Volver al panel
+        </a>
+
+    </div>
+
+    <script>
+
+        function qrEscaneado(codigo) {
+
+            console.log("QR detectado:", codigo);
+
+            if (codigo !== "TRAININGPOINT-CHECKIN") {
+                return;
+            }
+
+            fetch("/api/checkin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    codigo: codigo
+                })
+            })
+            .then(respuesta => respuesta.json())
+            .then(datos => {
+
+                console.log("Respuesta del servidor:", datos);
+
+                alert(datos.mensaje);
+
+            })
+            .catch(error => {
+
+                console.error("Error:", error);
+
+                alert("No se pudo conectar con el servidor.");
+
+            });
+
+        }
+
+        function errorLectura(error) {
+
+            // Ignoramos errores normales mientras busca un QR.
+
+        }
+
+        const lectorQR = new Html5Qrcode("lector");
+
+        lectorQR.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            qrEscaneado,
+            errorLectura
+        );
+
+    </script>
+
+</body>
+</html>

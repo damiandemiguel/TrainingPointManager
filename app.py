@@ -2466,6 +2466,239 @@ def agregar_alumno():
 
     return render_template("agregar.html")
 
+@app.route("/lector-qr")
+def lector_qr():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    return render_template("lector_qr.html")
+
+@app.route("/api/checkin", methods=["POST"])
+def checkin():
+
+    if "usuario_id" not in session:
+        return {
+            "ok": False,
+            "mensaje": "La sesión no está iniciada."
+        }, 401
+
+    if session["rol"] != "alumno":
+        return {
+            "ok": False,
+            "mensaje": "Solo los alumnos pueden registrar asistencia."
+        }, 403
+
+    datos = request.get_json()
+
+    if not datos:
+        return {
+            "ok": False,
+            "mensaje": "No se recibieron datos."
+        }, 400
+
+    codigo = datos.get("codigo")
+
+    if codigo != "TRAININGPOINT-CHECKIN":
+        return {
+            "ok": False,
+            "mensaje": "Código QR no válido."
+        }, 400
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    try:
+
+        # Buscar al alumno correspondiente al usuario conectado
+        cursor.execute("""
+            SELECT id, nombre
+            FROM alumnos
+            WHERE usuario_id = ?
+              AND activo = 1
+        """, (session["usuario_id"],))
+
+        alumno = cursor.fetchone()
+
+        if alumno is None:
+            conexion.close()
+
+            return {
+                "ok": False,
+                "mensaje": "No se encontró el alumno."
+            }, 404
+
+        ahora = datetime.now()
+
+        fecha_hoy = ahora.strftime("%Y-%m-%d")
+        hora_actual = ahora.strftime("%H:%M:%S")
+
+        # Buscar la clase que está ocurriendo en este momento
+        cursor.execute("""
+            SELECT *
+            FROM clases
+            WHERE fecha = ?
+              AND hora_inicio <= ?
+              AND hora_fin > ?
+            ORDER BY hora_inicio ASC
+            LIMIT 1
+        """, (
+            fecha_hoy,
+            hora_actual,
+            hora_actual
+        ))
+
+        clase = cursor.fetchone()
+
+        if clase is None:
+            conexion.close()
+
+            return {
+                "ok": False,
+                "mensaje": "No hay una clase en curso en este momento."
+            }, 400
+
+        # Verificar que el alumno esté inscripto en la clase
+        cursor.execute("""
+            SELECT id
+            FROM inscripciones
+            WHERE clase_id = ?
+              AND alumno_id = ?
+              AND estado = 'Inscripto'
+        """, (
+            clase["id"],
+            alumno["id"]
+        ))
+
+        inscripcion = cursor.fetchone()
+
+        if inscripcion is None:
+            conexion.close()
+
+            return {
+                "ok": False,
+                "mensaje": "No estás inscripto en esta clase."
+            }, 400
+
+        # Verificar que no tenga ya registrada la asistencia
+        cursor.execute("""
+            SELECT id
+            FROM asistencias
+            WHERE clase_id = ?
+              AND alumno_id = ?
+        """, (
+            clase["id"],
+            alumno["id"]
+        ))
+
+        asistencia_existente = cursor.fetchone()
+
+        if asistencia_existente:
+            conexion.close()
+
+            return {
+                "ok": False,
+                "mensaje": "Tu asistencia ya fue registrada."
+            }, 400
+
+        # Buscar bono activo con crédito disponible
+        cursor.execute("""
+            SELECT
+                id,
+                creditos_disponibles
+            FROM bonos
+            WHERE alumno_id = ?
+              AND estado = 'Activo'
+              AND creditos_disponibles > 0
+              AND fecha_vencimiento >= ?
+            ORDER BY fecha_vencimiento ASC
+            LIMIT 1
+        """, (
+            alumno["id"],
+            fecha_hoy
+        ))
+
+        bono = cursor.fetchone()
+
+        if bono is None:
+            conexion.close()
+
+            return {
+                "ok": False,
+                "mensaje": "No tenés un bono activo con créditos disponibles."
+            }, 400
+
+        # Registrar asistencia
+        cursor.execute("""
+            INSERT INTO asistencias (
+                clase_id,
+                alumno_id,
+                bono_id,
+                fecha_hora,
+                metodo,
+                credito_descontado
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            clase["id"],
+            alumno["id"],
+            bono["id"],
+            ahora.strftime("%Y-%m-%d %H:%M:%S"),
+            "QR",
+            1
+        ))
+
+        # Descontar un crédito
+        cursor.execute("""
+            UPDATE bonos
+            SET creditos_disponibles = creditos_disponibles - 1
+            WHERE id = ?
+        """, (bono["id"],))
+
+        # Registrar movimiento
+        cursor.execute("""
+            INSERT INTO movimientos_creditos (
+                bono_id,
+                alumno_id,
+                fecha,
+                tipo,
+                cantidad,
+                descripcion
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            bono["id"],
+            alumno["id"],
+            fecha_hoy,
+            "consumo",
+            -1,
+            "Consumo de crédito por asistencia mediante QR"
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        return {
+            "ok": True,
+            "mensaje": "¡Asistencia registrada correctamente!",
+            "alumno": alumno["nombre"],
+            "clase": clase["hora_inicio"],
+            "credito_descontado": 1
+        }
+
+    except Exception as error:
+
+        conexion.rollback()
+        conexion.close()
+
+        return {
+            "ok": False,
+            "mensaje": f"Error al registrar la asistencia: {error}"
+        }, 500
 
 if __name__ == "__main__":
     app.run(debug=True)
