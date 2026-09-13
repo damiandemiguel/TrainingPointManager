@@ -326,6 +326,13 @@ def panel_alumno():
 
     return render_template("panel_alumno.html")
 
+@app.route("/cerrar-sesion")
+def cerrar_sesion():
+
+    session.clear()
+
+    return redirect(url_for("inicio"))
+
 @app.route("/clases")
 def gestionar_clases():
 
@@ -339,11 +346,18 @@ def gestionar_clases():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
+    hoy = datetime.now().date()
+    fecha_limite = hoy + timedelta(days=30)
+
     cursor.execute("""
         SELECT *
         FROM clases
+        WHERE fecha BETWEEN ? AND ?
         ORDER BY fecha ASC, hora_inicio ASC
-    """)
+    """, (
+        hoy.strftime("%Y-%m-%d"),
+        fecha_limite.strftime("%Y-%m-%d")
+    ))
 
     clases = cursor.fetchall()
 
@@ -1331,6 +1345,12 @@ def mis_clases():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
+    hoy = datetime.now().date()
+
+    fecha_limite = hoy + timedelta(days=30)
+
+    hora_actual = datetime.now().strftime("%H:%M:%S")
+
     cursor.execute("""
         SELECT
             clases.*,
@@ -1354,9 +1374,24 @@ def mis_clases():
         FROM clases
 
         WHERE clases.estado = 'Disponible'
+          AND clases.fecha BETWEEN ? AND ?
+          AND (
+                clases.fecha > ?
+                OR (
+                    clases.fecha = ?
+                    AND clases.hora_fin > ?
+                )
+              )
 
         ORDER BY clases.fecha ASC, clases.hora_inicio ASC
-    """, (session["usuario_id"],))
+    """, (
+        session["usuario_id"],
+        hoy.strftime("%Y-%m-%d"),
+        fecha_limite.strftime("%Y-%m-%d"),
+        hoy.strftime("%Y-%m-%d"),
+        hoy.strftime("%Y-%m-%d"),
+        hora_actual
+    ))
 
     clases = cursor.fetchall()
 
@@ -1367,7 +1402,9 @@ def mis_clases():
     return render_template(
         "mis_clases.html",
         clases=clases,
-        mensaje=mensaje
+        mensaje=mensaje,
+        hoy=hoy,
+        fecha_limite=fecha_limite
     )
 
 @app.route("/mis-clases/<int:clase_id>/inscribirme", methods=["POST"])
