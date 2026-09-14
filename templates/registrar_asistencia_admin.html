@@ -82,12 +82,13 @@
 
         .acciones {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .boton {
-            flex: 1;
+            flex: 1 1 220px;
             padding: 12px 18px;
             border-radius: 8px;
             text-decoration: none;
@@ -180,20 +181,54 @@
 
                 {% for alumno in inscriptos %}
 
-                    <label class="alumno">
+                    {% if alumno.asistencia_id %}
 
-                        <span class="nombre">
-                            {{ alumno.nombre }}
-                        </span>
+                        <div class="alumno">
 
-                        <input
-                            type="checkbox"
-                            name="alumnos_presentes"
-                            value="{{ alumno.alumno_id }}"
-                            class="checkbox"
-                        >
+                            <div>
 
-                    </label>
+                                <div class="nombre">
+                                    {{ alumno.nombre }}
+                                </div>
+
+                                <div>
+                                    ✅ Asistencia registrada
+                                </div>
+
+                                <div>
+                                    Método: {{ alumno.metodo }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <label class="alumno">
+
+                            <div>
+
+                                <div class="nombre">
+                                    {{ alumno.nombre }}
+                                </div>
+
+                                <div>
+                                    ⏳ Pendiente
+                                </div>
+
+                            </div>
+
+                            <input
+                                type="checkbox"
+                                name="alumnos_presentes"
+                                value="{{ alumno.alumno_id }}"
+                                class="checkbox"
+                            >
+
+                        </label>
+
+                    {% endif %}
 
                 {% endfor %}
 

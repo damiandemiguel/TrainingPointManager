@@ -803,12 +803,18 @@ def registrar_asistencia_admin(clase_id):
         SELECT
             alumnos.id AS alumno_id,
             alumnos.nombre,
-            alumnos.email
+            alumnos.email,
+            asistencias.id AS asistencia_id,
+            asistencias.fecha_hora,
+            asistencias.metodo
         FROM inscripciones
         INNER JOIN alumnos
             ON inscripciones.alumno_id = alumnos.id
+        LEFT JOIN asistencias
+            ON asistencias.clase_id = inscripciones.clase_id
+           AND asistencias.alumno_id = alumnos.id
         WHERE inscripciones.clase_id = ?
-          AND inscripciones.estado = 'Inscripto'
+           AND inscripciones.estado = 'Inscripto'
         ORDER BY alumnos.nombre ASC
     """, (clase_id,))
 
