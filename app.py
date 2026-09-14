@@ -687,6 +687,10 @@ def registrar_asistencia_admin(clase_id):
 
         alumnos_presentes = request.form.getlist("alumnos_presentes")
 
+        registradas = 0
+        ya_registradas = 0
+        sin_bono = 0
+
         for alumno_id in alumnos_presentes:
 
             alumno_id = int(alumno_id)
@@ -722,11 +726,11 @@ def registrar_asistencia_admin(clase_id):
             asistencia_existente = cursor.fetchone()
 
             if asistencia_existente:
-                print("La asistencia ya estaba registrada para este alumno.")
+                ya_registradas += 1
                 continue
 
             if bono is None:
-                print("El alumno no tiene un bono disponible.")
+                sin_bono += 1
                 continue
 
             cursor.execute("""
@@ -773,16 +777,24 @@ def registrar_asistencia_admin(clase_id):
                 "Consumo de crédito por asistencia a clase"
             ))
 
+            registradas += 1
+
         conexion.commit()
         conexion.close()
+
+        mensaje_resultado = (
+            f"Asistencias registradas: {registradas}. "
+            f"Ya registradas: {ya_registradas}. "
+            f"Sin bono/créditos disponibles: {sin_bono}."
+        )
 
         return redirect(
             url_for(
                 "registrar_asistencia_admin",
                 clase_id=clase_id,
-                mensaje="Asistencia registrada correctamente. Los créditos fueron descontados."
+                mensaje=mensaje_resultado
             )
-        )
+    )
 
     # Buscar alumnos inscriptos
 
