@@ -23,9 +23,9 @@
     }
 
     .contenedor {
-        width: 92%;
-        max-width: 900px;
-        margin: 40px auto;
+        width: 96%;
+        max-width: 1400px;
+        margin: 35px auto;
     }
 
     .encabezado {
@@ -41,56 +41,9 @@
         margin: 0;
     }
 
-    .clases {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
-    }
-
-    .clase {
-        background-color: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.10);
-    }
-
-    .clase h2 {
-        margin-top: 0;
-    }
-
-    .dato {
-        padding: 6px 0;
-        color: #555;
-    }
-
-    .etiqueta {
-        font-weight: bold;
-        color: #222;
-    }
-
-    .sin-clases {
-        background-color: white;
-        padding: 40px;
-        text-align: center;
-        border-radius: 12px;
-        color: #666;
-    }
-
-    .boton {
-        display: inline-block;
-        margin-top: 25px;
-        padding: 12px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        text-align: center;
-        font-weight: bold;
-        background-color: #222;
-        color: white;
-    }
-
-    .boton:hover {
-        background-color: #444;
+    .encabezado p {
+        margin-bottom: 0;
+        color: #ddd;
     }
 
     .mensaje {
@@ -103,11 +56,95 @@
         font-weight: bold;
     }
 
-    .acciones-clase {
+    .semana {
+        margin-bottom: 30px;
+    }
+
+    .titulo-semana {
+        background-color: #333;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .calendario {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 15px;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        background-color: #ddd;
+        padding: 8px;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .dia {
+        background-color: white;
+        min-height: 220px;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .dia-hoy {
+        border: 2px solid #222;
+    }
+
+    .encabezado-dia {
+        text-align: center;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+
+    .nombre-dia {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .fecha-dia {
+        margin-top: 4px;
+        color: #777;
+        font-size: 13px;
+    }
+
+    .clase {
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-left: 4px solid #222;
+    }
+
+    .clase-inscripto {
+        background-color: #eaf7ea;
+        border-left-color: #2e8b57;
+    }
+
+    .hora {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 7px;
+    }
+
+    .dato {
+        font-size: 13px;
+        margin: 4px 0;
+        color: #555;
+    }
+
+    .sin-clase-dia {
+        text-align: center;
+        color: #aaa;
+        padding-top: 25px;
+        font-size: 13px;
+    }
+
+    .acciones-clase {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 10px;
     }
 
     .acciones-clase form {
@@ -116,19 +153,20 @@
     }
 
     .boton-inscribirme,
+    .boton-cancelar,
     .boton-inscriptos {
         width: 100%;
-        height: 45px;
-        padding: 0 10px;
-        border-radius: 8px;
+        min-height: 36px;
+        border-radius: 6px;
         font-weight: bold;
+        font-size: 12px;
         text-align: center;
-        text-decoration: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-sizing: border-box;
+        text-decoration: none;
+        padding: 7px;
     }
 
     .boton-inscribirme {
@@ -141,47 +179,77 @@
         background-color: #444;
     }
 
-    .boton-inscriptos {
-        display: block;
-        background-color: #e5e5e5;
-        color: #333;
-    }
-
-    .boton-inscriptos:hover {
-        background-color: #ccc;
-    }
-
-    @media (max-width: 700px) {
-
-        .clases {
-            grid-template-columns: 1fr;
-        }
-
-        .acciones-clase {
-            flex-direction: column;
-        }
-
-    }
-
     .boton-cancelar {
-        width: 100%;
-        height: 45px;
-        padding: 0 10px;
         border: none;
-        border-radius: 8px;
-        background-color: #e5e5e5;
+        background-color: #ddd;
         color: #333;
-        font-weight: bold;
-        text-align: center;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
     }
 
     .boton-cancelar:hover {
         background-color: #ccc;
+    }
+
+    .boton-inscriptos {
+        background-color: white;
+        border: 1px solid #ccc;
+        color: #333;
+    }
+
+    .boton-inscriptos:hover {
+        background-color: #eee;
+    }
+
+    .sin-clases {
+        background-color: white;
+        padding: 40px;
+        text-align: center;
+        border-radius: 12px;
+        color: #666;
+    }
+
+    .boton-volver {
+        display: inline-block;
+        margin-top: 5px;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        background-color: #222;
+        color: white;
+    }
+
+    .boton-volver:hover {
+        background-color: #444;
+    }
+
+    @media (max-width: 1100px) {
+
+        .calendario {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+    }
+
+    @media (max-width: 750px) {
+
+        .contenedor {
+            width: 94%;
+            margin-top: 20px;
+        }
+
+        .calendario {
+            grid-template-columns: 1fr;
+        }
+
+        .dia {
+            min-height: auto;
+        }
+
+        .sin-clase-dia {
+            padding: 15px 0;
+        }
+
     }
 
 </style>
@@ -206,106 +274,145 @@
 
 <div class="contenedor">
 
-<div class="encabezado">
+    <div class="encabezado">
 
-    <h1>📅 Mis clases</h1>
+        <h1>📅 Mis clases</h1>
 
-    <p>
-        Próximas clases disponibles
-    </p>
-
-</div>
-
-
-{% if mensaje %}
-
-    <div class="mensaje" id="mensaje">
-
-        ⚠️ {{ mensaje }}
+        <p>
+            Clases disponibles para los próximos 30 días
+        </p>
 
     </div>
 
-{% endif %}
+
+    {% if mensaje %}
+
+        <div class="mensaje" id="mensaje">
+            ⚠️ {{ mensaje }}
+        </div>
+
+    {% endif %}
 
 
-{% if clases %}
+    {% if clases %}
 
-    <div class="clases">
+        {% for semana in semanas %}
 
-        {% for clase in clases %}
+            <div class="semana">
 
-            <div class="clase">
+                <div class="titulo-semana">
 
-                <h2>
-                    📅
-                    {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
-                </h2>
+                    Semana del
 
-                <div class="dato">
-                    <span class="etiqueta">🕐 Horario:</span>
-                    {{ clase.hora_inicio }} a {{ clase.hora_fin }}
-                </div>
+                    {{ "%02d"|format(semana.inicio.day) }}/{{ "%02d"|format(semana.inicio.month) }}
 
-                <div class="dato">
-                    <span class="etiqueta">👥 Inscriptos:</span>
-                    {{ clase.cantidad_inscriptos }} / {{ clase.cupo_maximo }}
-                </div>
+                    al
 
-                <div class="dato">
-                    <span class="etiqueta">🟢 Cupos disponibles:</span>
-                    {{ clase.cupo_maximo - clase.cantidad_inscriptos }}
-                </div>
+                    {{ "%02d"|format(semana.fin.day) }}/{{ "%02d"|format(semana.fin.month) }}
 
-                <div class="dato">
-                    <span class="etiqueta">📌 Estado:</span>
-                    {{ clase.estado }}
                 </div>
 
 
-                <div class="acciones-clase">
+                <div class="calendario">
 
-                    {% if clase.alumno_inscripto %}
+                    {% for dia in semana.dias %}
 
-                        <form
-                            action="{{ url_for('cancelar_inscripcion_alumno', clase_id=clase.id) }}"
-                            method="POST"
-                            onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
-                        >
+                        <div class="dia {% if dia.fecha == hoy %}dia-hoy{% endif %}">
 
-                            <button
-                                type="submit"
-                                class="boton-cancelar"
-                            >
-                                ❌ Cancelar inscripción
-                            </button>
+                            <div class="encabezado-dia">
 
-                        </form>
+                                <div class="nombre-dia">
+                                    {{ dia.nombre }}
+                                </div>
 
-                    {% else %}
+                                <div class="fecha-dia">
+                                    {{ "%02d"|format(dia.fecha.day) }}/{{ "%02d"|format(dia.fecha.month) }}
+                                </div>
 
-                        <form
-                            action="{{ url_for('inscribirme_clase', clase_id=clase.id) }}"
-                            method="POST"
-                        >
-
-                            <button
-                                type="submit"
-                                class="boton-inscribirme"
-                            >
-                                ➕ Inscribirme
-                            </button>
-
-                        </form>
-
-                    {% endif %}
+                            </div>
 
 
-                    <a
-                        href="{{ url_for('ver_inscriptos_alumno', clase_id=clase.id) }}"
-                        class="boton-inscriptos"
-                    >
-                        👥 Ver inscriptos
-                    </a>
+                            {% if dia.clases %}
+
+                                {% for clase in dia.clases %}
+
+                                    <div class="clase {% if clase.alumno_inscripto %}clase-inscripto{% endif %}">
+
+                                        <div class="hora">
+                                            🕐 {{ clase.hora_inicio }}
+                                        </div>
+
+                                        <div class="dato">
+                                            👥 {{ clase.cantidad_inscriptos }} / {{ clase.cupo_maximo }} inscriptos
+                                        </div>
+
+                                        <div class="dato">
+                                            🟢 {{ clase.cupo_maximo - clase.cantidad_inscriptos }} cupos disponibles
+                                        </div>
+
+
+                                        <div class="acciones-clase">
+
+                                            {% if clase.alumno_inscripto %}
+
+                                                <form
+                                                    action="{{ url_for('cancelar_inscripcion_alumno', clase_id=clase.id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
+                                                >
+
+                                                    <button
+                                                        type="submit"
+                                                        class="boton-cancelar"
+                                                    >
+                                                        ❌ Cancelar inscripción
+                                                    </button>
+
+                                                </form>
+
+                                            {% else %}
+
+                                                <form
+                                                    action="{{ url_for('inscribirme_clase', clase_id=clase.id) }}"
+                                                    method="POST"
+                                                >
+
+                                                    <button
+                                                        type="submit"
+                                                        class="boton-inscribirme"
+                                                    >
+                                                        ➕ Inscribirme
+                                                    </button>
+
+                                                </form>
+
+                                            {% endif %}
+
+
+                                            <a
+                                                href="{{ url_for('ver_inscriptos_alumno', clase_id=clase.id) }}"
+                                                class="boton-inscriptos"
+                                            >
+                                                👥 Ver inscriptos
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="sin-clase-dia">
+                                    Sin clases
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
 
                 </div>
 
@@ -313,29 +420,28 @@
 
         {% endfor %}
 
-    </div>
 
-{% else %}
+    {% else %}
 
-    <div class="sin-clases">
+        <div class="sin-clases">
 
-        <h2>📅 No hay clases disponibles</h2>
+            <h2>📅 No hay clases disponibles</h2>
 
-        <p>
-            Actualmente no hay próximas clases disponibles.
-        </p>
+            <p>
+                Actualmente no hay próximas clases disponibles.
+            </p>
 
-    </div>
+        </div>
 
-{% endif %}
+    {% endif %}
 
 
-<a
-    href="{{ url_for('panel_alumno') }}"
-    class="boton"
->
-    ⬅️ Volver al panel
-</a>
+    <a
+        href="{{ url_for('panel_alumno') }}"
+        class="boton-volver"
+    >
+        ⬅️ Volver al panel
+    </a>
 
 </div>
 
