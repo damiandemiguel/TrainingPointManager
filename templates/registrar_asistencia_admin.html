@@ -205,7 +205,7 @@
 
                     {% else %}
 
-                        <label class="alumno">
+                        <div class="alumno">
 
                             <div>
 
@@ -213,20 +213,29 @@
                                     {{ alumno.nombre }}
                                 </div>
 
-                                <div>
-                                    ⏳ Pendiente
-                                </div>
+                                {% if clase_iniciada %}
+
+                                    <div>
+                                        ⏳ Pendiente
+                                    </div>
+
+                                    <input
+                                        type="checkbox"
+                                        name="alumnos_presentes"
+                                        value="{{ alumno.alumno_id }}"
+                                    >
+
+                                {% else %}
+
+                                    <div>
+                                        🔒 Pendiente - La clase todavía no comenzó
+                                    </div>
+
+                                {% endif %}
 
                             </div>
 
-                            <input
-                                type="checkbox"
-                                name="alumnos_presentes"
-                                value="{{ alumno.alumno_id }}"
-                                class="checkbox"
-                            >
-
-                        </label>
+                        </div>
 
                     {% endif %}
 
@@ -235,12 +244,16 @@
 
                 <div class="acciones">
 
-                    <button
-                        type="submit"
-                        class="boton"
-                    >
-                        💾 Registrar asistencias
-                    </button>
+                    {% if clase_iniciada %}
+
+                        <button
+                            type="submit"
+                            class="boton"
+                        >
+                            💾 Registrar asistencias
+                        </button>
+
+                    {% endif %}
 
                     <a
                         href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"

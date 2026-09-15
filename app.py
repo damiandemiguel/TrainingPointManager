@@ -683,7 +683,24 @@ def registrar_asistencia_admin(clase_id):
         conexion.close()
         return "No se encontró la clase."
 
+    inicio_clase = datetime.fromisoformat(
+        f"{clase['fecha']} {clase['hora_inicio']}"
+    )
+
+    clase_iniciada = datetime.now() >= inicio_clase
+
     if request.method == "POST":
+
+        if not clase_iniciada:
+            conexion.close()
+
+            return redirect(
+                url_for(
+                    "registrar_asistencia_admin",
+                    clase_id=clase_id,
+                    mensaje="Todavía no se puede registrar asistencia porque la clase no comenzó."
+                )
+            )
 
         alumnos_presentes = request.form.getlist("alumnos_presentes")
 
@@ -826,7 +843,8 @@ def registrar_asistencia_admin(clase_id):
         "registrar_asistencia_admin.html",
         clase=clase,
         inscriptos=inscriptos,
-        mensaje=mensaje
+        mensaje=mensaje,
+        clase_iniciada=clase_iniciada
     )
 
 @app.route("/admin/asistencias")
