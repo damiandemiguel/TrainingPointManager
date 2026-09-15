@@ -347,25 +347,85 @@ def gestionar_clases():
     cursor = conexion.cursor()
 
     hoy = datetime.now().date()
+
+    fecha_inicio = hoy.replace(day=1)
     fecha_limite = hoy + timedelta(days=30)
 
     cursor.execute("""
-        SELECT *
+        SELECT
+            clases.*,
+            COUNT(inscripciones.id) AS cantidad_inscriptos
         FROM clases
-        WHERE fecha BETWEEN ? AND ?
-        ORDER BY fecha ASC, hora_inicio ASC
+        LEFT JOIN inscripciones
+            ON clases.id = inscripciones.clase_id
+            AND inscripciones.estado = 'Inscripto'
+        WHERE clases.fecha BETWEEN ? AND ?
+        GROUP BY clases.id
+        ORDER BY clases.fecha ASC, clases.hora_inicio ASC
     """, (
-        hoy.strftime("%Y-%m-%d"),
+        fecha_inicio.strftime("%Y-%m-%d"),
         fecha_limite.strftime("%Y-%m-%d")
     ))
 
     clases = cursor.fetchall()
 
+    clases_por_fecha = {}
+
+    for clase in clases:
+        fecha_clase = clase["fecha"]
+
+        if fecha_clase not in clases_por_fecha:
+            clases_por_fecha[fecha_clase] = []
+
+        clases_por_fecha[fecha_clase].append(clase)
+
+    nombres_dias = [
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+        "Domingo"
+    ]
+
+    semanas = []
+
+    inicio_calendario = fecha_inicio - timedelta(days=fecha_inicio.weekday())
+    inicio = inicio_calendario
+
+    while inicio <= fecha_limite:
+
+        dias = []
+
+        for numero_dia in range(7):
+
+            fecha_dia = inicio + timedelta(days=numero_dia)
+            fecha_texto = fecha_dia.strftime("%Y-%m-%d")
+
+            dias.append({
+                "nombre": nombres_dias[numero_dia],
+                "fecha": fecha_dia,
+                "fecha_texto": fecha_texto,
+                "clases": clases_por_fecha.get(fecha_texto, [])
+            })
+
+        semanas.append({
+            "inicio": inicio,
+            "fin": inicio + timedelta(days=6),
+            "dias": dias
+        })
+
+        inicio = inicio + timedelta(days=7)
+
     conexion.close()
 
     return render_template(
         "clases_admin.html",
-        clases=clases
+        clases=clases,
+        semanas=semanas,
+        hoy=hoy,
+        fecha_limite=fecha_limite
     )
 
 @app.route("/clases/nueva", methods=["GET", "POST"])

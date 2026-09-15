@@ -3,142 +3,256 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Clases - Training Point</title>
+<title>Clases - Training Point</title>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        color: #222;
+    }
+
+    .contenedor {
+        width: 96%;
+        max-width: 1400px;
+        margin: 35px auto;
+    }
+
+    .encabezado {
+        background-color: #222;
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .encabezado h1 {
+        margin: 0;
+    }
+
+    .encabezado p {
+        margin-bottom: 0;
+        color: #ddd;
+    }
+
+    .acciones-superiores {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .boton-superior {
+        flex: 1;
+        padding: 13px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        background-color: #222;
+        color: white;
+    }
+
+    .boton-superior:hover {
+        background-color: #444;
+    }
+
+    .semana {
+        margin-bottom: 30px;
+    }
+
+    .titulo-semana {
+        background-color: #333;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .calendario {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        background-color: #ddd;
+        padding: 8px;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .dia {
+        background-color: white;
+        min-height: 260px;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .dia-hoy {
+        border: 2px solid #222;
+    }
+
+    .dia-pasado {
+        background-color: #eeeeee;
+    }
+
+    .dia-pasado .clase {
+        opacity: 0.72;
+    }
+
+    .encabezado-dia {
+        text-align: center;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+
+    .nombre-dia {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .fecha-dia {
+        margin-top: 4px;
+        color: #777;
+        font-size: 13px;
+    }
+
+    .clase {
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-left: 4px solid #222;
+    }
+
+    .hora {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 7px;
+    }
+
+    .dato {
+        font-size: 13px;
+        margin: 4px 0;
+        color: #555;
+    }
+
+    .acciones-clase {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .acciones-clase form {
+        margin: 0;
+        width: 100%;
+    }
+
+    .boton-clase,
+    .boton-eliminar {
+        width: 100%;
+        min-height: 36px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 12px;
+        text-align: center;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        padding: 7px;
+    }
+
+    .boton-clase {
+        border: none;
+        background-color: #222;
+        color: white;
+    }
+
+    .boton-clase:hover {
+        background-color: #444;
+    }
+
+    .boton-secundario {
+        background-color: white;
+        border: 1px solid #ccc;
+        color: #333;
+    }
+
+    .boton-secundario:hover {
+        background-color: #eee;
+    }
+
+    .boton-eliminar {
+        border: none;
+        background-color: #ddd;
+        color: #333;
+    }
+
+    .boton-eliminar:hover {
+        background-color: #ccc;
+    }
+
+    .sin-clase-dia {
+        text-align: center;
+        color: #aaa;
+        padding-top: 25px;
+        font-size: 13px;
+    }
+
+    .sin-clases {
+        background-color: white;
+        padding: 40px;
+        text-align: center;
+        border-radius: 12px;
+        color: #666;
+    }
+
+    @media (max-width: 1100px) {
+
+        .calendario {
+            grid-template-columns: repeat(4, 1fr);
         }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            color: #222;
-        }
+    }
+
+    @media (max-width: 750px) {
 
         .contenedor {
-            width: 92%;
-            max-width: 900px;
-            margin: 40px auto;
+            width: 94%;
+            margin-top: 20px;
         }
 
-        .encabezado {
-            background-color: #222;
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 25px;
+        .acciones-superiores {
+            flex-direction: column;
         }
 
-        .encabezado h1 {
-            margin: 0;
+        .calendario {
+            grid-template-columns: 1fr;
         }
 
-        .encabezado p {
-            color: #ccc;
-            margin-bottom: 0;
+        .dia {
+            min-height: auto;
         }
 
-        .acciones {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+        .sin-clase-dia {
+            padding: 15px 0;
         }
 
-        .boton {
-            flex: 1;
-            padding: 14px;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-            background-color: #222;
-            color: white;
-        }
+    }
 
-        .boton:hover {
-            background-color: #444;
-        }
-
-        .boton-clase {
-            width: 150px;
-            flex: none;
-        }
-
-        .boton-eliminar {
-            width: 150px;
-            flex: none;
-        }
-
-        .boton-editar {
-            display: block;
-            width: fit-content;
-            margin: 15px auto 0;
-            padding: 9px 16px;
-            background-color: #222;
-            color: white;
-            border-radius: 7px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .boton-editar:hover {
-            background-color: #444;
-        }
-
-        .clase {
-            background-color: white;
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 18px;
-
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.10);
-        }
-
-        .clase h2 {
-            margin-top: 0;
-        }
-
-        .dato {
-            padding: 6px 0;
-            color: #555;
-        }
-
-        .etiqueta {
-            font-weight: bold;
-            color: #222;
-        }
-
-        .sin-clases {
-            background-color: white;
-            padding: 40px;
-            text-align: center;
-            border-radius: 12px;
-            color: #666;
-        }
-
-        @media (max-width: 600px) {
-
-            .contenedor {
-                width: 94%;
-                margin: 20px auto;
-            }
-
-            .acciones {
-                flex-direction: column;
-            }
-
-        }
-
-    </style>
+</style>
 
 </head>
 
@@ -150,18 +264,26 @@
 
         <h1>📅 Clases</h1>
 
-        <p>Crear y gestionar las clases de Training Point</p>
+        <p>
+            Historial del mes actual y próximas clases de Training Point
+        </p>
 
     </div>
 
 
-    <div class="acciones">
+    <div class="acciones-superiores">
 
-        <a href="{{ url_for('nueva_clase') }}" class="boton">
+        <a
+            href="{{ url_for('nueva_clase') }}"
+            class="boton-superior"
+        >
             ➕ Crear nueva clase
         </a>
 
-        <a href="{{ url_for('panel') }}" class="boton">
+        <a
+            href="{{ url_for('panel') }}"
+            class="boton-superior"
+        >
             ⬅️ Volver al panel
         </a>
 
@@ -170,68 +292,144 @@
 
     {% if clases %}
 
-        {% for clase in clases %}
+        {% for semana in semanas %}
 
-            <div class="clase">
+            <div class="semana">
 
-                <h2>
-                    📅 {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
-                </h2>
+                <div class="titulo-semana">
 
-                <div class="dato">
-                    <span class="etiqueta">🕐 Horario:</span>
-                    {{ clase.hora_inicio }} - {{ clase.hora_fin }}
+                    Semana del
+
+                    {{ "%02d"|format(semana.inicio.day) }}/{{ "%02d"|format(semana.inicio.month) }}
+
+                    al
+
+                    {{ "%02d"|format(semana.fin.day) }}/{{ "%02d"|format(semana.fin.month) }}
+
                 </div>
 
-                <div class="dato">
-                    <span class="etiqueta">👥 Cupo máximo:</span>
-                    {{ clase.cupo_maximo }}
-                </div>
 
-                <div class="dato">
-                    <span class="etiqueta">📌 Estado:</span>
-                    {{ clase.estado }}
-                </div>
+                <div class="calendario">
 
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    {% for dia in semana.dias %}
 
-                    <a
-                        href="{{ url_for('editar_clase', clase_id=clase.id) }}"
-                        class="boton boton-clase"
-                    >
-                        ✏️ Editar clase
-                    </a>
+                        <div class="dia
+                            {% if dia.fecha == hoy %}dia-hoy{% endif %}
+                            {% if dia.fecha < hoy %}dia-pasado{% endif %}
+                        ">
 
-                    <a
-                        href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
-                        class="boton boton-clase"
-                    >
-                        👥 Ver inscriptos
-                    </a>
+                            <div class="encabezado-dia">
 
-                    <a
-                        href="{{ url_for('registrar_asistencia_admin', clase_id=clase.id) }}"
-                        class="boton boton-clase"
-                    >
-                        🏃 Registrar asistencia
-                    </a>
+                                <div class="nombre-dia">
+                                    {{ dia.nombre }}
+                                </div>
 
-                    <form
-                        method="POST"
-                        action="{{ url_for('eliminar_clase', clase_id=clase.id) }}"
-                        style="margin: 0;"
-                        onsubmit="return confirm('⚠️ ¿Estás seguro de que querés eliminar esta clase?');"
-                    >
-                        <button type="submit" class="boton boton-eliminar">
-                            🗑️ Eliminar
-                        </button>
-                    </form>
+                                <div class="fecha-dia">
+                                    {{ "%02d"|format(dia.fecha.day) }}/{{ "%02d"|format(dia.fecha.month) }}
+                                </div>
+
+                            </div>
+
+
+                            {% if dia.clases %}
+
+                                {% for clase in dia.clases %}
+
+                                    <div class="clase">
+
+                                        <div class="hora">
+                                            🕐 {{ clase.hora_inicio }}
+                                        </div>
+
+                                        {% if dia.fecha < hoy %}
+
+                                            <div class="dato">
+                                                ⏱️ Clase finalizada
+                                            </div>
+
+                                        {% elif dia.fecha == hoy %}
+
+                                            <div class="dato">
+                                                📍 Hoy
+                                            </div>
+
+                                        {% endif %}
+
+                                        <div class="dato">
+                                            👥 {{ clase.cantidad_inscriptos }} / {{ clase.cupo_maximo }} inscriptos
+                                        </div>
+
+                                        <div class="dato">
+                                            🟢 {{ clase.cupo_maximo - clase.cantidad_inscriptos }} cupos disponibles
+                                        </div>
+
+                                        <div class="dato">
+                                            📌 Estado: {{ clase.estado }}
+                                        </div>
+
+
+                                        <div class="acciones-clase">
+
+                                            <a
+                                                href="{{ url_for('editar_clase', clase_id=clase.id) }}"
+                                                class="boton-clase"
+                                            >
+                                                ✏️ Editar
+                                            </a>
+
+                                            <a
+                                                href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
+                                                class="boton-clase boton-secundario"
+                                            >
+                                                👥 Ver inscriptos
+                                            </a>
+
+                                            <a
+                                                href="{{ url_for('registrar_asistencia_admin', clase_id=clase.id) }}"
+                                                class="boton-clase boton-secundario"
+                                            >
+                                                🏃 Asistencia
+                                            </a>
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for('eliminar_clase', clase_id=clase.id) }}"
+                                                onsubmit="return confirm('⚠️ ¿Estás seguro de que querés eliminar esta clase?');"
+                                            >
+
+                                                <button
+                                                    type="submit"
+                                                    class="boton-eliminar"
+                                                >
+                                                    🗑️ Eliminar
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="sin-clase-dia">
+                                    Sin clases
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
 
                 </div>
 
             </div>
 
         {% endfor %}
+
 
     {% else %}
 
@@ -240,7 +438,7 @@
             <h2>📅 No hay clases creadas</h2>
 
             <p>
-                Todavía no se han generado clases.
+                Actualmente no hay próximas clases creadas.
             </p>
 
         </div>
