@@ -2031,6 +2031,46 @@ def pagos():
         pagos=pagos
     )
 
+@app.route("/admin/pagos")
+def pagos_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            bonos.id,
+            bonos.fecha_pago,
+            bonos.precio,
+            bonos.forma_pago,
+            bonos.estado,
+            alumnos.nombre AS alumno_nombre,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN alumnos
+            ON bonos.alumno_id = alumnos.id
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.fecha_pago IS NOT NULL
+        ORDER BY bonos.fecha_pago DESC, bonos.id DESC
+    """)
+
+    pagos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "pagos_admin.html",
+        pagos=pagos
+    )
+
 @app.route("/mis-asistencias")
 def mis_asistencias():
 
