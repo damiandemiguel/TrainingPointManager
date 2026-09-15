@@ -829,6 +829,46 @@ def registrar_asistencia_admin(clase_id):
         mensaje=mensaje
     )
 
+@app.route("/admin/asistencias")
+def asistencias_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            asistencias.id,
+            asistencias.fecha_hora,
+            asistencias.metodo,
+            asistencias.credito_descontado,
+            alumnos.nombre AS alumno_nombre,
+            clases.fecha AS clase_fecha,
+            clases.hora_inicio,
+            clases.hora_fin
+        FROM asistencias
+        INNER JOIN alumnos
+            ON asistencias.alumno_id = alumnos.id
+        INNER JOIN clases
+            ON asistencias.clase_id = clases.id
+        ORDER BY asistencias.fecha_hora DESC
+    """)
+
+    asistencias = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "asistencias_admin.html",
+        asistencias=asistencias
+    )
+
 @app.route("/clases/<int:clase_id>/inscribir", methods=["GET", "POST"])
 def inscribir_alumno_admin(clase_id):
 

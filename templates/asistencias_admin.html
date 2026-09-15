@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Asistencias - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ccc;
+        }
+
+        .tabla-contenedor {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #222;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metodo {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background-color: #e5e5e5;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .sin-asistencias {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .boton-volver {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            background-color: #222;
+            color: white;
+            font-weight: bold;
+        }
+
+        .boton-volver:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+
+            .contenedor {
+                width: 95%;
+            }
+
+            th,
+            td {
+                padding: 9px;
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>📋 Historial de asistencias</h1>
+
+        <p>
+            Registro de asistencias de Training Point
+        </p>
+
+    </div>
+
+
+    {% if asistencias %}
+
+        <div class="tabla-contenedor">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Alumno</th>
+                        <th>Clase</th>
+                        <th>Horario</th>
+                        <th>Registro</th>
+                        <th>Método</th>
+                        <th>Crédito</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for asistencia in asistencias %}
+
+                        <tr>
+
+                            <td>
+                                <strong>{{ asistencia.alumno_nombre }}</strong>
+                            </td>
+
+                            <td>
+                                {{ asistencia.clase_fecha[8:10] }}/{{ asistencia.clase_fecha[5:7] }}/{{ asistencia.clase_fecha[0:4] }}
+                            </td>
+
+                            <td>
+                                {{ asistencia.hora_inicio }} - {{ asistencia.hora_fin }}
+                            </td>
+
+                            <td>
+                                {{ asistencia.fecha_hora }}
+                            </td>
+
+                            <td>
+                                <span class="metodo">
+                                    {{ asistencia.metodo }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ asistencia.credito_descontado }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-asistencias">
+
+            <h2>📋 No hay asistencias registradas</h2>
+
+            <p>
+                Todavía no se registraron asistencias.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <a
+        href="{{ url_for('panel') }}"
+        class="boton-volver"
+    >
+        ⬅️ Volver al panel
+    </a>
+
+</div>
+
+</body>
+
+</html>
