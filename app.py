@@ -845,6 +845,7 @@ def asistencias_admin():
     cursor.execute("""
         SELECT
             asistencias.id,
+            asistencias.bono_id,
             asistencias.fecha_hora,
             asistencias.metodo,
             asistencias.credito_descontado,
@@ -867,6 +868,79 @@ def asistencias_admin():
     return render_template(
         "asistencias_admin.html",
         asistencias=asistencias
+    )
+
+@app.route("/admin/asistencias/<int:asistencia_id>/anular", methods=["POST"])
+def anular_asistencia_admin(asistencia_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar la asistencia
+    cursor.execute("""
+        SELECT
+            id,
+            alumno_id,
+            bono_id,
+            credito_descontado
+        FROM asistencias
+        WHERE id = ?
+    """, (asistencia_id,))
+
+    asistencia = cursor.fetchone()
+
+    if asistencia is None:
+        conexion.close()
+        return redirect(url_for("asistencias_admin"))
+
+    # Devolver el crédito al bono utilizado
+    cursor.execute("""
+        UPDATE bonos
+        SET creditos_disponibles = creditos_disponibles + ?
+        WHERE id = ?
+    """, (
+        asistencia["credito_descontado"],
+        asistencia["bono_id"]
+    ))
+
+    # Registrar la devolución en movimientos
+    cursor.execute("""
+        INSERT INTO movimientos_creditos (
+            bono_id,
+            alumno_id,
+            fecha,
+            tipo,
+            cantidad,
+            descripcion
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        asistencia["bono_id"],
+        asistencia["alumno_id"],
+        datetime.now().strftime("%Y-%m-%d"),
+        "devolucion",
+        asistencia["credito_descontado"],
+        "Devolución de crédito por anulación de asistencia"
+    ))
+
+    # Eliminar la asistencia
+    cursor.execute("""
+        DELETE FROM asistencias
+        WHERE id = ?
+    """, (asistencia_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for("asistencias_admin")
     )
 
 @app.route("/clases/<int:clase_id>/inscribir", methods=["GET", "POST"])

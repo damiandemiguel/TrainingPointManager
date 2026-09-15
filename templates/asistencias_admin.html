@@ -83,6 +83,20 @@
             font-size: 13px;
         }
 
+        .boton-anular {
+            border: none;
+            background-color: #e5e5e5;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-anular:hover {
+            background-color: #ccc;
+        }
+
         .sin-asistencias {
             background-color: white;
             padding: 40px;
@@ -155,6 +169,7 @@
                         <th>Registro</th>
                         <th>Método</th>
                         <th>Crédito</th>
+                        <th>Acción</th>
                     </tr>
 
                 </thead>
@@ -189,6 +204,25 @@
 
                             <td>
                                 {{ asistencia.credito_descontado }}
+                            </td>
+
+                            <td>
+
+                                <form
+                                    action="{{ url_for('anular_asistencia_admin', asistencia_id=asistencia.id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('¿Seguro que querés anular esta asistencia? El crédito será devuelto al alumno.');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="boton-anular"
+                                    >
+                                        ❌ Anular
+                                    </button>
+
+                                </form>
+
                             </td>
 
                         </tr>
