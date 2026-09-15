@@ -87,7 +87,7 @@
         }
         .resumen-estados {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
             margin: 25px 0;
         }
@@ -123,8 +123,17 @@
             border-top: 4px solid red;
         }
 
+        .resumen.sin-creditos {
+            border-top: 4px solid #d97706;
+        }
+
         .resumen.sin-bono {
             border-top: 4px solid #888;
+        }
+
+        .sin-creditos-estado {
+            color: #d97706;
+            font-weight: bold;
         }
     </style>
 
@@ -151,6 +160,12 @@
         <div class="resumen vencido">
             <div class="resumen-numero">{{ bonos_vencidos }}</div>
             <div class="resumen-titulo">🔴 Vencidos</div>
+        </div>
+
+        <div class="resumen sin-creditos">
+            <div class="resumen-numero">{{ bonos_sin_creditos }}</div>
+            <div class="resumen-titulo">🟠 Sin créditos</div>
+
         </div>
 
         <div class="resumen sin-bono">
@@ -199,7 +214,7 @@
 
                     <td>
                         {% if alumno["fecha_pago"] %}
-                            {{ alumno["fecha_pago"] }}
+                            {{ alumno["fecha_pago"][8:10] }}/{{ alumno["fecha_pago"][5:7] }}/{{ alumno["fecha_pago"][0:4] }}
                         {% else %}
                             —
                         {% endif %}
@@ -207,7 +222,7 @@
 
                     <td>
                         {% if alumno["fecha_vencimiento"] %}
-                            {{ alumno["fecha_vencimiento"] }}
+                            {{ alumno["fecha_vencimiento"][8:10] }}/{{ alumno["fecha_vencimiento"][5:7] }}/{{ alumno["fecha_vencimiento"][0:4] }}
                         {% else %}
                             —
                         {% endif %}
@@ -233,7 +248,7 @@
 
                     <td>
                         {% if alumno["precio"] is not none %}
-                            ${{ "%.2f"|format(alumno["precio"]) }}
+                            ${{ "{:,.0f}".format(alumno["precio"]).replace(",", ".") }}
                         {% else %}
                             —
                         {% endif %}
@@ -264,15 +279,38 @@
                     </td>
 
                     <td>
-                        {% if alumno["estado"] %}
-                            <span class="activo">
-                                {{ alumno["estado"] }}
-                            </span>
-                        {% else %}
+                        {% if not alumno["bono_id"] %}
+
                             <span class="sin-bono">
-                                Sin bono
+                                ⚪ Sin bono
                             </span>
+
+                        {% elif alumno["creditos_disponibles"] == 0 %}
+
+                            <span class="sin-creditos-estado">
+                                🟠 Sin créditos
+                            </span>
+
+                        {% elif alumno["dias_para_vencer"] <= 0 %}
+
+                            <span class="vencido">
+                                🔴 Vencido
+                            </span>
+
+                        {% elif alumno["dias_para_vencer"] <= 7 %}
+
+                            <span class="por-vencer">
+                                🟡 Por vencer
+                            </span>
+
+                        {% else %}
+
+                            <span class="vigente">
+                                🟢 Vigente
+                            </span>
+
                         {% endif %}
+
                     </td>
 
                     <td>
