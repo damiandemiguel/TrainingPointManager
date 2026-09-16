@@ -219,6 +219,16 @@
         color: #666;
     }
 
+    .mensaje-creacion {
+        background-color: white;
+        border-left: 5px solid #222;
+        padding: 15px 18px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        line-height: 1.6;
+    }
+
     @media (max-width: 1100px) {
 
         .calendario {
@@ -307,6 +317,27 @@
                     {{ "%02d"|format(semana.fin.day) }}/{{ "%02d"|format(semana.fin.month) }}
 
                 </div>
+
+                {% if clases_creadas is not none %}
+
+                    <div class="mensaje-creacion">
+
+                        {% if clases_creadas > 0 %}
+                            ✅ Se crearon {{ clases_creadas }} clase(s).
+                        {% endif %}
+
+                        {% if clases_omitidas and clases_omitidas > 0 %}
+                            <br>
+                            ⚠️ {{ clases_omitidas }} clase(s) ya existían y fueron omitidas.
+                        {% endif %}
+
+                        {% if clases_creadas == 0 and (not clases_omitidas or clases_omitidas == 0) %}
+                            No se generaron clases.
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
 
 
                 <div class="calendario">

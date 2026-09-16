@@ -336,6 +336,9 @@ def cerrar_sesion():
 @app.route("/clases")
 def gestionar_clases():
 
+    clases_creadas = request.args.get("creadas", type=int)
+    clases_omitidas = request.args.get("omitidas", type=int)
+
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
 
@@ -425,7 +428,9 @@ def gestionar_clases():
         clases=clases,
         semanas=semanas,
         hoy=hoy,
-        fecha_limite=fecha_limite
+        fecha_limite=fecha_limite,
+        clases_creadas=clases_creadas,
+        clases_omitidas=clases_omitidas
     )
 
 @app.route("/clases/nueva", methods=["GET", "POST"])
@@ -450,9 +455,34 @@ def nueva_clase():
 
         try:
 
+            clases_creadas = 0
+            clases_omitidas = 0
+
             if modo == "individual":
 
                 fecha = request.form["fecha"]
+
+                cursor.execute("""
+                    SELECT id
+                    FROM clases
+                    WHERE fecha = ?
+                      AND hora_inicio = ?
+                """, (
+                    fecha,
+                    hora_inicio
+                ))
+
+                clase_existente = cursor.fetchone()
+
+                if clase_existente:
+
+                    conexion.close()
+
+                    return (
+                        "Ya existe una clase para esa fecha y horario. "
+                        "<br><br>"
+                        "<a href='/clases/nueva'>Volver</a>"
+                    )
 
                 cursor.execute("""
                     INSERT INTO clases (
@@ -470,6 +500,8 @@ def nueva_clase():
                     cupo_maximo,
                     "Disponible"
                 ))
+
+                clases_creadas += 1
 
             elif modo == "recurrente":
 
@@ -503,22 +535,44 @@ def nueva_clase():
 
                     if fecha_actual.weekday() in dias:
 
+                        fecha_texto = fecha_actual.strftime("%Y-%m-%d")
+
                         cursor.execute("""
-                            INSERT INTO clases (
-                                fecha,
+                            SELECT id
+                            FROM clases
+                            WHERE fecha = ?
+                              AND hora_inicio = ?
+                        """, (
+                            fecha_texto,
+                            hora_inicio
+                        ))
+
+                        clase_existente = cursor.fetchone()
+
+                        if clase_existente:
+
+                            clases_omitidas += 1
+
+                        else:
+
+                            cursor.execute("""
+                                INSERT INTO clases (
+                                    fecha,
+                                    hora_inicio,
+                                    hora_fin,
+                                    cupo_maximo,
+                                    estado
+                                )
+                                VALUES (?, ?, ?, ?, ?)
+                            """, (
+                                fecha_texto,
                                 hora_inicio,
                                 hora_fin,
                                 cupo_maximo,
-                                estado
-                            )
-                            VALUES (?, ?, ?, ?, ?)
-                        """, (
-                            fecha_actual.strftime("%Y-%m-%d"),
-                            hora_inicio,
-                            hora_fin,
-                            cupo_maximo,
-                            "Disponible"
-                        ))
+                                "Disponible"
+                            ))
+
+                            clases_creadas += 1
 
                     fecha_actual += timedelta(days=1)
 
@@ -533,7 +587,13 @@ def nueva_clase():
 
         conexion.close()
 
-        return redirect(url_for("gestionar_clases"))
+        return redirect(
+            url_for(
+                "gestionar_clases",
+                creadas=clases_creadas,
+                omitidas=clases_omitidas
+            )
+        )
 
     return render_template("nueva_clase_admin.html")
 
