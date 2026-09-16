@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pagos de {{ alumno.nombre }} - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 94%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .resumen-tarjeta {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .resumen-numero {
+            display: block;
+            font-size: 26px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .tabla-contenedor {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .importe {
+            font-weight: bold;
+        }
+
+        .estado {
+            font-weight: bold;
+        }
+
+        .sin-pagos {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        .volver {
+            display: block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .volver:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+
+            .resumen {
+                grid-template-columns: 1fr;
+            }
+
+            th,
+            td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>💳 Pagos de {{ alumno.nombre }}</h1>
+
+        <p>
+            Historial individual de pagos
+        </p>
+
+    </div>
+
+    <div class="resumen">
+
+        <div class="resumen-tarjeta">
+
+            Pagos registrados
+
+            <span class="resumen-numero">
+                {{ pagos|length }}
+            </span>
+
+        </div>
+
+        <div class="resumen-tarjeta">
+
+            Total registrado
+
+            <span class="resumen-numero">
+                ${{ "{:,.0f}".format(pagos|sum(attribute='precio')).replace(",", ".") }}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="tabla-contenedor">
+
+        {% if pagos %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Bono</th>
+                        <th>Importe</th>
+                        <th>Forma de pago</th>
+                        <th>Estado bono</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for pago in pagos %}
+
+                        <tr>
+
+                            <td>
+                                {{ pago.fecha_pago[8:10] }}/{{ pago.fecha_pago[5:7] }}/{{ pago.fecha_pago[0:4] }}
+                            </td>
+
+                            <td>
+                                {{ pago.nombre_bono }}
+                            </td>
+
+                            <td class="importe">
+                                ${{ "{:,.0f}".format(pago.precio).replace(",", ".") }}
+                            </td>
+
+                            <td>
+                                {{ pago.forma_pago }}
+                            </td>
+
+                            <td class="estado">
+                                {{ pago.estado }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <div class="sin-pagos">
+                {{ alumno.nombre }} todavía no tiene pagos registrados.
+            </div>
+
+        {% endif %}
+
+        <a
+            href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.id) }}"
+            class="volver"
+        >
+            ⬅️ Volver al perfil
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

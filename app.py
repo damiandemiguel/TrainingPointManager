@@ -948,6 +948,60 @@ def asistencias_admin():
         asistencias=asistencias
     )
 
+@app.route("/alumnos/<int:alumno_id>/asistencias")
+def asistencias_alumno_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno
+    cursor.execute("""
+        SELECT id, nombre
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "Alumno no encontrado."
+
+    # Buscar únicamente sus asistencias
+    cursor.execute("""
+        SELECT
+            asistencias.id,
+            asistencias.bono_id,
+            asistencias.fecha_hora,
+            asistencias.metodo,
+            asistencias.credito_descontado,
+            clases.fecha AS clase_fecha,
+            clases.hora_inicio,
+            clases.hora_fin
+        FROM asistencias
+        INNER JOIN clases
+            ON asistencias.clase_id = clases.id
+        WHERE asistencias.alumno_id = ?
+        ORDER BY asistencias.fecha_hora DESC
+    """, (alumno_id,))
+
+    asistencias = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "asistencias_alumno_admin.html",
+        alumno=alumno,
+        asistencias=asistencias
+    )
+
 @app.route("/admin/asistencias/<int:asistencia_id>/anular", methods=["POST"])
 def anular_asistencia_admin(asistencia_id):
 
@@ -2128,6 +2182,59 @@ def pagos_admin():
 
     return render_template(
         "pagos_admin.html",
+        pagos=pagos
+    )
+
+@app.route("/alumnos/<int:alumno_id>/pagos")
+def pagos_alumno_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno
+    cursor.execute("""
+        SELECT id, nombre
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "Alumno no encontrado."
+
+    # Buscar únicamente sus pagos
+    cursor.execute("""
+        SELECT
+            bonos.id,
+            bonos.fecha_pago,
+            bonos.precio,
+            bonos.forma_pago,
+            bonos.estado,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.alumno_id = ?
+          AND bonos.fecha_pago IS NOT NULL
+        ORDER BY bonos.fecha_pago DESC, bonos.id DESC
+    """, (alumno_id,))
+
+    pagos = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "pagos_alumno_admin.html",
+        alumno=alumno,
         pagos=pagos
     )
 

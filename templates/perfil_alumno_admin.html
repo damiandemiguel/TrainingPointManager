@@ -247,6 +247,20 @@
             🎟️ Bonos y créditos
         </a>
 
+        <a
+            href="{{ url_for('asistencias_alumno_admin', alumno_id=alumno.id) }}"
+            class="boton"
+        >
+            🏃 Asistencias
+        </a>
+
+        <a
+            href="{{ url_for('pagos_alumno_admin', alumno_id=alumno.id) }}"
+            class="boton"
+        >
+            💳 Pagos
+        </a>
+
         <a href="{{ url_for("mostrar_alumnos") }}" class="boton">
             ⬅️ Volver
         </a>
