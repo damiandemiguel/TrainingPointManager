@@ -253,6 +253,32 @@
 
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const posicionGuardada = sessionStorage.getItem("alumnoScrollPosition");
+
+        if (posicionGuardada !== null) {
+            window.scrollTo(0, parseInt(posicionGuardada));
+            sessionStorage.removeItem("alumnoScrollPosition");
+        }
+
+        const enlacesPanel = document.querySelectorAll(".panel a.tarjeta");
+
+        enlacesPanel.forEach(function (enlace) {
+
+            enlace.addEventListener("click", function () {
+                sessionStorage.setItem(
+                    "alumnoScrollPosition",
+                    window.scrollY
+                );
+            });
+
+        });
+
+    });
+</script>
+
 </body>
 
 </html>

@@ -106,18 +106,24 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
         }
 
-        .boton-volver {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            background-color: #222;
-            color: white;
-            font-weight: bold;
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
-        .boton-volver:hover {
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
             background-color: #444;
         }
 
@@ -145,11 +151,22 @@
 
     <div class="encabezado">
 
-        <h1>📋 Historial de asistencias</h1>
+        <h1>🏃 Asistencias</h1>
 
         <p>
-            Registro de asistencias de Training Point
+            Historial de asistencias registradas en Training Point
         </p>
+
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
 
     </div>
 
@@ -248,14 +265,6 @@
         </div>
 
     {% endif %}
-
-
-    <a
-        href="{{ url_for('panel') }}"
-        class="boton-volver"
-    >
-        ⬅️ Volver al panel
-    </a>
 
 </div>
 

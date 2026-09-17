@@ -376,7 +376,7 @@
             </a>
 
 
-            <a href="#" class="boton">
+            <a href="{{ url_for('certificados_admin') }}" class="boton">
 
                 <div class="icono">📄</div>
 
@@ -416,6 +416,33 @@
             🚪 Cerrar sesión
         </a>
     </main>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const posicionGuardada = sessionStorage.getItem("adminScrollPosition");
+
+        if (posicionGuardada !== null) {
+            window.scrollTo(0, parseInt(posicionGuardada));
+            sessionStorage.removeItem("adminScrollPosition");
+        }
+
+        const enlacesPanel = document.querySelectorAll(".menu a");
+
+        enlacesPanel.forEach(function (enlace) {
+
+            enlace.addEventListener("click", function () {
+                sessionStorage.setItem(
+                    "adminScrollPosition",
+                    window.scrollY
+                );
+            });
+
+        });
+
+    });
+</script>
 
 </body>
 

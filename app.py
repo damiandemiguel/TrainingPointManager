@@ -2801,6 +2801,69 @@ def editar_vencimiento_bono_admin(bono_id):
         bono=bono
     )
 
+@app.route("/admin/certificados")
+def certificados_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            nombre,
+            certificado_medico,
+            fecha_certificado
+        FROM alumnos
+        WHERE activo = 1
+        ORDER BY nombre ASC
+    """)
+
+    alumnos = cursor.fetchall()
+    conexion.close()
+
+    certificados = []
+
+    vigentes = 0
+    vencidos = 0
+    sin_certificado = 0
+
+    for alumno in alumnos:
+
+        if not alumno["certificado_medico"]:
+            estado = "Sin certificado"
+            sin_certificado += 1
+
+        elif fecha_vencida(alumno["fecha_certificado"]):
+            estado = "Vencido"
+            vencidos += 1
+
+        else:
+            estado = "Vigente"
+            vigentes += 1
+
+        certificados.append({
+            "id": alumno["id"],
+            "nombre": alumno["nombre"],
+            "certificado_medico": alumno["certificado_medico"],
+            "fecha_certificado": alumno["fecha_certificado"],
+            "estado": estado
+        })
+
+    return render_template(
+        "certificados_admin.html",
+        certificados=certificados,
+        vigentes=vigentes,
+        vencidos=vencidos,
+        sin_certificado=sin_certificado
+    )
+
 @app.route("/alumnos/<int:alumno_id>/salud")
 def ficha_salud_admin(alumno_id):
 

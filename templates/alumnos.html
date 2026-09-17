@@ -85,15 +85,45 @@
             font-weight: bold;
         }
 
-        .volver {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 20px;
+        .encabezado {
             background-color: #222;
             color: white;
-            text-decoration: none;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
         }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
     </style>
 </head>
 
@@ -101,7 +131,26 @@
 
     <div class="contenedor">
 
-        <h1>Lista de alumnos</h1>
+        <div class="encabezado">
+
+            <h1>👥 Alumnos</h1>
+
+            <p>
+                Gestión de alumnos de Training Point
+            </p>
+
+        </div>
+
+        <div class="acciones-superiores">
+
+            <a
+                href="{{ url_for('panel') }}"
+                class="boton-superior"
+            >
+                ⬅️ Volver al panel
+            </a>
+
+        </div>
 
         <form method="GET" action="{{ url_for('mostrar_alumnos') }}" class="buscador">
 
@@ -157,10 +206,6 @@
             {% endfor %}
 
         </table>
-
-        <a href="{{ url_for('panel') }}" class="volver">
-            Volver al panel
-        </a>
 
     </div>
 

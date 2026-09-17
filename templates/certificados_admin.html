@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Certificados médicos - Training Point</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 30px;
+            color: #222;
+        }
+
+        .contenedor {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        .subtitulo {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .resumen-estados {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .resumen {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .resumen-numero {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .resumen-titulo {
+            font-weight: bold;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #222;
+            color: white;
+        }
+
+        .estado {
+            font-weight: bold;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .boton {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .boton-secundario {
+            background-color: #666;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 15px;
+            }
+
+            .resumen-estados {
+                grid-template-columns: 1fr;
+            }
+
+            th,
+            td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>📄 Certificados médicos</h1>
+
+        <p>
+            Estado de los certificados médicos de los alumnos activos de Training Point
+        </p>
+
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+    <div class="resumen-estados">
+
+        <div class="resumen">
+            <div class="resumen-numero">{{ vigentes }}</div>
+            <div class="resumen-titulo">🟢 Vigentes</div>
+        </div>
+
+        <div class="resumen">
+            <div class="resumen-numero">{{ vencidos }}</div>
+            <div class="resumen-titulo">🔴 Vencidos</div>
+        </div>
+
+        <div class="resumen">
+            <div class="resumen-numero">{{ sin_certificado }}</div>
+            <div class="resumen-titulo">⚪ Sin certificado</div>
+        </div>
+
+    </div>
+
+    <div class="tabla-contenedor">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for certificado in certificados %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ certificado.nombre }}</strong>
+                    </td>
+
+                    <td>
+                        {% if certificado.fecha_certificado %}
+                        {{ certificado.fecha_certificado[8:10] }}/{{ certificado.fecha_certificado[5:7] }}/{{ certificado.fecha_certificado[0:4] }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td class="estado">
+
+                        {% if certificado.estado == "Vigente" %}
+                            🟢 Vigente
+
+                        {% elif certificado.estado == "Vencido" %}
+                            🔴 Vencido
+
+                        {% else %}
+                            ⚪ Sin certificado
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <div class="acciones">
+
+                            {% if certificado.certificado_medico %}
+
+                                <a
+                                    href="{{ url_for('static', filename='uploads/certificados/' + certificado.certificado_medico) }}"
+                                    target="_blank"
+                                    class="boton"
+                                >
+                                    📄 Certificado médico
+                                </a>
+
+                            {% endif %}
+
+                            <a
+                                href="{{ url_for('ficha_salud_admin', alumno_id=certificado.id) }}"
+                                class="boton boton-secundario"
+                            >
+                                🩺 Ficha de salud
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

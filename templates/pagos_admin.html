@@ -78,10 +78,15 @@
             color: #666;
         }
 
-        .volver {
-            display: block;
-            margin-top: 20px;
-            padding: 12px 18px;
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
             border-radius: 8px;
             text-decoration: none;
             text-align: center;
@@ -90,7 +95,7 @@
             color: white;
         }
 
-        .volver:hover {
+        .boton-superior:hover {
             background-color: #444;
         }
 
@@ -114,11 +119,22 @@
 
     <div class="encabezado">
 
-        <h1>💳 Historial de pagos</h1>
+        <h1>💰 Pagos</h1>
 
-        <p>
-            Pagos registrados en Training Point
-        </p>
+            <p>
+                Historial de pagos registrados en Training Point
+            </p>
+
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
 
     </div>
 
@@ -136,7 +152,7 @@
                         <th>Abono</th>
                         <th>Importe</th>
                         <th>Forma de pago</th>
-                        <th>Estado bono</th>
+                        <th>Estado abono</th>
                     </tr>
 
                 </thead>
@@ -188,13 +204,6 @@
             </div>
 
         {% endif %}
-
-        <a
-            href="{{ url_for('panel') }}"
-            class="volver"
-        >
-            ⬅️ Volver al panel
-        </a>
 
     </div>
 
