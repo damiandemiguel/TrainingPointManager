@@ -265,16 +265,6 @@
                 <div class="estadistica-titulo">Sin ficha de salud</div>
             </div>
 
-            <a href="{{ url_for('estado_alumnos') }}" class="estadistica" style="text-decoration: none; color: #222; cursor: pointer; transition: 0.2s;">
-                <div class="estadistica-icono">📊</div>
-                <div style="font-size: 17px; font-weight: bold; color: #222; margin-top: 5px;">
-                    Estado de alumnos
-                </div>
-                <div style="margin-top: 8px; color: #666; font-size: 14px;">
-                    Bonos y vencimientos
-                </div>
-            </a>
-
         </section>
 
 
@@ -311,16 +301,16 @@
             </a>
 
 
-            <a href="#" class="boton">
+            <a href="{{ url_for('estado_alumnos') }}" class="boton">
 
                 <div class="icono">💳</div>
 
                 <div class="titulo">
-                    Créditos
+                    Abonos y créditos
                 </div>
 
                 <div class="descripcion">
-                    Cargar y gestionar créditos
+                    Cargar y gestionar abonos 
                 </div>
 
             </a>
@@ -339,21 +329,7 @@
                 </div>
 
             </a>
-
-
-            <a href="#" class="boton">
-
-                <div class="icono">📱</div>
-
-                <div class="titulo">
-                    Lector QR
-                </div>
-
-                <div class="descripcion">
-                    Registrar asistencia
-                </div>
-
-            </a>
+            
 
             <a href="{{ url_for('asistencias_admin') }}" class="boton">
 

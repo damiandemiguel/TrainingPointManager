@@ -208,8 +208,10 @@
     }
 
     .boton-volver {
-        display: inline-block;
+        display: block;
+        width: fit-content;
         margin-top: 5px;
+        margin-bottom: 25px;
         padding: 12px 18px;
         border-radius: 8px;
         text-decoration: none;
@@ -283,6 +285,13 @@
         </p>
 
     </div>
+
+    <a
+        href="{{ url_for('panel_alumno') }}"
+        class="boton-volver"
+    >
+        ⬅️ Volver al panel
+    </a>
 
 
     {% if mensaje %}
@@ -434,14 +443,6 @@
         </div>
 
     {% endif %}
-
-
-    <a
-        href="{{ url_for('panel_alumno') }}"
-        class="boton-volver"
-    >
-        ⬅️ Volver al panel
-    </a>
 
 </div>
 

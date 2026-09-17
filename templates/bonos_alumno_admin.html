@@ -138,7 +138,7 @@
 
 <div class="contenedor">
 
-    <h1>🎟️ Bonos y créditos</h1>
+    <h1>🎟️ Abonos y créditos</h1>
 
     <div class="subtitulo">
         Alumno: <strong>{{ alumno.nombre }}</strong>
@@ -149,7 +149,7 @@
         href="{{ url_for('nuevo_bono_admin', alumno_id=alumno.id) }}"
         class="boton-nuevo"
     >
-        ➕ Registrar nuevo bono
+        ➕ Registrar nuevo abono
     </a>
 
 
@@ -231,7 +231,7 @@
     {% else %}
 
         <div class="sin-bonos">
-            <p>Este alumno todavía no tiene bonos registrados.</p>
+            <p>Este alumno todavía no tiene abonos registrados.</p>
         </div>
 
     {% endif %}

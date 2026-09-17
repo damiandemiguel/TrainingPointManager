@@ -1090,7 +1090,7 @@ def anular_asistencia_admin(asistencia_id):
         conexion.close()
         return redirect(url_for("asistencias_admin"))
 
-    # Devolver el crédito al bono utilizado
+    # Devolver el crédito al abono utilizado
     cursor.execute("""
         UPDATE bonos
         SET creditos_disponibles = creditos_disponibles + ?
@@ -2563,7 +2563,7 @@ def nuevo_bono_admin(alumno_id):
 
         if tipo_bono is None:
             conexion.close()
-            return "Tipo de bono no válido."
+            return "Tipo de abono no válido."
 
         creditos_iniciales = tipo_bono["creditos"]
         precio = tipo_bono["precio"]
@@ -3196,7 +3196,7 @@ def checkin():
                 "mensaje": "Tu asistencia ya fue registrada."
             }, 400
 
-        # Buscar bono activo con crédito disponible
+        # Buscar abono activo con crédito disponible
         cursor.execute("""
             SELECT
                 id,
@@ -3220,7 +3220,7 @@ def checkin():
 
             return {
                 "ok": False,
-                "mensaje": "No tenés un bono activo con créditos disponibles."
+                "mensaje": "No tenés un abono activo con créditos disponibles."
             }, 400
 
         # Registrar asistencia

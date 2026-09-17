@@ -143,13 +143,13 @@
 
 <div class="contenedor">
 
-    <h1>📊 Estado de alumnos</h1>
+    <h1>💳 Abonos y créditos</h1>
 
     <div class="resumen-estados">
 
         <div class="resumen vigente">
             <div class="resumen-numero">{{ bonos_vigentes }}</div>
-            <div class="resumen-titulo">🟢 Bonos vigentes</div>
+            <div class="resumen-titulo">🟢 Vigentes</div>
         </div>
 
         <div class="resumen por-vencer">
@@ -170,7 +170,7 @@
 
         <div class="resumen sin-bono">
             <div class="resumen-numero">{{ alumnos_sin_bono }}</div>
-            <div class="resumen-titulo">⚪ Sin bono</div>
+            <div class="resumen-titulo">⚪ Sin abono</div>
         </div>
 
     </div>
@@ -181,7 +181,7 @@
             <thead>
                 <tr>
                     <th>Alumno</th>
-                    <th>Bono activo</th>
+                    <th>Abono activo</th>
                     <th>Fecha de pago</th>
                     <th>Vencimiento</th>
                     <th>Días para vencer</th>
@@ -208,7 +208,7 @@
                         {% if alumno["bono_id"] %}
                             {{ alumno["nombre_bono"] }}
                         {% else %}
-                            <span class="sin-bono">Sin bono</span>
+                            <span class="sin-bono">Sin abono</span>
                         {% endif %}
                     </td>
 
@@ -282,7 +282,7 @@
                         {% if not alumno["bono_id"] %}
 
                             <span class="sin-bono">
-                                ⚪ Sin bono
+                                ⚪ Sin abono
                             </span>
 
                         {% elif alumno["creditos_disponibles"] == 0 %}
@@ -320,7 +320,7 @@
 
                         <br>
                         <a href="{{ url_for('nuevo_bono_admin', alumno_id=alumno['id']) }}">
-                            ➕ Cargar bono
+                            ➕ Cargar Abono
                         </a>
                         
                     </td>
