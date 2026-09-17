@@ -851,8 +851,6 @@ def registrar_asistencia_admin(clase_id):
 
             bono = cursor.fetchone()
 
-            print("Bono encontrado:", bono)
-
             cursor.execute("""
                 SELECT id
                 FROM asistencias
@@ -1955,6 +1953,40 @@ def cancelar_inscripcion_alumno(clase_id):
             )
         )
 
+# Verificar que todavía esté dentro del plazo de cancelación
+    cursor.execute("""
+        SELECT fecha, hora_inicio
+        FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return redirect(
+            url_for(
+                "mis_clases",
+                mensaje="La clase no existe."
+            )
+        )
+
+    inicio_clase = datetime.fromisoformat(
+        f"{clase['fecha']} {clase['hora_inicio']}"
+    )
+
+    limite_cancelacion = inicio_clase - timedelta(minutes=10)
+
+    if datetime.now() > limite_cancelacion:
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mis_clases",
+                mensaje="Ya no podés cancelar la inscripción. El límite es 10 minutos antes de la clase."
+            )
+        )
+
     # Cancelar inscripción
     cursor.execute("""
         UPDATE inscripciones
@@ -2023,6 +2055,8 @@ def ver_inscriptos_alumno(clase_id):
 @app.route("/mis-inscripciones")
 def mis_inscripciones():
 
+    mensaje = request.args.get("mensaje")
+
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
 
@@ -2065,7 +2099,8 @@ def mis_inscripciones():
 
     return render_template(
         "mis_inscripciones.html",
-        inscripciones=inscripciones
+        inscripciones=inscripciones,
+        mensaje=mensaje
     )
 
 @app.route("/mi-bono")
@@ -2378,12 +2413,20 @@ def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
 
     # Buscar la inscripción y comprobar que pertenece al alumno
     cursor.execute("""
-        SELECT id
+        SELECT
+            inscripciones.id,
+            clases.fecha,
+            clases.hora_inicio
         FROM inscripciones
-        WHERE id = ?
-          AND alumno_id = ?
-          AND estado = 'Inscripto'
-    """, (inscripcion_id, alumno["id"]))
+        INNER JOIN clases
+            ON inscripciones.clase_id = clases.id
+        WHERE inscripciones.id = ?
+          AND inscripciones.alumno_id = ?
+          AND inscripciones.estado = 'Inscripto'
+    """, (
+        inscripcion_id,
+        alumno["id"]
+    ))
 
     inscripcion = cursor.fetchone()
 
@@ -2393,6 +2436,23 @@ def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
         return redirect(
             url_for(
                 "mis_inscripciones"
+            )
+        )
+
+    # Verificar que todavía esté dentro del plazo de cancelación
+    inicio_clase = datetime.fromisoformat(
+        f"{inscripcion['fecha']} {inscripcion['hora_inicio']}"
+    )
+
+    limite_cancelacion = inicio_clase - timedelta(minutes=10)
+
+    if datetime.now() > limite_cancelacion:
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mis_inscripciones",
+                mensaje="Ya no podés cancelar la inscripción. El límite es 10 minutos antes de la clase."
             )
         )
 

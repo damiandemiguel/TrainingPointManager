@@ -101,6 +101,15 @@
             background-color: #444;
         }
 
+        .mensaje {
+            background-color: #fff3cd;
+            color: #664d03;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
         @media (max-width: 700px) {
 
             .inscripciones {
@@ -143,6 +152,14 @@
         </p>
 
     </div>
+
+    {% if mensaje %}
+
+        <div class="mensaje">
+            ⚠️ {{ mensaje }}
+        </div>
+
+    {% endif %}
 
 
     {% if inscripciones %}
