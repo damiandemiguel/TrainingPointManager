@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi cuenta - Training Point</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #222;
+        }
+
+        .contenedor {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .tarjeta {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .tarjeta h2 {
+            margin-top: 0;
+        }
+
+        .dato {
+            margin-bottom: 15px;
+        }
+
+        .dato strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .rol {
+            display: inline-block;
+            background-color: #eee;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        .boton-guardar {
+            width: 100%;
+            margin-top: 22px;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background-color: #222;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-guardar:hover {
+            background-color: #444;
+        }
+
+        .mensaje {
+            background-color: #e7f6e7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .error {
+            background-color: #fde8e8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .ayuda {
+            color: #777;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .encabezado {
+                padding: 20px 15px;
+            }
+
+            .tarjeta {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+        <h1>👤 Mi cuenta</h1>
+        <p>Datos de acceso y seguridad</p>
+    </div>
+
+    <div class="acciones-superiores">
+
+        {% if usuario["rol"] == "administrador" %}
+
+            <a href="{{ url_for('panel') }}"
+               class="boton-superior">
+                ⬅️ Volver al panel
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('panel_alumno') }}"
+               class="boton-superior">
+                ⬅️ Volver al panel
+            </a>
+
+        {% endif %}
+
+    </div>
+
+    <div class="tarjeta">
+
+        <h2>Datos de la cuenta</h2>
+
+        <div class="dato">
+            <strong>Usuario</strong>
+            {{ usuario["usuario"] }}
+        </div>
+
+        <div class="dato">
+            <strong>Tipo de cuenta</strong>
+
+            <span class="rol">
+                {% if usuario["rol"] == "administrador" %}
+                    Administrador
+                {% else %}
+                    Alumno
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+    <div class="tarjeta">
+
+        <h2>🔐 Cambiar contraseña</h2>
+
+        {% if mensaje %}
+            <div class="mensaje">
+                {{ mensaje }}
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <label for="password_actual">
+                Contraseña actual
+            </label>
+
+            <input
+                type="password"
+                id="password_actual"
+                name="password_actual"
+                autocomplete="current-password"
+                required
+            >
+
+            <label for="password_nueva">
+                Nueva contraseña
+            </label>
+
+            <input
+                type="password"
+                id="password_nueva"
+                name="password_nueva"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
+
+            <div class="ayuda">
+                Debe tener al menos 6 caracteres.
+            </div>
+
+            <label for="confirmar_password">
+                Repetir nueva contraseña
+            </label>
+
+            <input
+                type="password"
+                id="confirmar_password"
+                name="confirmar_password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
+
+            <button
+                type="submit"
+                class="boton-guardar"
+            >
+                🔐 Actualizar contraseña
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

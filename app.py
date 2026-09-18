@@ -486,6 +486,85 @@ def rutinas_alumno():
         clases=clases
     )
 
+@app.route("/mi-cuenta", methods=["GET", "POST"])
+def mi_cuenta():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, usuario, password, rol
+        FROM usuarios
+        WHERE id = ?
+    """, (session["usuario_id"],))
+
+    usuario = cursor.fetchone()
+
+    if usuario is None:
+        conexion.close()
+        session.clear()
+        return redirect(url_for("inicio"))
+
+    mensaje = None
+    error = None
+
+    if request.method == "POST":
+
+        password_actual = request.form.get("password_actual", "")
+        password_nueva = request.form.get("password_nueva", "")
+        confirmar_password = request.form.get("confirmar_password", "")
+
+        if not check_password_hash(
+            usuario["password"],
+            password_actual
+        ):
+            error = "La contraseña actual no es correcta."
+
+        elif len(password_nueva) < 6:
+            error = "La nueva contraseña debe tener al menos 6 caracteres."
+
+        elif password_nueva != confirmar_password:
+            error = "Las nuevas contraseñas no coinciden."
+
+        else:
+            password_segura = generate_password_hash(password_nueva)
+
+            cursor.execute("""
+                UPDATE usuarios
+                SET password = ?
+                WHERE id = ?
+            """, (
+                password_segura,
+                session["usuario_id"]
+            ))
+
+            conexion.commit()
+
+            mensaje = "Contraseña actualizada correctamente."
+
+            # Actualizamos el dato leído para mantener
+            # la información de la cuenta consistente.
+            cursor.execute("""
+                SELECT id, usuario, password, rol
+                FROM usuarios
+                WHERE id = ?
+            """, (session["usuario_id"],))
+
+            usuario = cursor.fetchone()
+
+    conexion.close()
+
+    return render_template(
+        "mi_cuenta.html",
+        usuario=usuario,
+        mensaje=mensaje,
+        error=error
+    )
+
 @app.route("/cerrar-sesion")
 def cerrar_sesion():
 
