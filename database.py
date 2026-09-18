@@ -269,3 +269,68 @@ def crear_tabla_notificaciones():
 
     conexion.commit()
     conexion.close()
+
+def crear_tabla_configuracion():
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS configuracion (
+            clave TEXT PRIMARY KEY,
+            valor TEXT
+        )
+    """)
+
+    valores_iniciales = [
+        ("nombre_training_point", "Training Point"),
+        ("telefono", ""),
+        ("direccion", ""),
+        ("instagram", "@trainingpoint._"),
+        ("cupo_predeterminado", "30"),
+        ("minutos_cancelacion", "10")
+    ]
+
+    cursor.executemany("""
+        INSERT OR IGNORE INTO configuracion (clave, valor)
+        VALUES (?, ?)
+    """, valores_iniciales)
+
+    conexion.commit()
+    conexion.close()
+
+
+def crear_tabla_horarios_habituales():
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS horarios_habituales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            hora_inicio TEXT NOT NULL,
+            hora_fin TEXT NOT NULL,
+            activo INTEGER NOT NULL DEFAULT 1
+        )
+    """)
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM horarios_habituales
+    """)
+
+    cantidad = cursor.fetchone()[0]
+
+    if cantidad == 0:
+        cursor.executemany("""
+            INSERT INTO horarios_habituales (
+                hora_inicio,
+                hora_fin,
+                activo
+            )
+            VALUES (?, ?, 1)
+        """, [
+            ("18:30", "19:30"),
+            ("19:30", "20:30")
+        ])
+
+    conexion.commit()
+    conexion.close()

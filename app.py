@@ -14,7 +14,9 @@ from database import (
     crear_tabla_inscripciones,
     crear_tabla_asistencias,
     crear_tabla_rutinas,
-    crear_tabla_notificaciones
+    crear_tabla_notificaciones,
+    crear_tabla_configuracion,
+    crear_tabla_horarios_habituales
 )
 
 app = Flask(__name__)
@@ -62,6 +64,8 @@ crear_tabla_inscripciones()
 crear_tabla_asistencias()
 crear_tabla_rutinas()
 crear_tabla_notificaciones()
+crear_tabla_configuracion()
+crear_tabla_horarios_habituales()
 
 def archivo_permitido(nombre):
 
@@ -834,7 +838,32 @@ def nueva_clase():
             )
         )
 
-    return render_template("nueva_clase_admin.html")
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT valor
+        FROM configuracion
+        WHERE clave = 'cupo_predeterminado'
+    """)
+
+    fila = cursor.fetchone()
+
+    conexion.close()
+
+    cupo_predeterminado = 30
+
+    if fila is not None:
+        try:
+            cupo_predeterminado = int(fila["valor"])
+        except (ValueError, TypeError):
+            cupo_predeterminado = 30
+
+    return render_template(
+        "nueva_clase_admin.html",
+        cupo_predeterminado=cupo_predeterminado
+    )
 
 @app.route("/clases/<int:clase_id>/editar", methods=["GET", "POST"])
 def editar_clase(clase_id):
@@ -1370,6 +1399,129 @@ def anular_asistencia_admin(asistencia_id):
 
     return redirect(
         url_for("asistencias_admin")
+    )
+
+@app.route("/admin/configuracion", methods=["GET", "POST"])
+def configuracion_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    mensaje = None
+    error = None
+
+    if request.method == "POST":
+
+        nombre = request.form.get(
+            "nombre_training_point", ""
+        ).strip()
+
+        telefono = request.form.get(
+            "telefono", ""
+        ).strip()
+
+        direccion = request.form.get(
+            "direccion", ""
+        ).strip()
+
+        instagram = request.form.get(
+            "instagram", ""
+        ).strip()
+
+        cupo = request.form.get(
+            "cupo_predeterminado", ""
+        ).strip()
+
+        minutos = request.form.get(
+            "minutos_cancelacion", ""
+        ).strip()
+
+        try:
+            cupo_numero = int(cupo)
+            minutos_numero = int(minutos)
+
+            if not nombre:
+                error = "El nombre es obligatorio."
+
+            elif cupo_numero < 1:
+                error = "El cupo predeterminado debe ser mayor a 0."
+
+            elif minutos_numero < 0:
+                error = "Los minutos de cancelación no pueden ser negativos."
+
+            else:
+
+                valores = {
+                    "nombre_training_point": nombre,
+                    "telefono": telefono,
+                    "direccion": direccion,
+                    "instagram": instagram,
+                    "cupo_predeterminado": str(cupo_numero),
+                    "minutos_cancelacion": str(minutos_numero)
+                }
+
+                for clave, valor in valores.items():
+
+                    cursor.execute("""
+                        UPDATE configuracion
+                        SET valor = ?
+                        WHERE clave = ?
+                    """, (
+                        valor,
+                        clave
+                    ))
+
+                conexion.commit()
+
+                mensaje = "Configuración actualizada correctamente."
+
+        except ValueError:
+            error = "Cupo y minutos de cancelación deben ser números válidos."
+
+    cursor.execute("""
+        SELECT clave, valor
+        FROM configuracion
+    """)
+
+    filas = cursor.fetchall()
+
+    configuracion = {
+        fila["clave"]: fila["valor"]
+        for fila in filas
+    }
+
+    cursor.execute("""
+        SELECT *
+        FROM horarios_habituales
+        ORDER BY hora_inicio ASC
+    """)
+
+    horarios = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT *
+        FROM tipos_bono
+        ORDER BY id ASC
+    """)
+
+    tipos_bono = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "configuracion_admin.html",
+        configuracion=configuracion,
+        horarios=horarios,
+        tipos_bono=tipos_bono,
+        mensaje=mensaje,
+        error=error
     )
 
 @app.route("/clases/<int:clase_id>/inscribir", methods=["GET", "POST"])
@@ -2214,7 +2366,25 @@ def cancelar_inscripcion_alumno(clase_id):
         f"{clase['fecha']} {clase['hora_inicio']}"
     )
 
-    limite_cancelacion = inicio_clase - timedelta(minutes=10)
+    cursor.execute("""
+        SELECT valor
+        FROM configuracion
+        WHERE clave = 'minutos_cancelacion'
+    """)
+
+    fila_configuracion = cursor.fetchone()
+
+    minutos_cancelacion = 10
+
+    if fila_configuracion is not None:
+        try:
+            minutos_cancelacion = int(fila_configuracion["valor"])
+        except (ValueError, TypeError):
+            minutos_cancelacion = 10
+
+    limite_cancelacion = inicio_clase - timedelta(
+        minutes=minutos_cancelacion
+    )
 
     if datetime.now() > limite_cancelacion:
         conexion.close()
@@ -2222,7 +2392,11 @@ def cancelar_inscripcion_alumno(clase_id):
         return redirect(
             url_for(
                 "mis_clases",
-                mensaje="Ya no podés cancelar la inscripción. El límite es 10 minutos antes de la clase."
+                mensaje=(
+                    "Ya no podés cancelar la inscripción. "
+                    f"El límite es {minutos_cancelacion} minutos "
+                    "antes de la clase."
+                )
             )
         )
 
@@ -2683,7 +2857,25 @@ def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
         f"{inscripcion['fecha']} {inscripcion['hora_inicio']}"
     )
 
-    limite_cancelacion = inicio_clase - timedelta(minutes=10)
+    cursor.execute("""
+        SELECT valor
+        FROM configuracion
+        WHERE clave = 'minutos_cancelacion'
+    """)
+
+    fila_configuracion = cursor.fetchone()
+
+    minutos_cancelacion = 10
+
+    if fila_configuracion is not None:
+        try:
+            minutos_cancelacion = int(fila_configuracion["valor"])
+        except (ValueError, TypeError):
+            minutos_cancelacion = 10
+
+    limite_cancelacion = inicio_clase - timedelta(
+        minutes=minutos_cancelacion
+    )
 
     if datetime.now() > limite_cancelacion:
         conexion.close()
@@ -2691,7 +2883,11 @@ def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
         return redirect(
             url_for(
                 "mis_inscripciones",
-                mensaje="Ya no podés cancelar la inscripción. El límite es 10 minutos antes de la clase."
+                mensaje=(
+                    "Ya no podés cancelar la inscripción. "
+                    f"El límite es {minutos_cancelacion} minutos "
+                    "antes de la clase."
+                )
             )
         )
 

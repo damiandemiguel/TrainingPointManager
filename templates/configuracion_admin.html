@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Configuración - Training Point</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #222;
+        }
+
+        .contenedor {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .seccion {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .seccion h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .descripcion-seccion {
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 22px;
+        }
+
+        .grilla {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .campo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .campo input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .campo input:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        .boton-guardar {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 8px;
+            background-color: #222;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-guardar:hover {
+            background-color: #444;
+        }
+
+        .mensaje {
+            background-color: #e7f6e7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .error {
+            background-color: #fde8e8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .lista {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .item-principal {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .titulo-item {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .detalle {
+            color: #666;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        .estado {
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .activo {
+            background-color: #e7f6e7;
+        }
+
+        .inactivo {
+            background-color: #eee;
+            color: #666;
+        }
+
+        @media (max-width: 650px) {
+
+            body {
+                padding: 12px;
+            }
+
+            .encabezado {
+                padding: 20px 15px;
+            }
+
+            .seccion {
+                padding: 18px;
+            }
+
+            .grilla {
+                grid-template-columns: 1fr;
+            }
+
+            .item-principal {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+        <h1>⚙️ Configuración</h1>
+        <p>Parámetros generales de Training Point</p>
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a href="{{ url_for('panel') }}"
+           class="boton-superior">
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+
+    <div class="seccion">
+
+        <h2>🏢 Training Point</h2>
+
+        <p class="descripcion-seccion">
+            Datos generales del espacio de entrenamiento.
+        </p>
+
+        {% if mensaje %}
+            <div class="mensaje">
+                {{ mensaje }}
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="grilla">
+
+                <div class="campo">
+                    <label for="nombre_training_point">
+                        Nombre
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre_training_point"
+                        name="nombre_training_point"
+                        value="{{ configuracion.get('nombre_training_point', '') }}"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="instagram">
+                        Instagram
+                    </label>
+
+                    <input
+                        type="text"
+                        id="instagram"
+                        name="instagram"
+                        value="{{ configuracion.get('instagram', '') }}"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="telefono">
+                        Teléfono
+                    </label>
+
+                    <input
+                        type="text"
+                        id="telefono"
+                        name="telefono"
+                        value="{{ configuracion.get('telefono', '') }}"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="direccion">
+                        Dirección
+                    </label>
+
+                    <input
+                        type="text"
+                        id="direccion"
+                        name="direccion"
+                        value="{{ configuracion.get('direccion', '') }}"
+                    >
+                </div>
+
+            </div>
+
+
+            <h2 style="margin-top: 30px;">
+                🏋️ Clases e inscripciones
+            </h2>
+
+            <p class="descripcion-seccion">
+                Valores predeterminados utilizados por la aplicación.
+            </p>
+
+            <div class="grilla">
+
+                <div class="campo">
+                    <label for="cupo_predeterminado">
+                        Cupo predeterminado
+                    </label>
+
+                    <input
+                        type="number"
+                        id="cupo_predeterminado"
+                        name="cupo_predeterminado"
+                        min="1"
+                        value="{{ configuracion.get('cupo_predeterminado', '30') }}"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="minutos_cancelacion">
+                        Cancelación permitida hasta
+                    </label>
+
+                    <input
+                        type="number"
+                        id="minutos_cancelacion"
+                        name="minutos_cancelacion"
+                        min="0"
+                        value="{{ configuracion.get('minutos_cancelacion', '10') }}"
+                        required
+                    >
+
+                    <div class="detalle">
+                        Minutos antes del inicio de la clase.
+                    </div>
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="boton-guardar"
+            >
+                💾 Guardar configuración
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="seccion">
+
+        <h2>🕐 Horarios habituales</h2>
+
+        <p class="descripcion-seccion">
+            Turnos utilizados habitualmente en Training Point.
+        </p>
+
+        <div class="lista">
+
+            {% for horario in horarios %}
+
+                <div class="item">
+
+                    <div class="item-principal">
+
+                        <div>
+
+                            <div class="titulo-item">
+                                {{ horario["hora_inicio"] }}
+                                —
+                                {{ horario["hora_fin"] }}
+                            </div>
+
+                        </div>
+
+                        {% if horario["activo"] %}
+
+                            <span class="estado activo">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            <span class="estado inactivo">
+                                Inactivo
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <div class="seccion">
+
+        <h2>💳 Tipos de abono</h2>
+
+        <p class="descripcion-seccion">
+            Abonos disponibles para los alumnos.
+        </p>
+
+        <div class="lista">
+
+            {% for bono in tipos_bono %}
+
+                <div class="item">
+
+                    <div class="item-principal">
+
+                        <div>
+
+                            <div class="titulo-item">
+                                {{ bono["nombre"] }}
+                            </div>
+
+                            <div class="detalle">
+                                {{ bono["creditos"] }} crédito(s)
+                                ·
+                                ${{ "%.0f"|format(bono["precio"]) }}
+                                ·
+                                {{ bono["duracion_dias"] }} días
+                            </div>
+
+                        </div>
+
+                        {% if bono["activo"] %}
+
+                            <span class="estado activo">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            <span class="estado inactivo">
+                                Inactivo
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
