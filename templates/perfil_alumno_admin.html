@@ -21,23 +21,61 @@
         }
 
         .contenedor {
-            width: 90%;
-            max-width: 700px;
+            width: 92%;
+            max-width: 900px;
             margin: 40px auto;
-            background-color: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
-        h1 {
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
             text-align: center;
-            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .tarjeta-perfil {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+            margin-bottom: 25px;
         }
 
         .foto {
             text-align: center;
-            margin: 25px 0;
+            margin-bottom: 25px;
         }
 
         .foto img,
@@ -56,59 +94,127 @@
             font-size: 70px;
         }
 
+        .nombre-alumno {
+            text-align: center;
+            margin: 0 0 25px 0;
+            font-size: 24px;
+        }
+
+        .titulo-seccion {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+
+        .datos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
         .dato {
-            padding: 15px 0;
-            border-bottom: 1px solid #ddd;
+            background-color: #f7f7f7;
+            padding: 16px;
+            border-radius: 10px;
+            min-height: 75px;
+        }
+
+        .dato-completo {
+            grid-column: 1 / -1;
         }
 
         .etiqueta {
             display: block;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 5px;
-            color: #666;
+            text-transform: uppercase;
+            color: #777;
+            margin-bottom: 7px;
         }
 
-        .activo {
-            color: green;
+        .estado {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: bold;
         }
 
-        .inactivo {
-            color: red;
+        .estado-verde {
+            background-color: #e6f4ea;
+            color: #16803c;
+        }
+
+        .estado-rojo {
+            background-color: #fde8e8;
+            color: #b00020;
+        }
+
+        .certificado-detalle {
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        .boton-certificado {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
             font-weight: bold;
         }
 
-        .botones {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 30px;
+        .boton-certificado:hover {
+            background-color: #444;
         }
 
-        .boton {
-            flex: 1;
-            min-width: 150px;
-            padding: 12px 18px;
+        .tarjeta-acciones {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        .acciones-admin {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .accion-admin {
+            padding: 16px;
+            border-radius: 10px;
             background-color: #222;
             color: white;
             text-decoration: none;
             text-align: center;
-            border-radius: 8px;
+            font-weight: bold;
         }
 
-        .boton:hover {
+        .accion-admin:hover {
             background-color: #444;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
 
             .contenedor {
-                width: 92%;
-                padding: 25px;
+                width: 94%;
+                margin: 20px auto;
             }
 
-            .botones {
-                flex-direction: column;
+            .tarjeta-perfil,
+            .tarjeta-acciones {
+                padding: 20px;
+            }
+
+            .datos,
+            .acciones-admin {
+                grid-template-columns: 1fr;
+            }
+
+            .dato-completo {
+                grid-column: auto;
             }
 
         }
@@ -121,153 +227,264 @@
 
 <div class="contenedor">
 
-    <h1>Perfil del alumno</h1>
+    <div class="encabezado">
 
-    <div class="foto">
+        <h1>👤 Perfil del alumno</h1>
 
-        {% if alumno.foto_perfil %}
-
-            <img
-                src="{{ url_for("static", filename="uploads/perfiles/" + alumno.foto_perfil) }}"
-                alt="Foto del alumno"
-            >
-
-        {% else %}
-
-            <div class="silueta">👤</div>
-
-        {% endif %}
+        <p>
+            Información y gestión del alumno
+        </p>
 
     </div>
 
-    <div class="dato">
-        <span class="etiqueta">Nombre</span>
-        {{ alumno.nombre }}
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('mostrar_alumnos') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver a alumnos
+        </a>
+
     </div>
 
-    <div class="dato">
-        <span class="etiqueta">E-mail</span>
-        {{ alumno.email }}
-    </div>
+    <div class="tarjeta-perfil">
 
-    <div class="dato">
-        <span class="etiqueta">Fecha de nacimiento</span>
-        {{ alumno.fecha_nacimiento }}
-    </div>
+        <div class="foto">
 
-    <div class="dato">
-        <span class="etiqueta">Teléfono</span>
-        {{ alumno.telefono }}
-    </div>
+            {% if alumno.foto_perfil %}
 
-    <div class="dato">
-        <span class="etiqueta">Dirección</span>
-        {{ alumno.direccion }}
-    </div>
+                <img
+                    src="{{ url_for('static', filename='uploads/perfiles/' + alumno.foto_perfil) }}"
+                    alt="Foto del alumno"
+                >
 
-    <div class="dato">
-        <span class="etiqueta">Certificado médico</span>
+            {% else %}
 
-        {% if alumno.certificado_medico %}
+                <div class="silueta">👤</div>
 
-            {% if alumno.fecha_certificado and not certificado_vencido %}
-
-            <strong style="display: block; margin-bottom: 8px; color: #16803c;">
-                🟢 Estado: Vigente
-            </strong>
-
-        {% else %}
-
-            <strong style="display: block; margin-bottom: 8px; color: #b00020;">
-                🔴 Estado: Vencido
-            </strong>
-
-    {% endif %}
-
-            <div style="margin-top: 8px;">
-                📄 <strong>Archivo:</strong>
-                {{ alumno.certificado_medico }}
-            </div>
-
-            {% if alumno.fecha_certificado %}
-            <div style="margin-top: 6px;">
-                📅 <strong>Fecha de carga:</strong>
-                {{ alumno.fecha_certificado[:10] | replace("-", "/") }}
-            </div>
             {% endif %}
 
-            <div style="margin-top: 12px;">
-                <a
-                    href="{{ url_for('static', filename='uploads/certificados/' + alumno.certificado_medico) }}"
-                    target="_blank"
-                    class="boton"
-                >
-                    📄 Ver certificado
-                </a>
+        </div>
+
+        <h2 class="nombre-alumno">
+            {{ alumno.nombre }}
+        </h2>
+
+        <h3 class="titulo-seccion">
+            Información personal
+        </h3>
+
+        <div class="datos">
+
+            <div class="dato">
+                <span class="etiqueta">Nombre</span>
+                {{ alumno.nombre }}
             </div>
 
-        {% else %}
+            <div class="dato">
+                <span class="etiqueta">E-mail</span>
+                {{ alumno.email or "No informado" }}
+            </div>
 
-            <span style="color: #b00020;">
-                🔴 No presentado
-            </span>
+            <div class="dato">
+                <span class="etiqueta">Fecha de nacimiento</span>
 
-        {% endif %}
+                {% if alumno.fecha_nacimiento %}
+                    {{ alumno.fecha_nacimiento[8:10] }}/{{ alumno.fecha_nacimiento[5:7] }}/{{ alumno.fecha_nacimiento[0:4] }}
+                {% else %}
+                    No informada
+                {% endif %}
+            </div>
+
+            <div class="dato">
+                <span class="etiqueta">Teléfono</span>
+                {{ alumno.telefono or "No informado" }}
+            </div>
+
+            <div class="dato dato-completo">
+                <span class="etiqueta">Dirección</span>
+                {{ alumno.direccion or "No informada" }}
+            </div>
+
+            <div class="dato">
+
+                <span class="etiqueta">Estado</span>
+
+                {% if alumno.activo == 1 %}
+
+                    <span class="estado estado-verde">
+                        🟢 Activo
+                    </span>
+
+                {% else %}
+
+                    <span class="estado estado-rojo">
+                        🔴 Inactivo
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <div class="dato">
+
+                <span class="etiqueta">Certificado médico</span>
+
+                {% if alumno.certificado_medico %}
+
+                    {% if alumno.fecha_certificado and not certificado_vencido %}
+
+                        <span class="estado estado-verde">
+                            🟢 Vigente
+                        </span>
+
+                    {% else %}
+
+                        <span class="estado estado-rojo">
+                            🔴 Vencido
+                        </span>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <span class="estado estado-rojo">
+                        🔴 No presentado
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            {% if alumno.certificado_medico %}
+
+                <div class="dato dato-completo">
+
+                    <span class="etiqueta">
+                        Detalle del certificado
+                    </span>
+
+                    <div class="certificado-detalle">
+
+                        <div>
+                            📄 <strong>Archivo:</strong>
+                            {{ alumno.certificado_medico }}
+                        </div>
+
+                        {% if alumno.fecha_certificado %}
+
+                            <div>
+                                📅 <strong>Fecha de carga:</strong>
+                                {{ alumno.fecha_certificado[8:10] }}/{{ alumno.fecha_certificado[5:7] }}/{{ alumno.fecha_certificado[0:4] }}
+                            </div>
+
+                        {% endif %}
+
+                        <a
+                            href="{{ url_for('static', filename='uploads/certificados/' + alumno.certificado_medico) }}"
+                            target="_blank"
+                            class="boton-certificado"
+                        >
+                            📄 Ver certificado
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
 
     </div>
 
-    <div class="dato">
-        <span class="etiqueta">Estado</span>
+    <div class="tarjeta-acciones">
 
-        {% if alumno.activo == 1 %}
-            <span class="activo">Activo</span>
-        {% else %}
-            <span class="inactivo">Inactivo</span>
-        {% endif %}
+        <h3 class="titulo-seccion">
+            Acciones administrativas
+        </h3>
 
-    </div>
+        <div class="acciones-admin">
 
-    <div class="botones">
+            <a
+                href="{{ url_for('editar_alumno_admin', alumno_id=alumno.id) }}"
+                class="accion-admin"
+            >
+                📝 Editar alumno
+            </a>
 
-        <a href="{{ url_for("editar_alumno_admin", alumno_id=alumno.id) }}" class="boton">
-            📝 Editar alumno
-        </a>
+            <a
+                href="{{ url_for('ficha_salud_admin', alumno_id=alumno.id) }}"
+                class="accion-admin"
+            >
+                🩺 Ficha de salud
+            </a>
 
-        <a
-            href="{{ url_for('ficha_salud_admin', alumno_id=alumno.id) }}"
-            class="boton"
-        >
-            🩺 Ficha de salud
-        </a>
+            <a
+                href="{{ url_for('bonos_alumno_admin', alumno_id=alumno.id) }}"
+                class="accion-admin"
+            >
+                🎟️ Abonos y créditos
+            </a>
 
-        <a
-            href="{{ url_for('bonos_alumno_admin', alumno_id=alumno.id) }}"
-            class="boton"
-        >
-            🎟️ Abonos y créditos
-        </a>
+            <a
+                href="{{ url_for('asistencias_alumno_admin', alumno_id=alumno.id) }}"
+                class="accion-admin"
+            >
+                🏃 Asistencias
+            </a>
 
-        <a
-            href="{{ url_for('asistencias_alumno_admin', alumno_id=alumno.id) }}"
-            class="boton"
-        >
-            🏃 Asistencias
-        </a>
+            <a
+                href="{{ url_for('pagos_alumno_admin', alumno_id=alumno.id) }}"
+                class="accion-admin"
+            >
+                💳 Pagos
+            </a>
 
-        <a
-            href="{{ url_for('pagos_alumno_admin', alumno_id=alumno.id) }}"
-            class="boton"
-        >
-            💳 Pagos
-        </a>
-
-        <a href="{{ url_for("mostrar_alumnos") }}" class="boton">
-            ⬅️ Volver
-        </a>
+        </div>
 
     </div>
 
 </div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const claveScroll = "perfilAlumnoAdminScroll_{{ alumno.id }}";
+
+        const posicionGuardada = sessionStorage.getItem(claveScroll);
+
+        if (posicionGuardada !== null) {
+
+            window.scrollTo(
+                0,
+                parseInt(posicionGuardada)
+            );
+
+            sessionStorage.removeItem(claveScroll);
+
+        }
+
+        const accionesAdmin = document.querySelectorAll(".acciones-admin a");
+
+        accionesAdmin.forEach(function (enlace) {
+
+            enlace.addEventListener("click", function () {
+
+                sessionStorage.setItem(
+                    claveScroll,
+                    window.scrollY
+                );
+
+            });
+
+        });
+
+    });
+
+</script>
 
 </body>
 
