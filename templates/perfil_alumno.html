@@ -8,83 +8,99 @@
     <title>Mi perfil - Training Point</title>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
             padding: 0;
+            color: #222;
         }
 
         .contenedor {
-            width: 90%;
-            max-width: 700px;
-            margin: 50px auto;
-            background-color: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
         }
 
-        h1 {
-            margin-top: 0;
-            text-align: center;
-        }
+        /* ENCABEZADO */
 
-        .subtitulo {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .dato {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .dato:last-child {
-            border-bottom: none;
-        }
-
-        .etiqueta {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .volver {
-            display: block;
-            width: fit-content;
-            margin: 30px auto 0;
-            padding: 12px 20px;
+        .encabezado {
             background-color: #222;
             color: white;
-            text-decoration: none;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
         }
 
-        .volver:hover {
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        /* VOLVER */
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
             background-color: #444;
+        }
+
+        /* TARJETA DE PERFIL */
+
+        .tarjeta-perfil {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            margin-bottom: 25px;
+            text-align: center;
         }
 
         .foto-perfil {
             display: flex;
             justify-content: center;
-            margin: 25px 0;
+            margin-bottom: 20px;
         }
 
         .foto-perfil img,
         .silueta {
-            width: 140px;
-            height: 140px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
         }
 
         .foto-perfil img {
             object-fit: cover;
+            border: 4px solid #f2f2f2;
         }
 
         .silueta {
-            background-color: #d9d9d9;
+            background-color: #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,9 +108,10 @@
             color: #888;
         }
 
+        /* CAMBIO DE FOTO */
+
         .form-foto {
-            margin-top: 20px;
-            text-align: center;
+            margin-top: 10px;
         }
 
         .form-foto label {
@@ -104,12 +121,17 @@
             color: white;
             border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-foto label:hover {
+            background-color: #444;
         }
 
         .form-foto input[type="file"] {
             display: block;
-            margin: 10px auto 15px;
+            margin: 12px auto;
+            max-width: 100%;
         }
 
         .form-foto button {
@@ -119,36 +141,110 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         .form-foto button:hover {
-    background-color: #444;
+            background-color: #444;
         }
 
-        .foto-perfil {
+        /* ACCESOS */
+
+        .accesos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .acceso {
+            display: block;
+            padding: 13px 18px;
+            border-radius: 8px;
+            background-color: #f2f2f2;
+            color: #222;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+
+        .acceso:hover {
+            background-color: #e4e4e4;
+        }
+
+        /* INFORMACION */
+
+        .titulo-seccion {
             text-align: center;
-            margin-bottom: 25px;
+            margin: 30px 0 18px;
         }
 
-        .foto-perfil img,
-        .silueta {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
+        .datos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
         }
 
-        .silueta {
-            margin: 0 auto;
-            background-color: #ddd;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-size: 70px;
+        .dato {
+            background-color: white;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            min-width: 0;
         }
-    
+
+        .etiqueta {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #777;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+        }
+
+        .valor {
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .estado-ok {
+            background-color: #e7f6ec;
+            color: #237a43;
+        }
+
+        .estado-alerta {
+            background-color: #fbe9e9;
+            color: #a52a2a;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 650px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .tarjeta-perfil {
+                padding: 22px 16px;
+            }
+
+            .datos,
+            .accesos {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
     </style>
 </head>
 
@@ -156,9 +252,28 @@
 
     <div class="contenedor">
 
-        <h1>Mi perfil</h1>
+        <div class="encabezado">
 
-        <div class="foto-perfil">
+            <h1>👤 Mi perfil</h1>
+
+            <p>
+                Información personal y datos de tu cuenta
+            </p>
+
+        </div>
+
+        <div class="acciones-superiores">
+
+            <a
+                href="{{ url_for('panel_alumno') }}"
+                class="boton-superior"
+            >
+                ⬅️ Volver al panel
+            </a>
+
+        </div>
+
+        <div class="tarjeta-perfil">
 
             <div class="foto-perfil">
 
@@ -179,90 +294,142 @@
 
             </div>
 
-        </div>
-
-        <form method="POST" enctype="multipart/form-data" class="form-foto">
-
-            <label for="foto">
-                Elegir foto
-            </label>
-
-            <input
-                type="file"
-                id="foto"
-                name="foto"
-                accept=".jpg,.jpeg,.png,.webp"
-                required
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                class="form-foto"
             >
 
-            <button type="submit">
-                Guardar foto
-            </button>
+                <label for="foto">
+                    📷 Elegir foto
+                </label>
 
-        </form>
+                <input
+                    type="file"
+                    id="foto"
+                    name="foto"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    required
+                >
 
-        <a href="{{ url_for("ficha_salud") }}" class="volver" style="margin-top: 15px;">🩺 Ficha de salud</a>
+                <button type="submit">
+                    Guardar foto
+                </button>
 
-        <a
-            href="{{ url_for('mis_clases') }}"
-            class="volver"
-            style="margin-top: 15px;"
-        >
-            📅 Mis clases
-        </a>
+            </form>
 
-        <p class="subtitulo">
+            <div class="accesos">
+
+                <a
+                    href="{{ url_for('ficha_salud') }}"
+                    class="acceso"
+                >
+                    🩺 Ficha de salud
+                </a>
+
+                <a
+                    href="{{ url_for('mis_clases') }}"
+                    class="acceso"
+                >
+                    📅 Mis clases
+                </a>
+
+            </div>
+
+        </div>
+
+        <h2 class="titulo-seccion">
             Información personal
-        </p>
+        </h2>
 
-        <div class="dato">
-            <span class="etiqueta">Nombre</span>
-            {{ alumno.nombre }}
+        <div class="datos">
+
+            <div class="dato">
+                <span class="etiqueta">Nombre</span>
+                <div class="valor">
+                    {{ alumno.nombre }}
+                </div>
+            </div>
+
+            <div class="dato">
+                <span class="etiqueta">Email</span>
+                <div class="valor">
+                    {{ alumno.email }}
+                </div>
+            </div>
+
+            <div class="dato">
+                <span class="etiqueta">Fecha de nacimiento</span>
+                <div class="valor">
+
+                    {% if alumno.fecha_nacimiento %}
+                        {{ alumno.fecha_nacimiento[8:10] }}/{{ alumno.fecha_nacimiento[5:7] }}/{{ alumno.fecha_nacimiento[0:4] }}
+                    {% else %}
+                        No informada
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="dato">
+                <span class="etiqueta">Teléfono</span>
+                <div class="valor">
+                    {{ alumno.telefono or "No informado" }}
+                </div>
+            </div>
+
+            <div class="dato">
+                <span class="etiqueta">Dirección</span>
+                <div class="valor">
+                    {{ alumno.direccion or "No informada" }}
+                </div>
+            </div>
+
+            <div class="dato">
+
+                <span class="etiqueta">
+                    Certificado médico
+                </span>
+
+                {% if alumno.certificado_medico %}
+
+                    <span class="estado estado-ok">
+                        🟢 Presentado
+                    </span>
+
+                {% else %}
+
+                    <span class="estado estado-alerta">
+                        🔴 No presentado
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <div class="dato">
+
+                <span class="etiqueta">
+                    Estado
+                </span>
+
+                {% if alumno.activo == 1 %}
+
+                    <span class="estado estado-ok">
+                        🟢 Activo
+                    </span>
+
+                {% else %}
+
+                    <span class="estado estado-alerta">
+                        🔴 Inactivo
+                    </span>
+
+                {% endif %}
+
+            </div>
+
         </div>
-
-        <div class="dato">
-            <span class="etiqueta">Email</span>
-            {{ alumno.email }}
-        </div>
-
-        <div class="dato">
-            <span class="etiqueta">Fecha de nacimiento</span>
-            {{ alumno.fecha_nacimiento }}
-        </div>
-
-        <div class="dato">
-            <span class="etiqueta">Teléfono</span>
-            {{ alumno.telefono }}
-        </div>
-
-        <div class="dato">
-            <span class="etiqueta">Dirección</span>
-            {{ alumno.direccion }}
-        </div>
-
-        <div class="dato">
-            <span class="etiqueta">Certificado médico</span>
-
-            {% if alumno.certificado_medico %}
-                Presentado
-            {% else %}
-                No presentado
-            {% endif %}
-        </div>
-
-        <div class="dato">
-            <span class="etiqueta">Estado</span>
-
-            {% if alumno.activo == 1 %}
-                Activo
-            {% else %}
-                Inactivo
-            {% endif %}
-        </div>
-
-        <a href="/panel" class="volver">
-            Volver
-        </a>
 
     </div>
 

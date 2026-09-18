@@ -207,12 +207,15 @@
         color: #666;
     }
 
-    .boton-volver {
-        display: block;
-        width: fit-content;
-        margin-top: 5px;
+    .acciones-superiores {
+        display: flex;
+        gap: 10px;
         margin-bottom: 25px;
-        padding: 12px 18px;
+    }
+
+    .boton-superior {
+        flex: 1;
+        padding: 13px 18px;
         border-radius: 8px;
         text-decoration: none;
         text-align: center;
@@ -221,7 +224,7 @@
         color: white;
     }
 
-    .boton-volver:hover {
+    .boton-superior:hover {
         background-color: #444;
     }
 
@@ -286,12 +289,16 @@
 
     </div>
 
-    <a
-        href="{{ url_for('panel_alumno') }}"
-        class="boton-volver"
-    >
-        ⬅️ Volver al panel
-    </a>
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
 
 
     {% if mensaje %}

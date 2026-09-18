@@ -91,10 +91,15 @@
             padding: 30px 20px;
         }
 
-        .volver {
-            display: block;
-            margin-top: 20px;
-            padding: 12px 18px;
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
             border-radius: 8px;
             text-decoration: none;
             text-align: center;
@@ -103,7 +108,7 @@
             color: white;
         }
 
-        .volver:hover {
+        .boton-superior:hover {
             background-color: #444;
         }
 
@@ -153,6 +158,17 @@
         <p>
             Historial de tus asistencias a clase
         </p>
+
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
 
     </div>
 
@@ -209,13 +225,6 @@
             </div>
 
         {% endif %}
-
-        <a
-            href="{{ url_for('panel_alumno') }}"
-            class="volver"
-        >
-            ⬅️ Volver al panel
-        </a>
 
     </div>
 

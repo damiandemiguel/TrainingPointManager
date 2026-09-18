@@ -40,6 +40,27 @@
             margin: 0 0 10px 0;
         }
 
+        .acciones-superiores {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .boton-superior {
+        flex: 1;
+        padding: 13px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        background-color: #222;
+        color: white;
+    }
+
+    .boton-superior:hover {
+        background-color: #444;
+    }
+
         .bono {
             background-color: white;
             border-radius: 12px;
@@ -222,6 +243,17 @@
 
     </div>
 
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
 
     {% if bono %}
 
@@ -396,13 +428,6 @@
 
 
     <div class="botones">
-
-        <a
-            href="{{ url_for('panel_alumno') }}"
-            class="boton"
-        >
-            ⬅️ Volver al panel
-        </a>
 
     </div>
 
