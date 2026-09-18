@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notificaciones - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .lista {
+            display: grid;
+            gap: 15px;
+        }
+
+        .notificacion {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        .superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .titulo {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .tipo {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .general {
+            background-color: #e8f0fe;
+            color: #2457a7;
+        }
+
+        .individual {
+            background-color: #f3e8ff;
+            color: #6f2da8;
+        }
+
+        .inactiva {
+            background-color: #eee;
+            color: #777;
+        }
+
+        .destinatario {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mensaje {
+            margin-top: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .fecha {
+            margin-top: 15px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .acciones {
+            margin-top: 18px;
+        }
+
+        .boton-desactivar {
+            border: none;
+            background-color: #eee;
+            color: #333;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-desactivar:hover {
+            background-color: #ddd;
+        }
+
+        .sin-notificaciones {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .acciones-superiores {
+                flex-direction: column;
+            }
+
+            .superior {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>🔔 Notificaciones</h1>
+
+        <p>
+            Administrá avisos generales e individuales
+        </p>
+
+    </div>
+
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+        <a
+            href="{{ url_for('nueva_notificacion_admin') }}"
+            class="boton-superior"
+        >
+            ➕ Nueva notificación
+        </a>
+
+    </div>
+
+
+    {% if notificaciones %}
+
+        <div class="lista">
+
+            {% for notificacion in notificaciones %}
+
+                <div class="notificacion">
+
+                    <div class="superior">
+
+                        <div class="titulo">
+                            {{ notificacion.titulo }}
+                        </div>
+
+
+                        {% if notificacion.activa == 0 %}
+
+                            <span class="tipo inactiva">
+                                ⚪ Inactiva
+                            </span>
+
+                        {% elif notificacion.tipo == "General" %}
+
+                            <span class="tipo general">
+                                📢 General
+                            </span>
+
+                        {% else %}
+
+                            <span class="tipo individual">
+                                👤 Individual
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="destinatario">
+
+                        {% if notificacion.tipo == "General" %}
+
+                            Para todos los alumnos
+
+                        {% else %}
+
+                            Para:
+                            {{ notificacion.nombre_alumno or "Alumno no disponible" }}
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="mensaje">{{ notificacion.mensaje }}</div>
+
+
+                    <div class="fecha">
+
+                        Creada:
+                        {{ notificacion.fecha_creacion[8:10] }}/{{ notificacion.fecha_creacion[5:7] }}/{{ notificacion.fecha_creacion[0:4] }}
+                        {{ notificacion.fecha_creacion[11:16] }}
+
+                    </div>
+
+
+                    {% if notificacion.activa == 1 %}
+
+                        <div class="acciones">
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('desactivar_notificacion_admin', notificacion_id=notificacion.id) }}"
+                                onsubmit="return confirm('¿Desactivar esta notificación?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="boton-desactivar"
+                                >
+                                    🔕 Desactivar
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-notificaciones">
+            Todavía no hay notificaciones creadas.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

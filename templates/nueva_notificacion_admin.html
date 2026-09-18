@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nueva notificación - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .tarjeta {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        .campo {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            background-color: white;
+        }
+
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .mensaje-error {
+            background-color: #fde8e8;
+            color: #b00020;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .ayuda {
+            margin-top: 7px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .guardar {
+            width: 100%;
+            border: none;
+            padding: 14px 18px;
+            border-radius: 8px;
+            background-color: #222;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .guardar:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .tarjeta {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>➕ Nueva notificación</h1>
+
+        <p>
+            Enviá un aviso a todos o a un alumno en particular
+        </p>
+
+    </div>
+
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('notificaciones_admin') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver a notificaciones
+        </a>
+
+    </div>
+
+
+    <div class="tarjeta">
+
+        {% if mensaje_error %}
+
+            <div class="mensaje-error">
+                {{ mensaje_error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <div class="campo">
+
+                <label for="tipo">
+                    Tipo de notificación
+                </label>
+
+                <select
+                    id="tipo"
+                    name="tipo"
+                    required
+                    onchange="actualizarAlumno()"
+                >
+
+                    <option value="">
+                        Seleccionar...
+                    </option>
+
+                    <option value="General">
+                        📢 General - Todos los alumnos
+                    </option>
+
+                    <option value="Individual">
+                        👤 Individual - Un alumno
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                class="campo"
+                id="campo-alumno"
+                style="display: none;"
+            >
+
+                <label for="alumno_id">
+                    Alumno
+                </label>
+
+                <select
+                    id="alumno_id"
+                    name="alumno_id"
+                >
+
+                    <option value="">
+                        Seleccionar alumno...
+                    </option>
+
+                    {% for alumno in alumnos %}
+
+                        <option value="{{ alumno.id }}">
+                            {{ alumno.nombre }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="titulo">
+                    Título
+                </label>
+
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    placeholder="Ej.: Cambio de horario"
+                    required
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="mensaje">
+                    Mensaje
+                </label>
+
+                <textarea
+                    id="mensaje"
+                    name="mensaje"
+                    placeholder="Escribí el aviso..."
+                    required
+                ></textarea>
+
+                <div class="ayuda">
+                    El alumno verá este mensaje en su sección de Notificaciones.
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="guardar"
+            >
+                🔔 Enviar notificación
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function actualizarAlumno() {
+
+        const tipo = document.getElementById("tipo").value;
+        const campoAlumno = document.getElementById("campo-alumno");
+        const alumno = document.getElementById("alumno_id");
+
+        if (tipo === "Individual") {
+
+            campoAlumno.style.display = "block";
+            alumno.required = true;
+
+        } else {
+
+            campoAlumno.style.display = "none";
+            alumno.required = false;
+            alumno.value = "";
+
+        }
+
+    }
+
+</script>
+
+</body>
+
+</html>

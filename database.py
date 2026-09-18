@@ -248,3 +248,24 @@ def crear_tabla_rutinas():
 
     conexion.commit()
     conexion.close()
+
+def crear_tabla_notificaciones():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS notificaciones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            alumno_id INTEGER,
+            titulo TEXT NOT NULL,
+            mensaje TEXT NOT NULL,
+            tipo TEXT NOT NULL,
+            fecha_creacion TEXT NOT NULL,
+            activa INTEGER NOT NULL DEFAULT 1,
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()

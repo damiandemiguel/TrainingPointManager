@@ -13,7 +13,8 @@ from database import (
     crear_tabla_movimientos_creditos,
     crear_tabla_inscripciones,
     crear_tabla_asistencias,
-    crear_tabla_rutinas
+    crear_tabla_rutinas,
+    crear_tabla_notificaciones
 )
 
 app = Flask(__name__)
@@ -60,6 +61,7 @@ crear_tabla_movimientos_creditos()
 crear_tabla_inscripciones()
 crear_tabla_asistencias()
 crear_tabla_rutinas()
+crear_tabla_notificaciones()
 
 def archivo_permitido(nombre):
 
@@ -3540,6 +3542,141 @@ def editar_rutina_admin(clase_id):
         rutina=rutina,
         mensaje=mensaje
     )
+
+@app.route("/admin/notificaciones")
+def notificaciones_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            notificaciones.*,
+            alumnos.nombre AS nombre_alumno
+        FROM notificaciones
+        LEFT JOIN alumnos
+            ON notificaciones.alumno_id = alumnos.id
+        ORDER BY notificaciones.fecha_creacion DESC
+    """)
+
+    notificaciones = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "notificaciones_admin.html",
+        notificaciones=notificaciones
+    )
+
+@app.route("/admin/notificaciones/nueva", methods=["GET", "POST"])
+def nueva_notificacion_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre
+        FROM alumnos
+        WHERE activo = 1
+        ORDER BY nombre ASC
+    """)
+
+    alumnos = cursor.fetchall()
+
+    mensaje_error = None
+
+    if request.method == "POST":
+
+        tipo = request.form.get("tipo", "").strip()
+        titulo = request.form.get("titulo", "").strip()
+        mensaje = request.form.get("mensaje", "").strip()
+        alumno_id = request.form.get("alumno_id", "").strip()
+
+        if tipo not in ("General", "Individual"):
+            mensaje_error = "Seleccioná un tipo de notificación."
+
+        elif not titulo or not mensaje:
+            mensaje_error = "El título y el mensaje son obligatorios."
+
+        elif tipo == "Individual" and not alumno_id:
+            mensaje_error = "Seleccioná un alumno."
+
+        else:
+
+            if tipo == "General":
+                alumno_id = None
+            else:
+                alumno_id = int(alumno_id)
+
+            ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            cursor.execute("""
+                INSERT INTO notificaciones (
+                    alumno_id,
+                    titulo,
+                    mensaje,
+                    tipo,
+                    fecha_creacion,
+                    activa
+                )
+                VALUES (?, ?, ?, ?, ?, 1)
+            """, (
+                alumno_id,
+                titulo,
+                mensaje,
+                tipo,
+                ahora
+            ))
+
+            conexion.commit()
+            conexion.close()
+
+            return redirect(url_for("notificaciones_admin"))
+
+    conexion.close()
+
+    return render_template(
+        "nueva_notificacion_admin.html",
+        alumnos=alumnos,
+        mensaje_error=mensaje_error
+    )
+
+@app.route("/admin/notificaciones/<int:notificacion_id>/desactivar", methods=["POST"])
+def desactivar_notificacion_admin(notificacion_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        UPDATE notificaciones
+        SET activa = 0
+        WHERE id = ?
+    """, (notificacion_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(url_for("notificaciones_admin"))
 
 if __name__ == "__main__":
     app.run(debug=True)
