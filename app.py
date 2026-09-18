@@ -330,6 +330,118 @@ def panel_alumno():
 
     return render_template("panel_alumno.html")
 
+@app.route("/notificaciones")
+def notificaciones_alumno():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    # Buscar al alumno correspondiente al usuario
+    cursor.execute("""
+        SELECT
+            id,
+            nombre,
+            fecha_certificado
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    # Notificaciones manuales:
+    # generales + individuales destinadas a este alumno
+    cursor.execute("""
+        SELECT *
+        FROM notificaciones
+        WHERE activa = 1
+          AND (
+                tipo = 'General'
+                OR (
+                    tipo = 'Individual'
+                    AND alumno_id = ?
+                )
+              )
+        ORDER BY fecha_creacion DESC
+    """, (alumno["id"],))
+
+    notificaciones = cursor.fetchall()
+
+    avisos_automaticos = []
+
+    hoy = datetime.now().date()
+
+    # Aviso automático de abono próximo a vencer
+    cursor.execute("""
+        SELECT
+            fecha_vencimiento,
+            creditos_disponibles
+        FROM bonos
+        WHERE alumno_id = ?
+          AND estado = 'Activo'
+        ORDER BY fecha_vencimiento ASC
+        LIMIT 1
+    """, (alumno["id"],))
+
+    bono = cursor.fetchone()
+
+    if bono and bono["fecha_vencimiento"]:
+
+        fecha_vencimiento = datetime.strptime(
+            bono["fecha_vencimiento"],
+            "%Y-%m-%d"
+        ).date()
+
+        dias_para_vencer = (fecha_vencimiento - hoy).days
+
+        if (
+            bono["creditos_disponibles"] > 0
+            and 1 <= dias_para_vencer <= 7
+        ):
+
+            avisos_automaticos.append({
+                "tipo": "Abono",
+                "titulo": "Tu abono vence próximamente",
+                "mensaje": (
+                    f"Tu abono vence el "
+                    f"{fecha_vencimiento.strftime('%d/%m/%Y')}. "
+                    f"Te quedan {dias_para_vencer} días."
+                )
+            })
+
+    # Aviso automático de certificado médico vencido
+    if alumno["fecha_certificado"] and fecha_vencida(
+        alumno["fecha_certificado"]
+    ):
+
+        avisos_automaticos.append({
+            "tipo": "Certificado",
+            "titulo": "Certificado médico vencido",
+            "mensaje": (
+                "Tu certificado médico se encuentra vencido. "
+                "Recordá presentar uno actualizado."
+            )
+        })
+
+    conexion.close()
+
+    return render_template(
+        "notificaciones_alumno.html",
+        notificaciones=notificaciones,
+        avisos_automaticos=avisos_automaticos
+    )
+
 @app.route("/rutinas")
 def rutinas_alumno():
 

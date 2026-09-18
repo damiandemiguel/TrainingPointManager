@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notificaciones - Training Point</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #222;
+        }
+
+        .contenedor {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .seccion {
+            margin-bottom: 30px;
+        }
+
+        .seccion h2 {
+            margin-bottom: 15px;
+        }
+
+        .notificacion {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .notificacion-automatica {
+            border-left: 5px solid #222;
+        }
+
+        .cabecera-notificacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .titulo-notificacion {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .general {
+            background-color: #e8f4ff;
+        }
+
+        .individual {
+            background-color: #f1e8ff;
+        }
+
+        .automatica {
+            background-color: #fff3cd;
+        }
+
+        .mensaje {
+            line-height: 1.5;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+
+        .fecha {
+            color: #777;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .vacio {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 12px;
+            }
+
+            .encabezado {
+                padding: 20px 15px;
+            }
+
+            .cabecera-notificacion {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .notificacion {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+        <h1>🔔 Notificaciones</h1>
+        <p>Avisos y novedades de Training Point</p>
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a href="{{ url_for('panel_alumno') }}"
+           class="boton-superior">
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+
+    {% if avisos_automaticos %}
+
+        <div class="seccion">
+
+            <h2>⚠️ Avisos importantes</h2>
+
+            {% for aviso in avisos_automaticos %}
+
+                <div class="notificacion notificacion-automatica">
+
+                    <div class="cabecera-notificacion">
+
+                        <p class="titulo-notificacion">
+                            {% if aviso.tipo == "Abono" %}
+                                💳
+                            {% elif aviso.tipo == "Certificado" %}
+                                📄
+                            {% else %}
+                                ⚠️
+                            {% endif %}
+
+                            {{ aviso.titulo }}
+                        </p>
+
+                        <span class="etiqueta automatica">
+                            Automático
+                        </span>
+
+                    </div>
+
+                    <div class="mensaje">
+                        {{ aviso.mensaje }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if notificaciones %}
+
+        <div class="seccion">
+
+            <h2>📬 Avisos de Training Point</h2>
+
+            {% for notificacion in notificaciones %}
+
+                <div class="notificacion">
+
+                    <div class="cabecera-notificacion">
+
+                        <p class="titulo-notificacion">
+                            {% if notificacion["tipo"] == "General" %}
+                                📢
+                            {% else %}
+                                👤
+                            {% endif %}
+
+                            {{ notificacion["titulo"] }}
+                        </p>
+
+                        {% if notificacion["tipo"] == "General" %}
+
+                            <span class="etiqueta general">
+                                General
+                            </span>
+
+                        {% else %}
+
+                            <span class="etiqueta individual">
+                                Para vos
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="mensaje">
+                        {{ notificacion["mensaje"] }}
+                    </div>
+
+                    <div class="fecha">
+                        {{ notificacion["fecha_creacion"][8:10] }}/{{ notificacion["fecha_creacion"][5:7] }}/{{ notificacion["fecha_creacion"][0:4] }}
+                        ·
+                        {{ notificacion["fecha_creacion"][11:16] }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if not avisos_automaticos and not notificaciones %}
+
+        <div class="vacio">
+            🔔 No tenés notificaciones por el momento.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
