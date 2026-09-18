@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rutina - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .tarjeta {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        .datos-clase {
+            background-color: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 400px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .campo {
+            margin-bottom: 22px;
+        }
+
+        .mensaje {
+            background-color: #fde8e8;
+            color: #b00020;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .guardar {
+            width: 100%;
+            border: none;
+            padding: 14px 18px;
+            border-radius: 8px;
+            background-color: #222;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .guardar:hover {
+            background-color: #444;
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .tarjeta {
+                padding: 20px;
+            }
+
+            textarea {
+                min-height: 350px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        {% if rutina %}
+            <h1>✏️ Editar rutina</h1>
+        {% else %}
+            <h1>➕ Cargar rutina</h1>
+        {% endif %}
+
+        <p>
+            Entrenamiento de Training Point
+        </p>
+
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('rutinas_admin') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver a rutinas
+        </a>
+
+    </div>
+
+    <div class="tarjeta">
+
+        <div class="datos-clase">
+
+            <strong>📅 Fecha:</strong>
+            {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
+
+            <br>
+
+            <strong>🕒 Horario:</strong>
+            {{ clase.hora_inicio }} - {{ clase.hora_fin }}
+
+        </div>
+
+
+        {% if mensaje %}
+
+            <div class="mensaje">
+                {{ mensaje }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <div class="campo">
+
+                <label for="titulo">
+                    Título
+                </label>
+
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    placeholder="Ej.: Full Body"
+                    value="{{ rutina.titulo if rutina else '' }}"
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="contenido">
+                    Entrenamiento
+                </label>
+
+                <textarea
+                    id="contenido"
+                    name="contenido"
+                    placeholder="Escribí acá el entrenamiento completo..."
+                    required
+                >{{ rutina.contenido if rutina else '' }}</textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="guardar"
+            >
+                💾 Guardar rutina
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

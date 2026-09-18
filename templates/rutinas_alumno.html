@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rutinas - Training Point</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .encabezado {
+            background-color: #222;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #ddd;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+        .lista-clases {
+            display: grid;
+            gap: 18px;
+        }
+
+        .clase {
+            background-color: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        .datos-clase {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .fecha {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .horario {
+            color: #666;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .disponible {
+            background-color: #e6f4ea;
+            color: #16803c;
+        }
+
+        .no-disponible {
+            background-color: #eee;
+            color: #666;
+        }
+
+        .rutina {
+            border-top: 1px solid #eee;
+            padding-top: 18px;
+        }
+
+        .titulo-rutina {
+            font-size: 19px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .contenido-rutina {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .pendiente {
+            border-top: 1px solid #eee;
+            padding-top: 18px;
+            color: #777;
+            font-style: italic;
+        }
+
+        .sin-clases {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+
+        @media (max-width: 600px) {
+
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .datos-clase {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+
+        <h1>🏋️ Rutinas</h1>
+
+        <p>
+            Entrenamientos de Training Point
+        </p>
+
+    </div>
+
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
+
+    </div>
+
+
+    {% if clases %}
+
+        <div class="lista-clases">
+
+            {% for clase in clases %}
+
+                <div class="clase">
+
+                    <div class="datos-clase">
+
+                        <div>
+
+                            <div class="fecha">
+                                📅
+                                {{ clase.fecha[8:10] }}/{{ clase.fecha[5:7] }}/{{ clase.fecha[0:4] }}
+                            </div>
+
+                            <div class="horario">
+                                🕒 {{ clase.hora_inicio }} - {{ clase.hora_fin }}
+                            </div>
+
+                        </div>
+
+
+                        {% if clase.rutina_id %}
+
+                            <span class="estado disponible">
+                                🟢 Rutina disponible
+                            </span>
+
+                        {% else %}
+
+                            <span class="estado no-disponible">
+                                ⚪ Pendiente
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if clase.rutina_id %}
+
+                        <div class="rutina">
+
+                            <div class="titulo-rutina">
+
+                                {% if clase.titulo %}
+                                    {{ clase.titulo }}
+                                {% else %}
+                                    Entrenamiento del día
+                                {% endif %}
+
+                            </div>
+
+                            <div class="contenido-rutina">{{ clase.contenido }}</div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="pendiente">
+                            Rutina aún no disponible.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-clases">
+            No hay clases programadas para los próximos días.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

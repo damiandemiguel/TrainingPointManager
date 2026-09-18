@@ -12,7 +12,8 @@ from database import (
     crear_tabla_bonos,
     crear_tabla_movimientos_creditos,
     crear_tabla_inscripciones,
-    crear_tabla_asistencias
+    crear_tabla_asistencias,
+    crear_tabla_rutinas
 )
 
 app = Flask(__name__)
@@ -58,6 +59,7 @@ crear_tabla_bonos()
 crear_tabla_movimientos_creditos()
 crear_tabla_inscripciones()
 crear_tabla_asistencias()
+crear_tabla_rutinas()
 
 def archivo_permitido(nombre):
 
@@ -325,6 +327,50 @@ def panel_alumno():
         return "Acceso no autorizado."
 
     return render_template("panel_alumno.html")
+
+@app.route("/rutinas")
+def rutinas_alumno():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    hoy = datetime.now().date()
+    fecha_limite = hoy + timedelta(days=30)
+
+    cursor.execute("""
+        SELECT
+            clases.id,
+            clases.fecha,
+            clases.hora_inicio,
+            clases.hora_fin,
+            rutinas.id AS rutina_id,
+            rutinas.titulo,
+            rutinas.contenido
+        FROM clases
+        LEFT JOIN rutinas
+            ON rutinas.clase_id = clases.id
+        WHERE clases.fecha BETWEEN ? AND ?
+        ORDER BY clases.fecha ASC, clases.hora_inicio ASC
+    """, (
+        hoy.strftime("%Y-%m-%d"),
+        fecha_limite.strftime("%Y-%m-%d")
+    ))
+
+    clases = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "rutinas_alumno.html",
+        clases=clases
+    )
 
 @app.route("/cerrar-sesion")
 def cerrar_sesion():
@@ -3353,6 +3399,147 @@ def checkin():
             "ok": False,
             "mensaje": f"Error al registrar la asistencia: {error}"
         }, 500
+
+@app.route("/admin/rutinas")
+def rutinas_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    hoy = datetime.now().date()
+
+    fecha_limite = hoy + timedelta(days=30)
+
+    cursor.execute("""
+        SELECT
+            clases.id,
+            clases.fecha,
+            clases.hora_inicio,
+            clases.hora_fin,
+            rutinas.id AS rutina_id,
+            rutinas.titulo,
+            rutinas.fecha_actualizacion
+        FROM clases
+        LEFT JOIN rutinas
+            ON rutinas.clase_id = clases.id
+        WHERE clases.fecha BETWEEN ? AND ?
+        ORDER BY clases.fecha ASC, clases.hora_inicio ASC
+    """, (
+        hoy.strftime("%Y-%m-%d"),
+        fecha_limite.strftime("%Y-%m-%d")
+    ))
+
+    clases = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "rutinas_admin.html",
+        clases=clases,
+        hoy=hoy
+    )
+
+@app.route("/admin/rutinas/<int:clase_id>", methods=["GET", "POST"])
+def editar_rutina_admin(clase_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM clases
+        WHERE id = ?
+    """, (clase_id,))
+
+    clase = cursor.fetchone()
+
+    if clase is None:
+        conexion.close()
+        return "Clase no encontrada.", 404
+
+    cursor.execute("""
+        SELECT *
+        FROM rutinas
+        WHERE clase_id = ?
+    """, (clase_id,))
+
+    rutina = cursor.fetchone()
+
+    mensaje = None
+
+    if request.method == "POST":
+
+        titulo = request.form.get("titulo", "").strip()
+        contenido = request.form.get("contenido", "").strip()
+
+        if not contenido:
+
+            mensaje = "El contenido de la rutina es obligatorio."
+
+        else:
+
+            ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            if rutina:
+
+                cursor.execute("""
+                    UPDATE rutinas
+                    SET
+                        titulo = ?,
+                        contenido = ?,
+                        fecha_actualizacion = ?
+                    WHERE clase_id = ?
+                """, (
+                    titulo,
+                    contenido,
+                    ahora,
+                    clase_id
+                ))
+
+            else:
+
+                cursor.execute("""
+                    INSERT INTO rutinas (
+                        clase_id,
+                        titulo,
+                        contenido,
+                        fecha_creacion
+                    )
+                    VALUES (?, ?, ?, ?)
+                """, (
+                    clase_id,
+                    titulo,
+                    contenido,
+                    ahora
+                ))
+
+            conexion.commit()
+            conexion.close()
+
+            return redirect(url_for("rutinas_admin"))
+
+    conexion.close()
+
+    return render_template(
+        "editar_rutina_admin.html",
+        clase=clase,
+        rutina=rutina,
+        mensaje=mensaje
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

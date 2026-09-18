@@ -228,3 +228,23 @@ def crear_tabla_asistencias():
 
     conexion.commit()
     conexion.close()
+
+def crear_tabla_rutinas():
+    conexion = conectar()
+
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS rutinas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            clase_id INTEGER NOT NULL UNIQUE,
+            titulo TEXT,
+            contenido TEXT NOT NULL,
+            fecha_creacion TEXT NOT NULL,
+            fecha_actualizacion TEXT,
+            FOREIGN KEY (clase_id) REFERENCES clases(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
