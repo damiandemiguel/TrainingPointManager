@@ -427,6 +427,49 @@
 
             </div>
 
+            {% if horarios_habituales %}
+
+                <div class="campo">
+
+                    <label class="titulo-campo">
+                        🕐 Horarios habituales
+                    </label>
+
+                    <div
+                        style="
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                        margin-top: 10px;
+                    "
+                >
+
+                    {% for horario in horarios_habituales %}
+
+                        <button
+                            type="button"
+                            class="boton-horario"
+                            data-inicio="{{ horario['hora_inicio'] }}"
+                            data-fin="{{ horario['hora_fin'] }}"
+                            style="
+                                padding: 10px 14px;
+                                border: 1px solid #ccc;
+                                border-radius: 8px;
+                                cursor: pointer;
+                            "
+                        >
+                            {{ horario["hora_inicio"] }}
+                            —
+                            {{ horario["hora_fin"] }}
+                        </button>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
 
             <!-- DATOS COMUNES -->
 
@@ -546,6 +589,22 @@ function mostrarModo() {
 
 }
 
+</script>
+
+<script>
+    document.querySelectorAll(".boton-horario").forEach(function (boton) {
+
+        boton.addEventListener("click", function () {
+
+            const horaInicio = boton.dataset.inicio;
+            const horaFin = boton.dataset.fin;
+
+            document.getElementById("hora_inicio").value = horaInicio;
+            document.getElementById("hora_fin").value = horaFin;
+
+        });
+
+    });
 </script>
 
 </body>

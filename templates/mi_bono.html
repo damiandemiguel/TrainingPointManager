@@ -264,64 +264,111 @@
             </h2>
 
 
-            <div class="creditos">
+            {% if bono.creditos_ilimitados %}
 
-    <div>
-        Créditos disponibles
-    </div>
+                <div class="creditos">
 
-    <div class="creditos-numero">
-        {{ bono.creditos_disponibles }}
-    </div>
+                    <div>
+                        Modalidad
+                    </div>
 
-    <div>
-        de {{ bono.creditos_iniciales }} créditos
-    </div>
+                    <div class="creditos-numero">
+                        ♾️ Ilimitado
+                    </div>
 
-</div>
+                    <div>
+                        Pase libre durante la vigencia del abono
+                    </div>
 
+                </div>
 
-<div class="resumen-creditos">
+                <div class="resumen-creditos">
 
-    <div class="resumen-item">
+                    <div class="resumen-item">
+                        <span>
+                            🎫 Tipo de acceso
+                        </span>
 
-        <span>
-            📦 Créditos iniciales
-        </span>
+                        <strong>
+                            Pase Libre
+                        </strong>
+                    </div>
 
-        <strong>
-            {{ bono.creditos_iniciales }}
-        </strong>
+                    <div class="resumen-item">
+                        <span>
+                            ♾️ Créditos
+                        </span>
 
-    </div>
+                        <strong>
+                            Ilimitados
+                        </strong>
+                    </div>
 
+                    <div class="resumen-item">
+                        <span>
+                            📅 Vigencia
+                        </span>
 
-    <div class="resumen-item">
+                        <strong>
+                            Hasta {{ bono.fecha_vencimiento }}
+                        </strong>
+                    </div>
 
-        <span>
-            ✅ Créditos utilizados
-        </span>
+                </div>
 
-        <strong>
-            {{ creditos_utilizados }}
-        </strong>
+            {% else %}
 
-    </div>
+                <div class="creditos">
 
+                    <div>
+                        Créditos disponibles
+                    </div>
 
-    <div class="resumen-item">
+                    <div class="creditos-numero">
+                        {{ bono.creditos_disponibles }}
+                    </div>
 
-        <span>
-            🎫 Créditos disponibles
-        </span>
+                    <div>
+                        de {{ bono.creditos_iniciales }} créditos
+                    </div>
 
-        <strong>
-            {{ bono.creditos_disponibles }}
-        </strong>
+                </div>
 
-    </div>
+                <div class="resumen-creditos">
 
-</div>
+                    <div class="resumen-item">
+                        <span>
+                            📦 Créditos iniciales
+                        </span>
+
+                        <strong>
+                            {{ bono.creditos_iniciales }}
+                        </strong>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span>
+                            ✅ Créditos utilizados
+                        </span>
+
+                        <strong>
+                            {{ creditos_utilizados }}
+                        </strong>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span>
+                            🎫 Créditos disponibles
+                        </span>
+
+                        <strong>
+                            {{ bono.creditos_disponibles }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            {% endif %}
 
 
             <div class="dato">

@@ -93,7 +93,6 @@ def crear_alumno(usuario_id, nombre, email, fecha_nacimiento, telefono, direccio
 
 def crear_tabla_tipos_bono():
     conexion = conectar()
-
     cursor = conexion.cursor()
 
     cursor.execute("""
@@ -103,9 +102,26 @@ def crear_tabla_tipos_bono():
             creditos INTEGER NOT NULL,
             precio REAL NOT NULL,
             duracion_dias INTEGER,
-            activo INTEGER DEFAULT 1
+            activo INTEGER DEFAULT 1,
+            creditos_ilimitados INTEGER NOT NULL DEFAULT 0
         )
     """)
+
+    cursor.execute("""
+        PRAGMA table_info(tipos_bono)
+    """)
+
+    columnas = [
+        columna[1]
+        for columna in cursor.fetchall()
+    ]
+
+    if "creditos_ilimitados" not in columnas:
+
+        cursor.execute("""
+            ALTER TABLE tipos_bono
+            ADD COLUMN creditos_ilimitados INTEGER NOT NULL DEFAULT 0
+        """)
 
     conexion.commit()
     conexion.close()
@@ -113,7 +129,6 @@ def crear_tabla_tipos_bono():
 
 def crear_tabla_bonos():
     conexion = conectar()
-
     cursor = conexion.cursor()
 
     cursor.execute("""
@@ -132,10 +147,27 @@ def crear_tabla_bonos():
             extension_dias INTEGER DEFAULT 0,
             motivo_extension TEXT,
             estado TEXT DEFAULT 'Activo',
+            creditos_ilimitados INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY (alumno_id) REFERENCES alumnos(id),
             FOREIGN KEY (tipo_bono_id) REFERENCES tipos_bono(id)
         )
     """)
+
+    cursor.execute("""
+        PRAGMA table_info(bonos)
+    """)
+
+    columnas = [
+        columna[1]
+        for columna in cursor.fetchall()
+    ]
+
+    if "creditos_ilimitados" not in columnas:
+
+        cursor.execute("""
+            ALTER TABLE bonos
+            ADD COLUMN creditos_ilimitados INTEGER NOT NULL DEFAULT 0
+        """)
 
     conexion.commit()
     conexion.close()

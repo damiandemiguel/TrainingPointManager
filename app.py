@@ -390,7 +390,8 @@ def notificaciones_alumno():
     cursor.execute("""
         SELECT
             fecha_vencimiento,
-            creditos_disponibles
+            creditos_disponibles,
+            creditos_ilimitados
         FROM bonos
         WHERE alumno_id = ?
           AND estado = 'Activo'
@@ -410,7 +411,10 @@ def notificaciones_alumno():
         dias_para_vencer = (fecha_vencimiento - hoy).days
 
         if (
-            bono["creditos_disponibles"] > 0
+            (
+                bono["creditos_disponibles"] > 0
+                or bono["creditos_ilimitados"] == 1
+            )
             and 1 <= dias_para_vencer <= 7
         ):
 
@@ -860,9 +864,25 @@ def nueva_clase():
         except (ValueError, TypeError):
             cupo_predeterminado = 30
 
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, hora_inicio, hora_fin
+        FROM horarios_habituales
+        WHERE activo = 1
+        ORDER BY hora_inicio ASC
+    """)
+
+    horarios_habituales = cursor.fetchall()
+
+    conexion.close()       
+
     return render_template(
         "nueva_clase_admin.html",
-        cupo_predeterminado=cupo_predeterminado
+        cupo_predeterminado=cupo_predeterminado,
+        horarios_habituales=horarios_habituales
     )
 
 @app.route("/clases/<int:clase_id>/editar", methods=["GET", "POST"])
@@ -1100,16 +1120,21 @@ def registrar_asistencia_admin(clase_id):
 
             alumno_id = int(alumno_id)
 
+            # Buscar un abono activo y vigente
             cursor.execute("""
                 SELECT
                     id,
                     creditos_disponibles,
-                    fecha_vencimiento
+                    fecha_vencimiento,
+                    creditos_ilimitados
                 FROM bonos
                 WHERE alumno_id = ?
-                   AND estado = 'Activo'
-                   AND creditos_disponibles > 0
-                   AND fecha_vencimiento >= ?
+                  AND estado = 'Activo'
+                  AND fecha_vencimiento >= ?
+                  AND (
+                        creditos_disponibles > 0
+                        OR creditos_ilimitados = 1
+                      )
                 ORDER BY fecha_vencimiento ASC
                 LIMIT 1
             """, (
@@ -1119,6 +1144,7 @@ def registrar_asistencia_admin(clase_id):
 
             bono = cursor.fetchone()
 
+            # Verificar si la asistencia ya fue registrada
             cursor.execute("""
                 SELECT id
                 FROM asistencias
@@ -1136,6 +1162,15 @@ def registrar_asistencia_admin(clase_id):
                 sin_bono += 1
                 continue
 
+            creditos_ilimitados = (
+                bono["creditos_ilimitados"] == 1
+            )
+
+            credito_descontado = (
+                0 if creditos_ilimitados else 1
+            )
+
+            # Registrar asistencia
             cursor.execute("""
                 INSERT INTO asistencias (
                     clase_id,
@@ -1152,33 +1187,37 @@ def registrar_asistencia_admin(clase_id):
                 bono["id"],
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "Manual",
-                1
+                credito_descontado
             ))
 
-            cursor.execute("""
-                UPDATE bonos
-                SET creditos_disponibles = creditos_disponibles - 1
-                WHERE id = ?
-            """, (bono["id"],))
+            # Los abonos normales consumen un crédito.
+            # Pase Libre no consume créditos.
+            if not creditos_ilimitados:
 
-            cursor.execute("""
-                INSERT INTO movimientos_creditos (
-                    bono_id,
+                cursor.execute("""
+                    UPDATE bonos
+                    SET creditos_disponibles = creditos_disponibles - 1
+                    WHERE id = ?
+                """, (bono["id"],))
+
+                cursor.execute("""
+                    INSERT INTO movimientos_creditos (
+                        bono_id,
+                        alumno_id,
+                        fecha,
+                        tipo,
+                        cantidad,
+                        descripcion
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (
+                    bono["id"],
                     alumno_id,
-                    fecha,
-                    tipo,
-                    cantidad,
-                    descripcion
-                )
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                bono["id"],
-                alumno_id,
-                datetime.now().strftime("%Y-%m-%d"),
-                "consumo",
-                -1,
-                "Consumo de crédito por asistencia a clase"
-            ))
+                    datetime.now().strftime("%Y-%m-%d"),
+                    "consumo",
+                    -1,
+                    "Consumo de crédito por asistencia a clase"
+                ))
 
             registradas += 1
 
@@ -1188,7 +1227,7 @@ def registrar_asistencia_admin(clase_id):
         mensaje_resultado = (
             f"Asistencias registradas: {registradas}. "
             f"Ya registradas: {ya_registradas}. "
-            f"Sin bono/créditos disponibles: {sin_bono}."
+            f"Sin abono activo y vigente: {sin_bono}."
         )
 
         return redirect(
@@ -1197,9 +1236,7 @@ def registrar_asistencia_admin(clase_id):
                 clase_id=clase_id,
                 mensaje=mensaje_resultado
             )
-    )
-
-    # Buscar alumnos inscriptos
+        )
 
     # Buscar alumnos inscriptos
     cursor.execute("""
@@ -1217,7 +1254,7 @@ def registrar_asistencia_admin(clase_id):
             ON asistencias.clase_id = inscripciones.clase_id
            AND asistencias.alumno_id = alumnos.id
         WHERE inscripciones.clase_id = ?
-           AND inscripciones.estado = 'Inscripto'
+          AND inscripciones.estado = 'Inscripto'
         ORDER BY alumnos.nombre ASC
     """, (clase_id,))
 
@@ -1522,6 +1559,317 @@ def configuracion_admin():
         tipos_bono=tipos_bono,
         mensaje=mensaje,
         error=error
+    )
+
+@app.route("/admin/configuracion/horarios/nuevo", methods=["POST"])
+def nuevo_horario_habitual():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    hora_inicio = request.form.get("hora_inicio", "").strip()
+    hora_fin = request.form.get("hora_fin", "").strip()
+
+    if not hora_inicio or not hora_fin:
+        return redirect(url_for("configuracion_admin"))
+
+    if hora_inicio >= hora_fin:
+        return redirect(url_for("configuracion_admin"))
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id
+        FROM horarios_habituales
+        WHERE hora_inicio = ?
+          AND hora_fin = ?
+    """, (
+        hora_inicio,
+        hora_fin
+    ))
+
+    horario_existente = cursor.fetchone()
+
+    if horario_existente is None:
+
+        cursor.execute("""
+            INSERT INTO horarios_habituales (
+                hora_inicio,
+                hora_fin,
+                activo
+            )
+            VALUES (?, ?, 1)
+        """, (
+            hora_inicio,
+            hora_fin
+        ))
+
+        conexion.commit()
+
+    conexion.close()
+
+    return redirect(
+        url_for("configuracion_admin") + "#horarios-habituales"
+    )
+
+@app.route(
+    "/admin/configuracion/horarios/<int:horario_id>/estado",
+    methods=["POST"]
+)
+def cambiar_estado_horario_habitual(horario_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT activo
+        FROM horarios_habituales
+        WHERE id = ?
+    """, (horario_id,))
+
+    horario = cursor.fetchone()
+
+    if horario is not None:
+
+        nuevo_estado = 0 if horario[0] == 1 else 1
+
+        cursor.execute("""
+            UPDATE horarios_habituales
+            SET activo = ?
+            WHERE id = ?
+        """, (
+            nuevo_estado,
+            horario_id
+        ))
+
+        conexion.commit()
+
+    conexion.close()
+
+    return redirect(
+        url_for("configuracion_admin") + "#horarios-habituales"
+    )
+
+@app.route(
+    "/admin/configuracion/horarios/<int:horario_id>/eliminar",
+    methods=["POST"]
+)
+def eliminar_horario_habitual(horario_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        DELETE FROM horarios_habituales
+        WHERE id = ?
+    """, (horario_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for("configuracion_admin") + "#horarios-habituales"
+    )
+
+@app.route(
+    "/admin/configuracion/abonos/<int:tipo_bono_id>/editar",
+    methods=["POST"]
+)
+def editar_tipo_bono(tipo_bono_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    nombre = request.form.get("nombre", "").strip()
+    creditos = request.form.get("creditos", "").strip()
+    precio = request.form.get("precio", "").strip()
+    duracion_dias = request.form.get("duracion_dias", "").strip()
+    creditos_ilimitados = (
+        1
+        if request.form.get("creditos_ilimitados") == "1"
+        else 0
+    )
+
+    try:
+        precio = float(precio)
+        duracion_dias = int(duracion_dias)
+
+        if not nombre or precio < 0 or duracion_dias < 0:
+            raise ValueError
+
+        if creditos_ilimitados:
+            creditos = 0
+        else:
+            creditos = int(creditos)
+
+            if creditos < 1:
+                raise ValueError
+
+    except ValueError:
+        return redirect(
+            url_for("configuracion_admin") + "#tipos-abono"
+        )
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        UUPDATE tipos_bono
+        SET
+            nombre = ?,
+            creditos = ?,
+            precio = ?,
+            duracion_dias = ?,
+            creditos_ilimitados = ?
+        WHERE id = ?
+    """, (
+        nombre,
+        creditos,
+        precio,
+        duracion_dias,
+        creditos_ilimitados,
+        tipo_bono_id
+    ))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for("configuracion_admin") + "#tipos-abono"
+    )
+
+@app.route(
+    "/admin/configuracion/abonos/<int:tipo_bono_id>/estado",
+    methods=["POST"]
+)
+def cambiar_estado_tipo_bono(tipo_bono_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT activo
+        FROM tipos_bono
+        WHERE id = ?
+    """, (tipo_bono_id,))
+
+    tipo_bono = cursor.fetchone()
+
+    if tipo_bono is not None:
+
+        nuevo_estado = 0 if tipo_bono[0] == 1 else 1
+
+        cursor.execute("""
+            UPDATE tipos_bono
+            SET activo = ?
+            WHERE id = ?
+        """, (
+            nuevo_estado,
+            tipo_bono_id
+        ))
+
+        conexion.commit()
+
+    conexion.close()
+
+    return redirect(
+        url_for("configuracion_admin") + "#tipos-abono"
+    )
+
+@app.route(
+    "/admin/configuracion/abonos/nuevo",
+    methods=["POST"]
+)
+def nuevo_tipo_bono():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    nombre = request.form.get("nombre", "").strip()
+    creditos = request.form.get("creditos", "").strip()
+    precio = request.form.get("precio", "").strip()
+    duracion_dias = request.form.get("duracion_dias", "").strip()
+
+    creditos_ilimitados = (
+        1
+        if request.form.get("creditos_ilimitados") == "1"
+        else 0
+    )
+
+    try:
+        precio = float(precio)
+        duracion_dias = int(duracion_dias)
+
+        if not nombre or precio < 0 or duracion_dias < 0:
+            raise ValueError
+
+        if creditos_ilimitados:
+            creditos = 0
+        else:
+            creditos = int(creditos)
+
+            if creditos < 1:
+                raise ValueError
+
+    except ValueError:
+        return redirect(
+            url_for("configuracion_admin") + "#tipos-abono"
+        )
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        INSERT INTO tipos_bono (
+            nombre,
+            creditos,
+            precio,
+            duracion_dias,
+            activo,
+            creditos_ilimitados
+        )
+        VALUES (?, ?, ?, ?, 1, ?)
+    """, (
+        nombre,
+        creditos,
+        precio,
+        duracion_dias,
+        creditos_ilimitados
+    ))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(
+        url_for("configuracion_admin") + "#tipos-abono"
     )
 
 @app.route("/clases/<int:clase_id>/inscribir", methods=["GET", "POST"])
@@ -2551,6 +2899,7 @@ def mi_bono():
             bonos.tipo_bono_id,
             bonos.creditos_iniciales,
             bonos.creditos_disponibles,
+            bonos.creditos_ilimitados,
             bonos.fecha_inicio,
             bonos.fecha_vencimiento,
             bonos.estado,
@@ -3003,6 +3352,7 @@ def nuevo_bono_admin(alumno_id):
         creditos_iniciales = tipo_bono["creditos"]
         precio = tipo_bono["precio"]
         duracion_dias = tipo_bono["duracion_dias"]
+        creditos_ilimitados = tipo_bono["creditos_ilimitados"]
 
         cursor.execute("""
             UPDATE bonos
@@ -3011,7 +3361,18 @@ def nuevo_bono_admin(alumno_id):
               AND estado = 'Activo'
         """, (alumno_id,))
 
-        if creditos_iniciales == 1:
+        if creditos_ilimitados:
+
+            fecha_inicio_dt = datetime.strptime(
+                fecha_inicio,
+                "%Y-%m-%d"
+            )
+
+            fecha_vencimiento_original = (
+                fecha_inicio_dt + timedelta(days=duracion_dias)
+            ).strftime("%Y-%m-%d")
+
+        elif creditos_iniciales == 1:
 
             fecha_vencimiento_original = fecha_inicio
 
@@ -3021,7 +3382,6 @@ def nuevo_bono_admin(alumno_id):
                 fecha_inicio,
                 creditos_iniciales
             )
-
         cursor.execute("""
             INSERT INTO bonos (
                 alumno_id,
@@ -3035,7 +3395,8 @@ def nuevo_bono_admin(alumno_id):
                 forma_pago,
                 fecha_pago,
                 extension_dias,
-                estado
+                estado,
+                creditos_ilimitados
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
@@ -3050,29 +3411,32 @@ def nuevo_bono_admin(alumno_id):
             forma_pago,
             fecha_inicio,
             0,
-            "Activo"
+            "Activo",
+            creditos_ilimitados
         ))
 
         bono_id = cursor.lastrowid
 
-        cursor.execute("""
-            INSERT INTO movimientos_creditos (
+        if not creditos_ilimitados:
+
+            cursor.execute("""
+                INSERT INTO movimientos_creditos (
+                    bono_id,
+                    alumno_id,
+                    fecha,
+                    tipo,
+                    cantidad,
+                    descripcion
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
                 bono_id,
                 alumno_id,
-                fecha,
-                tipo,
-                cantidad,
-                descripcion
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            bono_id,
-            alumno_id,
-            fecha_inicio,
-            "carga",
-            creditos_iniciales,
-            "Carga inicial de créditos por compra de bono"
-        ))
+                fecha_inicio,
+                "carga",
+                creditos_iniciales,
+                "Carga inicial de créditos por compra de bono"
+            ))
 
         conexion.commit()
         conexion.close()
@@ -3430,6 +3794,7 @@ def estado_alumnos():
             bonos.precio,
             bonos.creditos_iniciales,
             bonos.creditos_disponibles,
+            bonos.creditos_ilimitados,
             bonos.estado
         FROM alumnos
         LEFT JOIN bonos
@@ -3469,11 +3834,12 @@ def estado_alumnos():
 
         dias = alumno["dias_para_vencer"]
         creditos = alumno["creditos_disponibles"]
+        creditos_ilimitados = alumno["creditos_ilimitados"]
 
         if dias is None:
             alumnos_sin_bono += 1
 
-        elif creditos == 0:
+        elif creditos == 0 and not creditos_ilimitados:
             bonos_sin_creditos += 1
 
         elif dias <= 0:
@@ -3694,16 +4060,20 @@ def checkin():
                 "mensaje": "Tu asistencia ya fue registrada."
             }, 400
 
-        # Buscar abono activo con crédito disponible
+        # Buscar abono activo y vigente
         cursor.execute("""
             SELECT
                 id,
-                creditos_disponibles
+                creditos_disponibles,
+                creditos_ilimitados
             FROM bonos
             WHERE alumno_id = ?
               AND estado = 'Activo'
-              AND creditos_disponibles > 0
               AND fecha_vencimiento >= ?
+              AND (
+                    creditos_disponibles > 0
+                    OR creditos_ilimitados = 1
+                  )
             ORDER BY fecha_vencimiento ASC
             LIMIT 1
         """, (
@@ -3718,8 +4088,16 @@ def checkin():
 
             return {
                 "ok": False,
-                "mensaje": "No tenés un abono activo con créditos disponibles."
+                "mensaje": "No tenés un abono activo y vigente."
             }, 400
+
+        creditos_ilimitados = (
+            bono["creditos_ilimitados"] == 1
+        )
+
+        credito_descontado = (
+            0 if creditos_ilimitados else 1
+        )
 
         # Registrar asistencia
         cursor.execute("""
@@ -3738,35 +4116,37 @@ def checkin():
             bono["id"],
             ahora.strftime("%Y-%m-%d %H:%M:%S"),
             "QR",
-            1
+            credito_descontado
         ))
 
-        # Descontar un crédito
-        cursor.execute("""
-            UPDATE bonos
-            SET creditos_disponibles = creditos_disponibles - 1
-            WHERE id = ?
-        """, (bono["id"],))
+        if not creditos_ilimitados:
 
-        # Registrar movimiento
-        cursor.execute("""
-            INSERT INTO movimientos_creditos (
-                bono_id,
-                alumno_id,
-                fecha,
-                tipo,
-                cantidad,
-                descripcion
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            bono["id"],
-            alumno["id"],
-            fecha_hoy,
-            "consumo",
-            -1,
-            "Consumo de crédito por asistencia mediante QR"
-        ))
+            # Descontar un crédito
+            cursor.execute("""
+                UPDATE bonos
+                SET creditos_disponibles = creditos_disponibles - 1
+                WHERE id = ?
+            """, (bono["id"],))
+
+            # Registrar movimiento
+            cursor.execute("""
+                INSERT INTO movimientos_creditos (
+                    bono_id,
+                    alumno_id,
+                    fecha,
+                    tipo,
+                    cantidad,
+                    descripcion
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                bono["id"],
+                alumno["id"],
+                fecha_hoy,
+                "consumo",
+                -1,
+                "Consumo de crédito por asistencia mediante QR"
+            ))
 
         conexion.commit()
         conexion.close()
@@ -3776,7 +4156,7 @@ def checkin():
             "mensaje": "¡Asistencia registrada correctamente!",
             "alumno": alumno["nombre"],
             "clase": clase["hora_inicio"],
-            "credito_descontado": 1
+            "credito_descontado": credito_descontado
         }
 
     except Exception as error:

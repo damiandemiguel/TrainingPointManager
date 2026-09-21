@@ -364,13 +364,62 @@
     </div>
 
 
-    <div class="seccion">
+    <div class="seccion" id="horarios-habituales">
 
         <h2>🕐 Horarios habituales</h2>
 
         <p class="descripcion-seccion">
             Turnos utilizados habitualmente en Training Point.
         </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('nuevo_horario_habitual') }}"
+            style="margin-bottom: 22px;"
+        >
+
+            <div class="grilla">
+
+                <div class="campo">
+
+                    <label for="hora_inicio_habitual">
+                        Hora de inicio
+                    </label>
+
+                    <input
+                        type="time"
+                        id="hora_inicio_habitual"
+                        name="hora_inicio"
+                        required
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label for="hora_fin_habitual">
+                        Hora de finalización
+                    </label>
+
+                    <input
+                        type="time"
+                        id="hora_fin_habitual"
+                        name="hora_fin"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="boton-guardar"
+            >
+                ➕ Agregar horario
+            </button>
+
+        </form>
 
         <div class="lista">
 
@@ -390,19 +439,76 @@
 
                         </div>
 
-                        {% if horario["activo"] %}
+                        <div>
 
-                            <span class="estado activo">
-                                Activo
-                            </span>
+                            {% if horario["activo"] %}
 
-                        {% else %}
+                                <span class="estado activo">
+                                    Activo
+                                </span>
 
-                            <span class="estado inactivo">
-                                Inactivo
-                            </span>
+                            {% else %}
 
-                        {% endif %}
+                                <span class="estado inactivo">
+                                    Inactivo
+                                </span>
+
+                            {% endif %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'cambiar_estado_horario_habitual',
+                                    horario_id=horario['id']
+                                ) }}"
+                                style="margin-top: 10px;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    style="
+                                        border: none;
+                                        border-radius: 7px;
+                                        padding: 7px 10px;
+                                        cursor: pointer;
+                                    "
+                                >
+                                    {% if horario["activo"] %}
+                                        ⏸️ Desactivar
+                                    {% else %}
+                                        ▶️ Activar
+                                    {% endif %}
+                                </button>
+
+                            </form>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'eliminar_horario_habitual',
+                                    horario_id=horario['id']
+                                ) }}"
+                                style="margin-top: 7px;"
+                                onsubmit="return confirm(
+                                    '¿Seguro que querés eliminar este horario habitual?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    style="
+                                        border: none;
+                                        border-radius: 7px;
+                                        padding: 7px 10px;
+                                        cursor: pointer;
+                                    "
+                                >
+                                    🗑️ Eliminar
+                                </button>
+
+                            </form>
+
+                        </div>
 
                     </div>
 
@@ -415,7 +521,7 @@
     </div>
 
 
-    <div class="seccion">
+    <div class="seccion" id="tipos-abono">
 
         <h2>💳 Tipos de abono</h2>
 
@@ -423,45 +529,241 @@
             Abonos disponibles para los alumnos.
         </p>
 
+        <form
+            method="POST"
+            action="{{ url_for('nuevo_tipo_bono') }}"
+            style="margin-bottom: 25px;"
+        >
+
+            <div class="grilla">
+
+                <div class="campo">
+                    <label>Nombre</label>
+                    <input
+                        type="text"
+                        name="nombre"
+                        placeholder="Ej.: Pase Libre"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label>Créditos</label>
+                    <input
+                        type="number"
+                        id="creditos_nuevo_abono"
+                        name="creditos"
+                        min="1"
+                        placeholder="Ej.: 8"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label>Precio</label>
+                    <input
+                        type="number"
+                        name="precio"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label>Duración (días)</label>
+                    <input
+                        type="number"
+                        name="duracion_dias"
+                        min="0"
+                        value="28"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <label
+                style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-top: 12px;
+                "
+            >
+                <input
+                    type="checkbox"
+                    id="creditos_ilimitados_nuevo_abono"
+                    name="creditos_ilimitados"
+                    value="1"
+                >
+                Créditos ilimitados
+            </label>
+
+            <button
+                type="submit"
+                class="boton-guardar"
+                style="margin-top: 15px;"
+            >
+                ➕ Crear tipo de abono
+            </button>
+
+        </form>
+
         <div class="lista">
 
             {% for bono in tipos_bono %}
 
                 <div class="item">
 
-                    <div class="item-principal">
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'editar_tipo_bono',
+                            tipo_bono_id=bono['id']
+                        ) }}"
+                    >
 
-                        <div>
+                        <div class="grilla">
 
-                            <div class="titulo-item">
-                                {{ bono["nombre"] }}
+                        <div class="campo">
+
+                            <label>
+                                Créditos
+                            </label>
+
+                            <input
+                                type="number"
+                                id="creditos_abono_{{ bono['id'] }}"
+                                name="creditos"
+                                min="1"
+                                value="{{ bono['creditos'] }}"
+                                {% if not bono["creditos_ilimitados"] %}
+                                    required
+                                {% else %}
+                                    disabled
+                                {% endif %}
+                            >
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Modalidad
+                            </label>
+
+                            <label style="font-weight: normal;">
+                                <input
+                                    type="checkbox"
+                                    class="checkbox-ilimitado-edicion"
+                                    name="creditos_ilimitados"
+                                    value="1"
+                                    data-creditos-id="creditos_abono_{{ bono['id'] }}"
+                                    {% if bono["creditos_ilimitados"] %}
+                                        checked
+                                    {% endif %}
+                                >
+                                ♾️ Créditos ilimitados / Pase Libre
+                            </label>
+
+                        </div>
+
+                            <div class="campo">
+
+                                <label>
+                                    Precio
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="precio"
+                                    value="{{ bono['precio'] }}"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                >
+
                             </div>
 
-                            <div class="detalle">
-                                {{ bono["creditos"] }} crédito(s)
-                                ·
-                                ${{ "%.0f"|format(bono["precio"]) }}
-                                ·
-                                {{ bono["duracion_dias"] }} días
+                            <div class="campo">
+
+                                <label>
+                                    Duración (días)
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="duracion_dias"
+                                    value="{{ bono['duracion_dias'] }}"
+                                    min="0"
+                                    required
+                                >
+
                             </div>
 
                         </div>
 
-                        {% if bono["activo"] %}
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                                gap: 15px;
+                                margin-top: 15px;
+                            "
+                        >
 
-                            <span class="estado activo">
-                                Activo
-                            </span>
+                            {% if bono["activo"] %}
 
-                        {% else %}
+                                <span class="estado activo">
+                                    Activo
+                                </span>
 
-                            <span class="estado inactivo">
-                                Inactivo
-                            </span>
+                            {% else %}
 
-                        {% endif %}
+                                <span class="estado inactivo">
+                                    Inactivo
+                                </span>
 
-                    </div>
+                            {% endif %}
+
+                            <button
+                                type="submit"
+                                class="boton-guardar"
+                            >
+                                💾 Guardar cambios
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'cambiar_estado_tipo_bono',
+                            tipo_bono_id=bono['id']
+                        ) }}"
+                        style="margin-top: 10px;"
+                    >
+
+                        <button
+                            type="submit"
+                            style="
+                                border: none;
+                                border-radius: 7px;
+                                padding: 8px 12px;
+                                cursor: pointer;
+                            "
+                        >
+                            {% if bono["activo"] %}
+                                ⏸️ Desactivar
+                            {% else %}
+                                ▶️ Activar
+                            {% endif %}
+                        </button>
+
+                    </form>
 
                 </div>
 
@@ -472,6 +774,55 @@
     </div>
 
 </div>
+
+<script>
+    const checkboxIlimitado = document.getElementById(
+        "creditos_ilimitados_nuevo_abono"
+    );
+
+    const campoCreditos = document.getElementById(
+        "creditos_nuevo_abono"
+    );
+
+    checkboxIlimitado.addEventListener("change", function () {
+
+        if (this.checked) {
+
+            campoCreditos.value = "";
+            campoCreditos.disabled = true;
+            campoCreditos.required = false;
+
+        } else {
+
+            campoCreditos.disabled = false;
+            campoCreditos.required = true;
+
+        }
+
+    });
+
+    document.querySelectorAll(
+    ".checkbox-ilimitado-edicion"
+).forEach(function (checkbox) {
+
+    checkbox.addEventListener("change", function () {
+
+        const campoCreditos = document.getElementById(
+            this.dataset.creditosId
+        );
+
+        if (this.checked) {
+            campoCreditos.disabled = true;
+            campoCreditos.required = false;
+        } else {
+            campoCreditos.disabled = false;
+            campoCreditos.required = true;
+        }
+
+    });
+
+});
+</script>
 
 </body>
 </html>
