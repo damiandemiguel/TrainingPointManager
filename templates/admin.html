@@ -88,6 +88,64 @@
             font-size: 14px;
         }
 
+        .hoy {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .hoy h2 {
+            margin: 0 0 20px;
+        }
+
+        .clases-hoy {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .clase-hoy {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .clase-hoy-horario {
+            font-size: 19px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .clase-hoy-datos {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .clase-hoy-acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .clase-hoy-accion {
+            display: inline-block;
+            padding: 9px 12px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .sin-clases-hoy {
+            color: #666;
+            margin: 0;
+        }
+
         .menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -172,6 +230,10 @@
 
             .contenedor {
                 width: 92%;
+            }
+
+            .clases-hoy {
+                grid-template-columns: 1fr;
             }
 
         }
@@ -267,6 +329,69 @@
 
         </section>
 
+        <section class="hoy">
+
+            <h2>📅 Hoy en Training Point</h2>
+
+            {% if clases_hoy %}
+
+                <div class="clases-hoy">
+
+                    {% for clase in clases_hoy %}
+
+                        <div class="clase-hoy">
+
+                            <div class="clase-hoy-horario">
+                                {{ clase[2] }} — {{ clase[3] }}
+                            </div>
+
+                            <div class="clase-hoy-datos">
+
+                                👥
+                                {{ clase[6] }} / {{ clase[4] }}
+                                inscriptos
+
+                                <br>
+
+                                ✅
+                                {{ clase[7] }}
+                                asistencias
+
+                            </div>
+
+                            <div class="clase-hoy-acciones">
+
+                                <a
+                                    href="{{ url_for('ver_inscriptos', clase_id=clase[0]) }}"
+                                    class="clase-hoy-accion"
+                                >
+                                    Ver inscriptos
+                                </a>
+
+                                <a
+                                    href="{{ url_for('registrar_asistencia_admin', clase_id=clase[0]) }}"
+                                    class="clase-hoy-accion"
+                                >
+                                    Registrar asistencia
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="sin-clases-hoy">
+                    No hay clases programadas para hoy.
+                </p>
+
+            {% endif %}
+
+        </section>
 
         <section class="menu">
 

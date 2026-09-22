@@ -323,6 +323,32 @@ def panel():
             else:
                 certificados_vigentes += 1
 
+        # Clases de hoy para el panel de administración
+        fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+
+        cursor.execute("""
+            SELECT
+                clases.id,
+                clases.fecha,
+                clases.hora_inicio,
+                clases.hora_fin,
+                clases.cupo_maximo,
+                clases.estado,
+                COUNT(DISTINCT inscripciones.id) AS cantidad_inscriptos,
+                COUNT(DISTINCT asistencias.id) AS cantidad_asistencias
+            FROM clases
+            LEFT JOIN inscripciones
+                ON clases.id = inscripciones.clase_id
+                AND inscripciones.estado = 'Inscripto'
+            LEFT JOIN asistencias
+                ON clases.id = asistencias.clase_id
+            WHERE clases.fecha = ?
+            GROUP BY clases.id
+            ORDER BY clases.hora_inicio
+        """, (fecha_hoy,))
+
+        clases_hoy = cursor.fetchall()
+
         conexion.close()
 
         return render_template(
@@ -334,7 +360,8 @@ def panel():
             alumnos_sin_certificado=alumnos_sin_certificado,
             alumnos_sin_ficha=alumnos_sin_ficha,
             certificados_vigentes=certificados_vigentes,
-            certificados_vencidos=certificados_vencidos
+            certificados_vencidos=certificados_vencidos,
+            clases_hoy=clases_hoy
         )
 
     return redirect(url_for("panel_alumno"))
