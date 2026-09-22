@@ -310,7 +310,7 @@
                         </span>
 
                         <strong>
-                            Hasta {{ bono.fecha_vencimiento }}
+                            Hasta {{ bono.fecha_vencimiento | fecha_ar }}
                         </strong>
                     </div>
 
@@ -377,7 +377,7 @@
                     📅 Fecha de inicio:
                 </span>
 
-                {{ bono.fecha_inicio }}
+                {{ bono.fecha_inicio | fecha_ar }}
 
             </div>
 
@@ -388,7 +388,7 @@
                     📅 Fecha de vencimiento:
                 </span>
 
-                {{ bono.fecha_vencimiento }}
+                {{ bono.fecha_vencimiento | fecha_ar }}
 
             </div>
 
@@ -414,7 +414,7 @@
                             <div class="movimiento">
 
                                 <div class="movimiento-fecha">
-                                    📅 {{ movimiento.fecha }}
+                                    📅 {{ movimiento.fecha | fecha_ar }}
                                 </div>
 
                                 <div class="movimiento-info">

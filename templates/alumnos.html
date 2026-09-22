@@ -186,7 +186,7 @@
                 <td>{{ alumno.id }}</td>
                 <td>{{ alumno.nombre }}</td>
                 <td>{{ alumno.email }}</td>
-                <td>{{ alumno.fecha_nacimiento }}</td>
+                <td>{{ alumno.fecha_nacimiento | fecha_ar }}</td>
 
                 <td>
                     {% if alumno.activo == 1 %}

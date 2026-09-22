@@ -163,17 +163,17 @@
 
                 <div class="dato">
                     <span class="etiqueta">📅 Inicio:</span>
-                    {{ bono.fecha_inicio }}
+                    {{ bono.fecha_inicio | fecha_ar }}
                 </div>
 
                 <div class="dato">
                     <span class="etiqueta">📅 Vencimiento original:</span>
-                    {{ bono.fecha_vencimiento_original or "No informado" }}
+                    {{ bono.fecha_vencimiento_original | fecha_ar if bono.fecha_vencimiento_original else "No informado" }}
                 </div>
 
                 <div class="dato">
                     <span class="etiqueta">📅 Vencimiento actual:</span>
-                    {{ bono.fecha_vencimiento or "No informado" }}
+                    {{ bono.fecha_vencimiento | fecha_ar if bono.fecha_vencimiento else "No informado" }}
                 </div>
 
                 {% if bono.extension_dias and bono.extension_dias > 0 %}
@@ -205,10 +205,20 @@
                 </div>
 
                 <div class="creditos">
-                    🎟️ Créditos:
-                    {{ bono.creditos_disponibles }}
-                    /
-                    {{ bono.creditos_iniciales }}
+
+                    {% if bono.creditos_ilimitados %}
+
+                        ♾️ Créditos: Ilimitados
+
+                    {% else %}
+
+                        🎟️ Créditos:
+                        {{ bono.creditos_disponibles }}
+                        /
+                        {{ bono.creditos_iniciales }}
+
+                    {% endif %}
+
                 </div>
 
                 <div class="dato">
@@ -231,7 +241,7 @@
     {% else %}
 
         <div class="sin-bonos">
-            <p>Este alumno todavía no tiene abonos registrados.</p>
+            <p>Este alumno todavía no tiene bonos registrados.</p>
         </div>
 
     {% endif %}

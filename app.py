@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
@@ -31,6 +30,23 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 ALLOWED_CERTIFICADO_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
 
 app.secret_key = "clave-temporal-training-point"
+
+@app.template_filter("fecha_ar")
+def fecha_ar(fecha):
+
+    if not fecha:
+        return ""
+
+    try:
+        fecha_convertida = datetime.strptime(
+            fecha,
+            "%Y-%m-%d"
+        )
+
+        return fecha_convertida.strftime("%d/%m/%Y")
+
+    except (ValueError, TypeError):
+        return fecha
 
 def calcular_vencimiento_bono(fecha_inicio, cantidad_clases):
 
@@ -1365,7 +1381,10 @@ def asistencias_alumno_admin(alumno_id):
         asistencias=asistencias
     )
 
-@app.route("/admin/asistencias/<int:asistencia_id>/anular", methods=["POST"])
+@app.route(
+    "/admin/asistencias/<int:asistencia_id>/anular",
+    methods=["POST"]
+)
 def anular_asistencia_admin(asistencia_id):
 
     if "usuario_id" not in session:
@@ -1395,35 +1414,37 @@ def anular_asistencia_admin(asistencia_id):
         conexion.close()
         return redirect(url_for("asistencias_admin"))
 
-    # Devolver el crédito al abono utilizado
-    cursor.execute("""
-        UPDATE bonos
-        SET creditos_disponibles = creditos_disponibles + ?
-        WHERE id = ?
-    """, (
-        asistencia["credito_descontado"],
-        asistencia["bono_id"]
-    ))
+    # Devolver crédito solo si la asistencia consumió uno
+    if asistencia["credito_descontado"] > 0:
 
-    # Registrar la devolución en movimientos
-    cursor.execute("""
-        INSERT INTO movimientos_creditos (
-            bono_id,
-            alumno_id,
-            fecha,
-            tipo,
-            cantidad,
-            descripcion
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
-        asistencia["bono_id"],
-        asistencia["alumno_id"],
-        datetime.now().strftime("%Y-%m-%d"),
-        "devolucion",
-        asistencia["credito_descontado"],
-        "Devolución de crédito por anulación de asistencia"
-    ))
+        cursor.execute("""
+            UPDATE bonos
+            SET creditos_disponibles = creditos_disponibles + ?
+            WHERE id = ?
+        """, (
+            asistencia["credito_descontado"],
+            asistencia["bono_id"]
+        ))
+
+        # Registrar la devolución en movimientos
+        cursor.execute("""
+            INSERT INTO movimientos_creditos (
+                bono_id,
+                alumno_id,
+                fecha,
+                tipo,
+                cantidad,
+                descripcion
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            asistencia["bono_id"],
+            asistencia["alumno_id"],
+            datetime.now().strftime("%Y-%m-%d"),
+            "devolucion",
+            asistencia["credito_descontado"],
+            "Devolución de crédito por anulación de asistencia"
+        ))
 
     # Eliminar la asistencia
     cursor.execute("""
@@ -3398,7 +3419,7 @@ def nuevo_bono_admin(alumno_id):
                 estado,
                 creditos_ilimitados
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             alumno_id,
             tipo_bono_id,

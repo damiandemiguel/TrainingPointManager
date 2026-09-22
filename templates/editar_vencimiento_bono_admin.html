@@ -164,12 +164,12 @@
 
     <div class="dato">
         <span class="etiqueta">📅 Vencimiento original:</span>
-        {{ bono.fecha_vencimiento_original }}
+        {{ bono.fecha_vencimiento_original | fecha_ar }}
     </div>
 
     <div class="dato">
         <span class="etiqueta">📅 Vencimiento actual:</span>
-        {{ bono.fecha_vencimiento }}
+        {{ bono.fecha_vencimiento | fecha_ar }}
     </div>
 
 </div>
