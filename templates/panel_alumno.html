@@ -4,85 +4,222 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Panel del alumno</title>
 
     <style>
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 30px;
+            color: #333;
         }
 
-        .contenedor {
-            max-width: 900px;
+        .encabezado {
+            background-color: #111;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .encabezado-contenido {
+            width: 92%;
+            max-width: 1000px;
             margin: auto;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
+        .encabezado h1 {
+            margin: 0;
+            font-size: 24px;
         }
 
-        .subtitulo {
-            text-align: center;
+        .encabezado p {
+            margin: 5px 0 0;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 1000px;
+            margin: 28px auto 50px;
+        }
+
+        .bienvenida {
+            margin-bottom: 28px;
+        }
+
+        .bienvenida h2 {
+            margin: 0 0 5px;
+            font-size: 25px;
+        }
+
+        .bienvenida p {
+            margin: 0;
             color: #666;
-            margin-bottom: 30px;
         }
 
-        .panel {
+        .titulo-seccion {
+            font-size: 18px;
+            margin: 28px 0 14px;
+        }
+
+        .menu-principal {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 16px;
         }
 
-        .tarjeta {
+        .boton-principal {
             background-color: white;
             border-radius: 12px;
-            padding: 25px;
-            text-align: center;
+            padding: 24px 18px;
             text-decoration: none;
             color: #333;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .tarjeta:hover {
+        .boton-principal:hover {
             transform: translateY(-3px);
+            box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
         }
 
-        .icono {
-            font-size: 35px;
-            margin-bottom: 10px;
+        .boton-principal-icono {
+            font-size: 30px;
+            margin-bottom: 12px;
         }
 
-        .titulo {
-            font-size: 18px;
+        .boton-principal-titulo {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .boton-principal-descripcion {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .herramientas {
+            background-color: white;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .herramientas-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .herramienta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            padding: 14px 10px;
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .herramienta:hover {
+            background-color: #ededed;
+        }
+
+        .herramienta-icono {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .herramienta-titulo {
+            font-size: 13px;
             font-weight: bold;
         }
 
-        .descripcion {
-            margin-top: 8px;
-            font-size: 14px;
-            color: #777;
-        }
-
-        .qr {
-            grid-column: span 3;
-        }
-
-        .volver {
+        .cerrar-sesion {
             display: block;
             width: fit-content;
-            margin: 30px auto 0;
+            margin: 28px auto 0;
             padding: 10px 18px;
             background-color: #ddd;
             color: #333;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
+            font-size: 14px;
+        }
+
+        .cerrar-sesion:hover {
+            background-color: #d2d2d2;
+        }
+
+        .navegacion-movil {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-top: 1px solid #ddd;
+            box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
+            z-index: 1000;
+        }
+
+        .navegacion-movil a {
+            padding: 10px 3px 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #555;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .navegacion-movil-icono {
+            display: block;
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .navegacion-movil .activo {
+            color: #111;
+            background-color: #f2f2f2;
+        }
+
+        @media (max-width: 750px) {
+
+            .contenedor {
+                width: 92%;
+                margin-top: 20px;
+                margin-bottom: 100px;
+            }
+
+            .titulo-accesos-principales,
+            .menu-principal {
+                display: none;
+            }
+
+            .herramientas-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .navegacion-movil {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+            }
+
         }
 
     </style>
@@ -91,208 +228,307 @@
 
 <body>
 
-<div class="contenedor">
+    <header class="encabezado">
 
-    <h1>🏋️ Training Point</h1>
+        <div class="encabezado-contenido">
 
-    <p class="subtitulo">
-        Panel del alumno
-    </p>
+            <h1>TRAINING POINT</h1>
+
+            <p>
+                Panel del alumno
+            </p>
+
+        </div>
+
+    </header>
 
 
-    <div class="panel">
+    <main class="contenedor">
+
+        <section class="bienvenida">
+
+            <h2>
+                Hola, {{ session["usuario"] }} 👋
+            </h2>
+
+            <p>
+                Este es tu espacio en Training Point.
+            </p>
+
+        </section>
+
+
+        <h2 class="titulo-seccion titulo-accesos-principales">
+            Accesos principales
+        </h2>
+
+        <section class="menu-principal">
+
+            <a
+                href="{{ url_for('mis_clases') }}"
+                class="boton-principal"
+            >
+
+                <div class="boton-principal-icono">
+                    📅
+                </div>
+
+                <div class="boton-principal-titulo">
+                    Clases
+                </div>
+
+                <div class="boton-principal-descripcion">
+                    Ver las próximas clases disponibles e inscribirte.
+                </div>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('mis_inscripciones') }}"
+                class="boton-principal"
+            >
+
+                <div class="boton-principal-icono">
+                    📝
+                </div>
+
+                <div class="boton-principal-titulo">
+                    Mis inscripciones
+                </div>
+
+                <div class="boton-principal-descripcion">
+                    Consultar las clases que tenés reservadas.
+                </div>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('lector_qr') }}"
+                class="boton-principal"
+            >
+
+                <div class="boton-principal-icono">
+                    📱
+                </div>
+
+                <div class="boton-principal-titulo">
+                    Lector QR
+                </div>
+
+                <div class="boton-principal-descripcion">
+                    Registrar tu asistencia a una clase.
+                </div>
+
+            </a>
+
+        </section>
+
+
+        <h2 class="titulo-seccion">
+            Más herramientas
+        </h2>
+
+        <section class="herramientas">
+
+            <div class="herramientas-grid">
+
+                <a
+                    href="{{ url_for('perfil_alumno') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        👤
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Mi perfil
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('mi_bono') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        🎫
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Mi abono
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('mis_asistencias') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        ✅
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Mis asistencias
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('pagos') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        💳
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Pagos
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('notificaciones_alumno') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        🔔
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Notificaciones
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('rutinas_alumno') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        🏋️
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Rutinas
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('mi_cuenta') }}"
+                    class="herramienta"
+                >
+
+                    <div class="herramienta-icono">
+                        ⚙️
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Mi cuenta
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
 
 
         <a
-            href="{{ url_for('perfil_alumno') }}"
-            class="tarjeta"
+            href="{{ url_for('cerrar_sesion') }}"
+            class="cerrar-sesion"
         >
-
-            <div class="icono">👤</div>
-
-            <div class="titulo">
-                Mi perfil
-            </div>
-
-            <div class="descripcion">
-                Mis datos personales
-            </div>
-
+            🚪 Cerrar sesión
         </a>
 
+    </main>
+
+
+    <nav class="navegacion-movil">
 
         <a
-            href="{{ url_for('mis_clases') }}"
-            class="tarjeta"
+            href="{{ url_for('panel') }}"
+            class="activo"
         >
-
-            <div class="icono">📅</div>
-
-            <div class="titulo">
-                Clases
-            </div>
-
-            <div class="descripcion">
-                Ver próximas clases
-            </div>
-
+            <span class="navegacion-movil-icono">🏠</span>
+            Inicio
         </a>
 
-        <a href="{{ url_for('mis_inscripciones') }}" class="tarjeta">
-
-            <div class="icono">📋</div>
-
-            <div class="titulo">
-                Mis inscripciones
-            </div>
-
-            <div class="descripcion">
-                Ver mis clases reservadas
-            </div>
-
+        <a href="{{ url_for('mis_clases') }}">
+            <span class="navegacion-movil-icono">📅</span>
+            Clases
         </a>
 
-        <a href="{{ url_for('mi_bono') }}" class="tarjeta">
-
-            <div class="icono">🎫</div>
-
-            <div class="titulo">
-                Mi bono
-            </div>
-
-            <div class="descripcion">
-                Créditos y clases disponibles
-            </div>
-
+        <a href="{{ url_for('mis_inscripciones') }}">
+            <span class="navegacion-movil-icono">📝</span>
+            Inscripciones
         </a>
 
-        <a href="{{ url_for('mis_asistencias') }}" class="tarjeta">
-
-            <div class="icono">🏃</div>
-
-            <div class="titulo">
-                Mis asistencias
-            </div>
-
-            <div class="descripcion">
-                Historial de asistencia
-            </div>
-
+        <a href="{{ url_for('lector_qr') }}">
+            <span class="navegacion-movil-icono">📱</span>
+            QR
         </a>
 
-
-       <a href="{{ url_for('pagos') }}" class="tarjeta">
-
-            <div class="icono">💳</div>
-
-            <div class="titulo">
-                Pagos
-            </div>
-
-            <div class="descripcion">
-                Pagos y vencimientos
-            </div>
-
-        </a>
+    </nav>
 
 
-        <a href="{{ url_for('notificaciones_alumno') }}" class="tarjeta">
+    <script>
 
-            <div class="icono">🔔</div>
+        document.addEventListener("DOMContentLoaded", function () {
 
-            <div class="titulo">
-                Notificaciones
-            </div>
+            const posicionGuardada = sessionStorage.getItem(
+                "alumnoScrollPosition"
+            );
 
-            <div class="descripcion">
-                Avisos y novedades
-            </div>
+            if (posicionGuardada !== null) {
 
-        </a>
-
-
-        <a href="{{ url_for('rutinas_alumno') }}" class="tarjeta">
-
-            <div class="icono">🏋️</div>
-
-            <div class="titulo">
-                Rutinas
-            </div>
-
-            <div class="descripcion">
-                Entrenamientos del día
-            </div>
-
-        </a>
-
-        <a href="{{ url_for('mi_cuenta') }}" class="tarjeta">
-
-            <div class="icono">
-                👤
-            </div>
-
-            <div class="titulo">
-                Mi cuenta
-            </div>
-
-            <div class="descripcion">
-                Usuario y seguridad
-            </div>
-
-        </a>
-
-
-        <a href="{{ url_for('lector_qr') }}" class="tarjeta qr">
-
-            <div class="icono">📱</div>
-
-            <div class="titulo">
-                Lector QR
-            </div>
-
-            <div class="descripcion">
-                Registrar asistencia
-            </div>
-
-        </a>
-
-
-    </div>
-
-    <a
-        href="{{ url_for('cerrar_sesion') }}"
-        class="volver"
-    >
-        🚪 Cerrar sesión
-    </a>
-
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const posicionGuardada = sessionStorage.getItem("alumnoScrollPosition");
-
-        if (posicionGuardada !== null) {
-            window.scrollTo(0, parseInt(posicionGuardada));
-            sessionStorage.removeItem("alumnoScrollPosition");
-        }
-
-        const enlacesPanel = document.querySelectorAll(".panel a.tarjeta");
-
-        enlacesPanel.forEach(function (enlace) {
-
-            enlace.addEventListener("click", function () {
-                sessionStorage.setItem(
-                    "alumnoScrollPosition",
-                    window.scrollY
+                window.scrollTo(
+                    0,
+                    parseInt(posicionGuardada)
                 );
+
+                sessionStorage.removeItem(
+                    "alumnoScrollPosition"
+                );
+
+            }
+
+            const enlacesPanel = document.querySelectorAll(
+                ".menu-principal a, .herramientas a"
+            );
+
+            enlacesPanel.forEach(function (enlace) {
+
+                enlace.addEventListener("click", function () {
+
+                    sessionStorage.setItem(
+                        "alumnoScrollPosition",
+                        window.scrollY
+                    );
+
+                });
+
             });
 
         });
 
-    });
-</script>
+    </script>
 
 </body>
 
