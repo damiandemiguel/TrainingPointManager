@@ -39,7 +39,7 @@
 
         .contenedor {
             width: 90%;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 30px auto 100px;
         }
 
@@ -48,45 +48,24 @@
             padding: 25px;
             border-radius: 12px;
             margin-bottom: 25px;
-
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.10);
-        }
-
-        .bienvenida h2 {
-            margin-top: 0;
-        }
-
-        .estadisticas {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .estadistica {
-            background-color: white;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
         }
 
-        .estadistica-icono {
-            font-size: 28px;
-            margin-bottom: 8px;
+        .bienvenida h2 {
+            margin: 0 0 8px;
         }
 
-        .estadistica-numero {
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .estadistica-titulo {
-            margin-top: 5px;
+        .bienvenida p {
+            margin: 0;
             color: #666;
-            font-size: 14px;
         }
+
+        .titulo-seccion {
+            margin: 30px 0 15px;
+            font-size: 20px;
+        }
+
+        /* HOY */
 
         .hoy {
             background-color: white;
@@ -141,72 +120,130 @@
             font-weight: bold;
         }
 
+        .clase-hoy-accion:hover {
+            background-color: #444;
+        }
+
         .sin-clases-hoy {
             color: #666;
             margin: 0;
         }
 
-        .menu {
+        /* ESTADÍSTICAS */
+
+        .estadisticas {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
-        .boton {
+        .estadistica {
             background-color: white;
             border-radius: 12px;
-            padding: 25px;
-
-            text-decoration: none;
-            color: #222;
-
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.10);
-
+            padding: 16px 10px;
             text-align: center;
-
-            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        .boton:hover {
-            transform: translateY(-3px);
-            box-shadow:
-                0 6px 15px rgba(0, 0, 0, 0.15);
+        .estadistica-icono {
+            font-size: 24px;
+            margin-bottom: 6px;
         }
 
-        .icono {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .titulo {
-            font-size: 18px;
+        .estadistica-numero {
+            font-size: 26px;
             font-weight: bold;
         }
 
-        .descripcion {
-            margin-top: 8px;
+        .estadistica-titulo {
+            margin-top: 5px;
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .salir {
-            display: block;
-            width: 200px;
-            margin: 30px auto;
+        /* ACCESOS PRINCIPALES */
 
-            padding: 14px;
+        .menu-principal {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
 
-            background-color: #222;
-            color: white;
-
-            text-align: center;
+        .boton-principal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px 18px;
             text-decoration: none;
-
-            border-radius: 8px;
+            color: #222;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            transition: 0.2s;
         }
 
-        .volver {
+        .boton-principal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .boton-principal .icono {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .boton-principal .titulo {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .boton-principal .descripcion {
+            margin-top: 7px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* MÁS HERRAMIENTAS */
+
+        .herramientas {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .herramientas-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .herramienta {
+            border: 1px solid #e2e2e2;
+            border-radius: 9px;
+            padding: 15px 10px;
+            text-decoration: none;
+            color: #222;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .herramienta:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .herramienta-icono {
+            font-size: 23px;
+            margin-bottom: 7px;
+        }
+
+        .herramienta-titulo {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .cerrar-sesion {
             display: block;
             width: fit-content;
             margin: 30px auto 0;
@@ -218,38 +255,66 @@
             font-weight: bold;
         }
 
-        @media (max-width: 600px) {
+        .navegacion-movil {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-top: 1px solid #ddd;
+            box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
+            z-index: 1000;
+        }
 
-            .estadisticas {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .navegacion-movil a {
+            padding: 10px 4px 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #555;
+            font-size: 11px;
+            font-weight: bold;
+        }
 
-            .menu {
-                grid-template-columns: 1fr;
-            }
+        .navegacion-movil-icono {
+            display: block;
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .navegacion-movil .activo {
+            color: #111;
+            background-color: #f2f2f2;
+        }
+
+        @media (max-width: 750px) {
 
             .contenedor {
                 width: 92%;
+                margin-top: 20px;
+                margin-bottom: 100px;
             }
 
             .clases-hoy {
                 grid-template-columns: 1fr;
             }
 
-        }
-
-        @media (max-width: 600px) {
-
             .estadisticas {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .menu {
-                grid-template-columns: 1fr;
+            .titulo-accesos-principales,
+            .menu-principal {
+                display: none;
             }
 
-            .contenedor {
-                width: 92%;
+            .herramientas-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .navegacion-movil {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
             }
 
         }
@@ -276,12 +341,72 @@
             <h2>Hola, {{ session["usuario"] }} 👋</h2>
 
             <p>
-                Bienvenido al panel de administración
-                de Training Point.
+                Este es el resumen de Training Point.
             </p>
 
         </section>
 
+
+        <section class="hoy">
+
+            <h2>📅 Hoy en Training Point</h2>
+
+            {% if clases_hoy %}
+
+                <div class="clases-hoy">
+
+                    {% for clase in clases_hoy %}
+
+                        <div class="clase-hoy">
+
+                            <div class="clase-hoy-horario">
+                                {{ clase[2] }} — {{ clase[3] }}
+                            </div>
+
+                            <div class="clase-hoy-datos">
+                                👥 {{ clase[6] }} / {{ clase[4] }} inscriptos
+                                <br>
+                                ✅ {{ clase[7] }} asistencias
+                            </div>
+
+                            <div class="clase-hoy-acciones">
+
+                                <a
+                                    href="{{ url_for('ver_inscriptos', clase_id=clase[0]) }}"
+                                    class="clase-hoy-accion"
+                                >
+                                    Ver inscriptos
+                                </a>
+
+                                <a
+                                    href="{{ url_for('registrar_asistencia_admin', clase_id=clase[0]) }}"
+                                    class="clase-hoy-accion"
+                                >
+                                    Registrar asistencia
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="sin-clases-hoy">
+                    No hay clases programadas para hoy.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <h2 class="titulo-seccion">
+            Resumen
+        </h2>
 
         <section class="estadisticas">
 
@@ -329,75 +454,17 @@
 
         </section>
 
-        <section class="hoy">
 
-            <h2>📅 Hoy en Training Point</h2>
+        <h2 class="titulo-seccion titulo-accesos-principales">
+            Accesos principales
+        </h2>
 
-            {% if clases_hoy %}
+        <section class="menu-principal">
 
-                <div class="clases-hoy">
-
-                    {% for clase in clases_hoy %}
-
-                        <div class="clase-hoy">
-
-                            <div class="clase-hoy-horario">
-                                {{ clase[2] }} — {{ clase[3] }}
-                            </div>
-
-                            <div class="clase-hoy-datos">
-
-                                👥
-                                {{ clase[6] }} / {{ clase[4] }}
-                                inscriptos
-
-                                <br>
-
-                                ✅
-                                {{ clase[7] }}
-                                asistencias
-
-                            </div>
-
-                            <div class="clase-hoy-acciones">
-
-                                <a
-                                    href="{{ url_for('ver_inscriptos', clase_id=clase[0]) }}"
-                                    class="clase-hoy-accion"
-                                >
-                                    Ver inscriptos
-                                </a>
-
-                                <a
-                                    href="{{ url_for('registrar_asistencia_admin', clase_id=clase[0]) }}"
-                                    class="clase-hoy-accion"
-                                >
-                                    Registrar asistencia
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <p class="sin-clases-hoy">
-                    No hay clases programadas para hoy.
-                </p>
-
-            {% endif %}
-
-        </section>
-
-        <section class="menu">
-
-
-            <a href="{{ url_for('gestionar_clases') }}" class="boton">
-
+            <a
+                href="{{ url_for('gestionar_clases') }}"
+                class="boton-principal"
+            >
                 <div class="icono">📅</div>
 
                 <div class="titulo">
@@ -407,12 +474,13 @@
                 <div class="descripcion">
                     Crear y gestionar clases
                 </div>
-
             </a>
 
 
-            <a href="{{ url_for('mostrar_alumnos') }}" class="boton">
-
+            <a
+                href="{{ url_for('mostrar_alumnos') }}"
+                class="boton-principal"
+            >
                 <div class="icono">👥</div>
 
                 <div class="titulo">
@@ -422,12 +490,13 @@
                 <div class="descripcion">
                     Ver y gestionar alumnos
                 </div>
-
             </a>
 
 
-            <a href="{{ url_for('estado_alumnos') }}" class="boton">
-
+            <a
+                href="{{ url_for('estado_alumnos') }}"
+                class="boton-principal"
+            >
                 <div class="icono">💳</div>
 
                 <div class="titulo">
@@ -435,154 +504,172 @@
                 </div>
 
                 <div class="descripcion">
-                    Cargar y gestionar abonos 
+                    Estado general y gestión de abonos
                 </div>
-
             </a>
-
-
-            <a href="{{ url_for('rutinas_admin') }}" class="boton">
-
-                <div class="icono">🏋️</div>
-
-                <div class="titulo">
-                    Rutinas
-                </div>
-
-                <div class="descripcion">
-                    Crear y administrar rutinas
-                </div>
-
-            </a>
-            
-
-            <a href="{{ url_for('asistencias_admin') }}" class="boton">
-
-                <div class="icono">📋</div>
-
-                <div class="titulo">
-                    Asistencias
-                </div>
-
-                <div class="descripcion">
-                    Consultar historial de asistencias
-                </div>
-
-            </a>
-
-            <a href="{{ url_for('pagos_admin') }}" class="boton">
-
-                <div class="icono">
-                    💳
-                </div>
-
-                <div class="titulo">
-                    Pagos
-                </div>
-
-                <div class="descripcion">
-                    Consultar historial de pagos
-                </div>
-
-            </a>
-
-            <a href="{{ url_for('notificaciones_admin') }}" class="boton">
-
-                <div class="icono">🔔</div>
-
-                <div class="titulo">
-                    Notificaciones
-                </div>
-
-                <div class="descripcion">
-                    Enviar y recibir mensajes
-                </div>
-
-            </a>
-
-
-            <a href="{{ url_for('certificados_admin') }}" class="boton">
-
-                <div class="icono">📄</div>
-
-                <div class="titulo">
-                    Certificados médicos
-                </div>
-
-                <div class="descripcion">
-                    Gestionar certificados
-                </div>
-
-            </a>
-
-
-            <a href="{{ url_for('configuracion_admin') }}" class="boton">
-
-                <div class="icono">⚙️</div>
-
-                <div class="titulo">
-                    Configuración
-                </div>
-
-                <div class="descripcion">
-                    Configurar la aplicación
-                </div>
-
-            </a>
-
-            <a href="{{ url_for('mi_cuenta') }}" class="boton">
-
-                <div class="icono">
-                    👤
-                </div>
-
-                <div class="titulo">
-                    Mi cuenta
-                </div>
-
-                <div class="descripcion">
-                    Usuario y seguridad
-                </div>
-
-            </a>
-
 
         </section>
 
+
+        <h2 class="titulo-seccion">
+            Más herramientas
+        </h2>
+
+        <section class="herramientas">
+
+            <div class="herramientas-grid">
+
+                <a
+                    href="{{ url_for('rutinas_admin') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">🏋️</div>
+                    <div class="herramienta-titulo">Rutinas</div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('asistencias_admin') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">📋</div>
+                    <div class="herramienta-titulo">Asistencias</div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('pagos_admin') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">💳</div>
+                    <div class="herramienta-titulo">Pagos</div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('notificaciones_admin') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">🔔</div>
+                    <div class="herramienta-titulo">Notificaciones</div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('certificados_admin') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">📄</div>
+                    <div class="herramienta-titulo">
+                        Certificados médicos
+                    </div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('configuracion_admin') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">⚙️</div>
+                    <div class="herramienta-titulo">
+                        Configuración
+                    </div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('mi_cuenta') }}"
+                    class="herramienta"
+                >
+                    <div class="herramienta-icono">👤</div>
+                    <div class="herramienta-titulo">
+                        Mi cuenta
+                    </div>
+                </a>
+
+            </div>
+
+        </section>
+
+
         <a
             href="{{ url_for('cerrar_sesion') }}"
-            class="volver"
+            class="cerrar-sesion"
         >
             🚪 Cerrar sesión
         </a>
+
     </main>
 
-<script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+    <nav class="navegacion-movil">
 
-        const posicionGuardada = sessionStorage.getItem("adminScrollPosition");
+        <a
+            href="{{ url_for('panel') }}"
+            class="activo"
+        >
+            <span class="navegacion-movil-icono">🏠</span>
+            Inicio
+        </a>
 
-        if (posicionGuardada !== null) {
-            window.scrollTo(0, parseInt(posicionGuardada));
-            sessionStorage.removeItem("adminScrollPosition");
-        }
+        <a href="{{ url_for('gestionar_clases') }}">
+            <span class="navegacion-movil-icono">📅</span>
+            Clases
+        </a>
 
-        const enlacesPanel = document.querySelectorAll(".menu a");
+        <a href="{{ url_for('mostrar_alumnos') }}">
+            <span class="navegacion-movil-icono">👥</span>
+            Alumnos
+        </a>
 
-        enlacesPanel.forEach(function (enlace) {
+        <a href="{{ url_for('estado_alumnos') }}">
+            <span class="navegacion-movil-icono">💳</span>
+            Abonos
+        </a>
 
-            enlace.addEventListener("click", function () {
-                sessionStorage.setItem(
-                    "adminScrollPosition",
-                    window.scrollY
+    </nav>
+
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const posicionGuardada =
+                sessionStorage.getItem("adminScrollPosition");
+
+            if (posicionGuardada !== null) {
+
+                window.scrollTo(
+                    0,
+                    parseInt(posicionGuardada)
                 );
+
+                sessionStorage.removeItem(
+                    "adminScrollPosition"
+                );
+
+            }
+
+            const enlacesPanel = document.querySelectorAll(
+                ".menu-principal a, .herramientas a, .clase-hoy-acciones a"
+            );
+
+            enlacesPanel.forEach(function (enlace) {
+
+                enlace.addEventListener("click", function () {
+
+                    sessionStorage.setItem(
+                        "adminScrollPosition",
+                        window.scrollY
+                    );
+
+                });
+
             });
 
         });
 
-    });
-</script>
+    </script>
 
 </body>
 
