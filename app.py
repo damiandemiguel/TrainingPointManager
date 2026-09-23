@@ -375,7 +375,135 @@ def panel_alumno():
     if session["rol"] != "alumno":
         return "Acceso no autorizado."
 
-    return render_template("panel_alumno.html")
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    hoy = datetime.now().date()
+    ahora = datetime.now()
+
+    # Buscar al alumno correspondiente al usuario
+    cursor.execute("""
+        SELECT
+            id,
+            nombre
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    alumno_id = alumno["id"]
+
+    # Próxima clase reservada
+    cursor.execute("""
+        SELECT
+            clases.id,
+            clases.fecha,
+            clases.hora_inicio,
+            clases.hora_fin
+        FROM inscripciones
+        INNER JOIN clases
+            ON inscripciones.clase_id = clases.id
+        WHERE inscripciones.alumno_id = ?
+          AND inscripciones.estado = 'Inscripto'
+          AND (
+                clases.fecha > ?
+                OR (
+                    clases.fecha = ?
+                    AND clases.hora_inicio >= ?
+                )
+              )
+        ORDER BY
+            clases.fecha ASC,
+            clases.hora_inicio ASC
+        LIMIT 1
+    """, (
+        alumno_id,
+        hoy.strftime("%Y-%m-%d"),
+        hoy.strftime("%Y-%m-%d"),
+        ahora.strftime("%H:%M")
+    ))
+
+    proxima_clase = cursor.fetchone()
+
+    # Abono activo
+    cursor.execute("""
+        SELECT
+            bonos.creditos_disponibles,
+            bonos.creditos_ilimitados,
+            bonos.fecha_vencimiento,
+            tipos_bono.nombre AS nombre_bono
+        FROM bonos
+        INNER JOIN tipos_bono
+            ON bonos.tipo_bono_id = tipos_bono.id
+        WHERE bonos.alumno_id = ?
+          AND bonos.estado = 'Activo'
+        ORDER BY bonos.fecha_vencimiento ASC
+        LIMIT 1
+    """, (alumno_id,))
+
+    bono = cursor.fetchone()
+
+    # Notificaciones activas correspondientes al alumno
+    cursor.execute("""
+        SELECT COUNT(*) AS cantidad
+        FROM notificaciones
+        WHERE activa = 1
+          AND (
+                tipo = 'General'
+                OR (
+                    tipo = 'Individual'
+                    AND alumno_id = ?
+                )
+              )
+    """, (alumno_id,))
+
+    resultado_notificaciones = cursor.fetchone()
+    cantidad_notificaciones = resultado_notificaciones["cantidad"]
+
+    # Clase reservada para hoy y rutina asociada
+    cursor.execute("""
+        SELECT
+            clases.id,
+            clases.fecha,
+            clases.hora_inicio,
+            clases.hora_fin,
+            rutinas.id AS rutina_id,
+            rutinas.titulo,
+            rutinas.contenido
+        FROM inscripciones
+        INNER JOIN clases
+            ON inscripciones.clase_id = clases.id
+        LEFT JOIN rutinas
+            ON rutinas.clase_id = clases.id
+        WHERE inscripciones.alumno_id = ?
+          AND inscripciones.estado = 'Inscripto'
+          AND clases.fecha = ?
+        ORDER BY clases.hora_inicio ASC
+        LIMIT 1
+    """, (
+        alumno_id,
+        hoy.strftime("%Y-%m-%d")
+    ))
+
+    rutina_hoy = cursor.fetchone()
+
+    conexion.close()
+
+    return render_template(
+        "panel_alumno.html",
+        alumno=alumno,
+        proxima_clase=proxima_clase,
+        bono=bono,
+        cantidad_notificaciones=cantidad_notificaciones,
+        rutina_hoy=rutina_hoy
+    )
 
 @app.route("/notificaciones")
 def notificaciones_alumno():

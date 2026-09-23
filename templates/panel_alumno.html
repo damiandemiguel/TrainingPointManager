@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Panel del alumno</title>
+    <title>Inicio - Training Point</title>
 
     <style>
 
@@ -15,9 +15,9 @@
         }
 
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
             color: #333;
         }
 
@@ -47,11 +47,11 @@
         .contenedor {
             width: 92%;
             max-width: 1000px;
-            margin: 28px auto 50px;
+            margin: 24px auto 50px;
         }
 
         .bienvenida {
-            margin-bottom: 28px;
+            margin-bottom: 16px;
         }
 
         .bienvenida h2 {
@@ -65,74 +65,95 @@
         }
 
         .titulo-seccion {
-            font-size: 18px;
-            margin: 28px 0 14px;
+            font-size: 17px;
+            margin: 20px 0 10px;
         }
 
-        .menu-principal {
+
+        /* =========================
+           RESUMEN
+           ========================= */
+
+        .resumen {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
 
-        .boton-principal {
+        .tarjeta-resumen {
             background-color: white;
-            border-radius: 12px;
-            padding: 24px 18px;
+            border-radius: 10px;
+            padding: 12px;
+            min-height: 100px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
             text-decoration: none;
             color: #333;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .boton-principal:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
+        .tarjeta-resumen:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.11);
         }
 
-        .boton-principal-icono {
-            font-size: 30px;
-            margin-bottom: 12px;
+        .tarjeta-encabezado {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .boton-principal-titulo {
+        .tarjeta-icono {
+            font-size: 21px;
+        }
+
+        .tarjeta-titulo {
+            font-size: 13px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .tarjeta-valor {
             font-size: 17px;
             font-weight: bold;
-            margin-bottom: 6px;
+            margin-top: 10px;
         }
 
-        .boton-principal-descripcion {
+        .tarjeta-detalle {
+            font-size: 12px;
             color: #777;
-            font-size: 13px;
-            line-height: 1.4;
+            margin-top: 4px;
+            line-height: 1.3;
         }
+
+
+        /* =========================
+           MÁS OPCIONES
+           ========================= */
 
         .herramientas {
             background-color: white;
-            border-radius: 12px;
-            padding: 18px;
+            border-radius: 10px;
+            padding: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .herramientas-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            grid-template-columns: 1fr;
+            gap: 5px;
         }
 
         .herramienta {
+            min-height: 46px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100px;
-            padding: 14px 10px;
+            gap: 9px;
+            padding: 8px 10px;
             background-color: #f7f7f7;
-            border-radius: 10px;
+            border-radius: 8px;
             text-decoration: none;
             color: #333;
-            text-align: center;
-            transition: background-color 0.2s;
         }
 
         .herramienta:hover {
@@ -140,8 +161,10 @@
         }
 
         .herramienta-icono {
-            font-size: 25px;
-            margin-bottom: 8px;
+            width: 25px;
+            text-align: center;
+            font-size: 19px;
+            flex-shrink: 0;
         }
 
         .herramienta-titulo {
@@ -152,19 +175,20 @@
         .cerrar-sesion {
             display: block;
             width: fit-content;
-            margin: 28px auto 0;
-            padding: 10px 18px;
+            margin: 22px auto 0;
+            padding: 9px 16px;
             background-color: #ddd;
             color: #333;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .cerrar-sesion:hover {
-            background-color: #d2d2d2;
-        }
+
+        /* =========================
+           NAVEGACIÓN MÓVIL
+           ========================= */
 
         .navegacion-movil {
             display: none;
@@ -198,21 +222,109 @@
             background-color: #f2f2f2;
         }
 
+
+        /* =========================
+           CELULAR
+           ========================= */
+
         @media (max-width: 750px) {
+
+            .encabezado {
+                padding: 14px 16px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
 
             .contenedor {
                 width: 92%;
-                margin-top: 20px;
-                margin-bottom: 100px;
+                margin-top: 16px;
+                margin-bottom: 95px;
             }
 
-            .titulo-accesos-principales,
-            .menu-principal {
-                display: none;
+            .bienvenida {
+                margin-bottom: 12px;
+            }
+
+            .bienvenida h2 {
+                font-size: 21px;
+            }
+
+            .bienvenida p {
+                font-size: 13px;
+            }
+
+
+            /* Resumen móvil: 2 x 2 */
+
+            .resumen {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .tarjeta-resumen {
+                min-height: 92px;
+                padding: 9px;
+            }
+
+            .tarjeta-encabezado {
+                gap: 6px;
+                align-items: center;
+            }
+
+            .tarjeta-icono {
+                font-size: 18px;
+            }
+
+            .tarjeta-titulo {
+                font-size: 11px;
+            }
+
+            .tarjeta-valor {
+                font-size: 14px;
+                margin-top: 6px;
+            }
+
+            .tarjeta-detalle {
+                font-size: 10px;
+                margin-top: 3px;
+            }
+
+
+            /* Más opciones móvil */
+
+            .titulo-seccion {
+                font-size: 15px;
+                margin: 16px 0 8px;
+            }
+
+            .herramientas {
+                padding: 6px;
             }
 
             .herramientas-grid {
-                grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
+            gap: 5px;
+        }
+
+            .herramienta {
+                min-height: 41px;
+                padding: 6px 8px;
+                gap: 6px;
+            }
+
+            .herramienta-icono {
+                width: 21px;
+                font-size: 16px;
+            }
+
+            .herramienta-titulo {
+                font-size: 11px;
+            }
+
+            .cerrar-sesion {
+                margin-top: 16px;
             }
 
             .navegacion-movil {
@@ -226,6 +338,7 @@
 
 </head>
 
+
 <body>
 
     <header class="encabezado">
@@ -234,9 +347,7 @@
 
             <h1>TRAINING POINT</h1>
 
-            <p>
-                Panel del alumno
-            </p>
+            <p>Panel del alumno</p>
 
         </div>
 
@@ -248,78 +359,232 @@
         <section class="bienvenida">
 
             <h2>
-                Hola, {{ session["usuario"] }} 👋
+                Hola, {{ alumno["nombre"] }} 👋
             </h2>
 
             <p>
-                Este es tu espacio en Training Point.
+                Este es tu resumen de Training Point.
             </p>
 
         </section>
 
 
-        <h2 class="titulo-seccion titulo-accesos-principales">
-            Accesos principales
-        </h2>
-
-        <section class="menu-principal">
-
-            <a
-                href="{{ url_for('mis_clases') }}"
-                class="boton-principal"
-            >
-
-                <div class="boton-principal-icono">
-                    📅
-                </div>
-
-                <div class="boton-principal-titulo">
-                    Clases
-                </div>
-
-                <div class="boton-principal-descripcion">
-                    Ver las próximas clases disponibles e inscribirte.
-                </div>
-
-            </a>
-
+        <section class="resumen">
 
             <a
                 href="{{ url_for('mis_inscripciones') }}"
-                class="boton-principal"
+                class="tarjeta-resumen"
             >
 
-                <div class="boton-principal-icono">
-                    📝
+                <div class="tarjeta-encabezado">
+
+                    <div class="tarjeta-icono">📅</div>
+
+                    <div class="tarjeta-titulo">
+                        Próxima clase
+                    </div>
+
                 </div>
 
-                <div class="boton-principal-titulo">
-                    Mis inscripciones
+                {% if proxima_clase %}
+
+                    <div>
+
+                        <div class="tarjeta-valor">
+                            {{ proxima_clase["fecha"]|fecha_ar }}
+                        </div>
+
+                        <div class="tarjeta-detalle">
+                            {{ proxima_clase["hora_inicio"] }} a {{ proxima_clase["hora_fin"] }}
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div>
+
+                        <div class="tarjeta-valor">
+                            Sin reserva
+                        </div>
+
+                        <div class="tarjeta-detalle">
+                            No tenés próximas clases.
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </a>
+
+
+            <a
+                href="{{ url_for('mi_bono') }}"
+                class="tarjeta-resumen"
+            >
+
+                <div class="tarjeta-encabezado">
+
+                    <div class="tarjeta-icono">🎫</div>
+
+                    <div class="tarjeta-titulo">
+                        Créditos
+                    </div>
+
                 </div>
 
-                <div class="boton-principal-descripcion">
-                    Consultar las clases que tenés reservadas.
+                {% if bono %}
+
+                    <div>
+
+                        {% if bono["creditos_ilimitados"] == 1 %}
+
+                            <div class="tarjeta-valor">
+                                ♾️ Pase Libre
+                            </div>
+
+                            <div class="tarjeta-detalle">
+                                Vence {{ bono["fecha_vencimiento"]|fecha_ar }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="tarjeta-valor">
+                                {{ bono["creditos_disponibles"] }}
+                            </div>
+
+                            <div class="tarjeta-detalle">
+                                créditos disponibles
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div>
+
+                        <div class="tarjeta-valor">
+                            Sin abono
+                        </div>
+
+                        <div class="tarjeta-detalle">
+                            No tenés un abono activo.
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </a>
+
+
+            <a
+                href="{{ url_for('notificaciones_alumno') }}"
+                class="tarjeta-resumen"
+            >
+
+                <div class="tarjeta-encabezado">
+
+                    <div class="tarjeta-icono">🔔</div>
+
+                    <div class="tarjeta-titulo">
+                        Notificaciones
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <div class="tarjeta-valor">
+                        {{ cantidad_notificaciones }}
+                    </div>
+
+                    <div class="tarjeta-detalle">
+
+                        {% if cantidad_notificaciones == 1 %}
+                            notificación activa
+                        {% else %}
+                            notificaciones activas
+                        {% endif %}
+
+                    </div>
+
                 </div>
 
             </a>
 
 
             <a
-                href="{{ url_for('lector_qr') }}"
-                class="boton-principal"
+                href="{{ url_for('rutinas_alumno') }}"
+                class="tarjeta-resumen"
             >
 
-                <div class="boton-principal-icono">
-                    📱
+                <div class="tarjeta-encabezado">
+
+                    <div class="tarjeta-icono">🏋️</div>
+
+                    <div class="tarjeta-titulo">
+                        Rutina de hoy
+                    </div>
+
                 </div>
 
-                <div class="boton-principal-titulo">
-                    Lector QR
-                </div>
+                {% if rutina_hoy %}
 
-                <div class="boton-principal-descripcion">
-                    Registrar tu asistencia a una clase.
-                </div>
+                    {% if rutina_hoy["rutina_id"] %}
+
+                        <div>
+
+                            <div class="tarjeta-valor">
+
+                                {% if rutina_hoy["titulo"] %}
+                                    {{ rutina_hoy["titulo"] }}
+                                {% else %}
+                                    Disponible
+                                {% endif %}
+
+                            </div>
+
+                            <div class="tarjeta-detalle">
+                                Clase {{ rutina_hoy["hora_inicio"] }}
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div>
+
+                            <div class="tarjeta-valor">
+                                Sin rutina
+                            </div>
+
+                            <div class="tarjeta-detalle">
+                                Todavía no fue cargada.
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <div>
+
+                        <div class="tarjeta-valor">
+                            Sin clase
+                        </div>
+
+                        <div class="tarjeta-detalle">
+                            No tenés reserva hoy.
+                        </div>
+
+                    </div>
+
+                {% endif %}
 
             </a>
 
@@ -327,8 +592,9 @@
 
 
         <h2 class="titulo-seccion">
-            Más herramientas
+            Más opciones
         </h2>
+
 
         <section class="herramientas">
 
@@ -338,15 +604,8 @@
                     href="{{ url_for('perfil_alumno') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        👤
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Mi perfil
-                    </div>
-
+                    <div class="herramienta-icono">👤</div>
+                    <div class="herramienta-titulo">Mi perfil</div>
                 </a>
 
 
@@ -354,15 +613,8 @@
                     href="{{ url_for('mi_bono') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        🎫
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Mi abono
-                    </div>
-
+                    <div class="herramienta-icono">🎫</div>
+                    <div class="herramienta-titulo">Mi abono</div>
                 </a>
 
 
@@ -370,15 +622,8 @@
                     href="{{ url_for('mis_asistencias') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        ✅
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Mis asistencias
-                    </div>
-
+                    <div class="herramienta-icono">✅</div>
+                    <div class="herramienta-titulo">Mis asistencias</div>
                 </a>
 
 
@@ -386,15 +631,8 @@
                     href="{{ url_for('pagos') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        💳
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Pagos
-                    </div>
-
+                    <div class="herramienta-icono">💳</div>
+                    <div class="herramienta-titulo">Pagos</div>
                 </a>
 
 
@@ -402,15 +640,8 @@
                     href="{{ url_for('notificaciones_alumno') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        🔔
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Notificaciones
-                    </div>
-
+                    <div class="herramienta-icono">🔔</div>
+                    <div class="herramienta-titulo">Notificaciones</div>
                 </a>
 
 
@@ -418,15 +649,8 @@
                     href="{{ url_for('rutinas_alumno') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        🏋️
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Rutinas
-                    </div>
-
+                    <div class="herramienta-icono">🏋️</div>
+                    <div class="herramienta-titulo">Rutinas</div>
                 </a>
 
 
@@ -434,15 +658,8 @@
                     href="{{ url_for('mi_cuenta') }}"
                     class="herramienta"
                 >
-
-                    <div class="herramienta-icono">
-                        ⚙️
-                    </div>
-
-                    <div class="herramienta-titulo">
-                        Mi cuenta
-                    </div>
-
+                    <div class="herramienta-icono">⚙️</div>
+                    <div class="herramienta-titulo">Mi cuenta</div>
                 </a>
 
             </div>
@@ -463,7 +680,7 @@
     <nav class="navegacion-movil">
 
         <a
-            href="{{ url_for('panel') }}"
+            href="{{ url_for('panel_alumno') }}"
             class="activo"
         >
             <span class="navegacion-movil-icono">🏠</span>
@@ -486,49 +703,6 @@
         </a>
 
     </nav>
-
-
-    <script>
-
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const posicionGuardada = sessionStorage.getItem(
-                "alumnoScrollPosition"
-            );
-
-            if (posicionGuardada !== null) {
-
-                window.scrollTo(
-                    0,
-                    parseInt(posicionGuardada)
-                );
-
-                sessionStorage.removeItem(
-                    "alumnoScrollPosition"
-                );
-
-            }
-
-            const enlacesPanel = document.querySelectorAll(
-                ".menu-principal a, .herramientas a"
-            );
-
-            enlacesPanel.forEach(function (enlace) {
-
-                enlace.addEventListener("click", function () {
-
-                    sessionStorage.setItem(
-                        "alumnoScrollPosition",
-                        window.scrollY
-                    );
-
-                });
-
-            });
-
-        });
-
-    </script>
 
 </body>
 
