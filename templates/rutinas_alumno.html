@@ -158,6 +158,10 @@
                 flex-direction: column;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
         }
 
     </style>
@@ -177,7 +181,6 @@
         </p>
 
     </div>
-
 
     <div class="acciones-superiores">
 
@@ -273,6 +276,9 @@
     {% endif %}
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_alumno.html' %}
 
 </body>
 

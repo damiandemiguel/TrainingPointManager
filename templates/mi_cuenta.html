@@ -160,7 +160,13 @@
             .tarjeta {
                 padding: 18px;
             }
+
+            .acciones-superiores {
+                display: none;
+            }
+            
         }
+
     </style>
 </head>
 
@@ -175,17 +181,21 @@
 
     <div class="acciones-superiores">
 
-        {% if usuario["rol"] == "administrador" %}
+        {% if session["rol"] == "administrador" %}
 
-            <a href="{{ url_for('panel') }}"
-               class="boton-superior">
+            <a
+                href="{{ url_for('panel') }}"
+                class="boton-superior"
+            >
                 ⬅️ Volver al panel
             </a>
 
         {% else %}
 
-            <a href="{{ url_for('panel_alumno') }}"
-               class="boton-superior">
+            <a
+                href="{{ url_for('panel_alumno') }}"
+                class="boton-superior"
+            >
                 ⬅️ Volver al panel
             </a>
 
@@ -288,6 +298,13 @@
     </div>
 
 </div>
+
+{% if session["rol"] == "alumno" %}
+
+    {% set nav_activa = '' %}
+    {% include '_nav_alumno.html' %}
+
+{% endif %}
 
 </body>
 </html>

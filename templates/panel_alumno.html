@@ -187,43 +187,6 @@
 
 
         /* =========================
-           NAVEGACIÓN MÓVIL
-           ========================= */
-
-        .navegacion-movil {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: white;
-            border-top: 1px solid #ddd;
-            box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
-            z-index: 1000;
-        }
-
-        .navegacion-movil a {
-            padding: 10px 3px 8px;
-            text-align: center;
-            text-decoration: none;
-            color: #555;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .navegacion-movil-icono {
-            display: block;
-            font-size: 21px;
-            margin-bottom: 3px;
-        }
-
-        .navegacion-movil .activo {
-            color: #111;
-            background-color: #f2f2f2;
-        }
-
-
-        /* =========================
            CELULAR
            ========================= */
 
@@ -306,7 +269,11 @@
             .herramientas-grid {
             grid-template-columns: 1fr;
             gap: 5px;
-        }
+            }
+            
+            .herramienta-solo-escritorio {
+                display: none;
+            }
 
             .herramienta {
                 min-height: 41px;
@@ -325,11 +292,6 @@
 
             .cerrar-sesion {
                 margin-top: 16px;
-            }
-
-            .navegacion-movil {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
             }
 
         }
@@ -601,6 +563,23 @@
             <div class="herramientas-grid">
 
                 <a
+                    href="{{ url_for('mis_clases') }}"
+                    class="herramienta herramienta-solo-escritorio"
+                >
+                    <div class="herramienta-icono">📅</div>
+                    <div class="herramienta-titulo">Clases</div>
+                </a>
+
+
+                <a
+                    href="{{ url_for('mis_inscripciones') }}"
+                    class="herramienta herramienta-solo-escritorio"
+                >
+                    <div class="herramienta-icono">📝</div>
+                    <div class="herramienta-titulo">Mis inscripciones</div>
+                </a>
+
+                <a
                     href="{{ url_for('perfil_alumno') }}"
                     class="herramienta"
                 >
@@ -676,33 +655,8 @@
 
     </main>
 
-
-    <nav class="navegacion-movil">
-
-        <a
-            href="{{ url_for('panel_alumno') }}"
-            class="activo"
-        >
-            <span class="navegacion-movil-icono">🏠</span>
-            Inicio
-        </a>
-
-        <a href="{{ url_for('mis_clases') }}">
-            <span class="navegacion-movil-icono">📅</span>
-            Clases
-        </a>
-
-        <a href="{{ url_for('mis_inscripciones') }}">
-            <span class="navegacion-movil-icono">📝</span>
-            Inscripciones
-        </a>
-
-        <a href="{{ url_for('lector_qr') }}">
-            <span class="navegacion-movil-icono">📱</span>
-            QR
-        </a>
-
-    </nav>
+    {% set nav_activa = 'inicio' %}
+    {% include '_nav_alumno.html' %}
 
 </body>
 

@@ -129,17 +129,6 @@
 
         </div>
 
-        <div class="acciones-superiores">
-
-            <a
-                href="{{ url_for('panel_alumno') }}"
-                class="boton-superior"
-            >
-                ⬅️ Volver al panel
-            </a>
-
-        </div>
-
         <div class="tarjeta-lector">
 
             <p class="instruccion">
@@ -211,6 +200,9 @@
         );
 
     </script>
+
+    {% set nav_activa = 'qr' %}
+    {% include '_nav_alumno.html' %}
 
 </body>
 </html>

@@ -154,6 +154,10 @@
             .notificacion {
                 padding: 16px;
             }
+
+            .acciones-superiores {
+                display: none;
+            } 
         }
     </style>
 </head>
@@ -169,13 +173,14 @@
 
     <div class="acciones-superiores">
 
-        <a href="{{ url_for('panel_alumno') }}"
-           class="boton-superior">
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton-superior"
+        >
             ⬅️ Volver al panel
         </a>
 
     </div>
-
 
     {% if avisos_automaticos %}
 
@@ -286,6 +291,9 @@
     {% endif %}
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_alumno.html' %}
 
 </body>
 </html>

@@ -118,6 +118,10 @@
                 grid-template-columns: 1fr 1fr;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
         }
 
         @media (max-width: 450px) {
@@ -229,6 +233,9 @@
     </div>
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_alumno.html' %}
 
 </body>
 

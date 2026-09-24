@@ -170,6 +170,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
         }
 
         .historial {
@@ -245,14 +249,14 @@
 
     <div class="acciones-superiores">
 
-        <a
-            href="{{ url_for('panel_alumno') }}"
-            class="boton-superior"
-        >
-            ⬅️ Volver al panel
-        </a>
+    <a
+        href="{{ url_for('panel_alumno') }}"
+        class="boton-superior"
+    >
+        ⬅️ Volver al panel
+    </a>
 
-    </div>
+</div>
 
 
     {% if bono %}
@@ -479,6 +483,9 @@
     </div>
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_alumno.html' %}
 
 </body>
 

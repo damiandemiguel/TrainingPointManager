@@ -243,6 +243,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
         }
 
     </style>
@@ -272,6 +276,7 @@
             </a>
 
         </div>
+
 
         <div class="tarjeta-perfil">
 
@@ -432,6 +437,14 @@
         </div>
 
     </div>
+
+
+    {% set nav_activa = '' %}
+    {% include '_nav_alumno.html' %}
+
+</body>
+
+</html>
 
 </body>
 
