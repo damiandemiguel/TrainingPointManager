@@ -4080,13 +4080,20 @@ def mostrar_alumnos():
 
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
-
     cursor = conexion.cursor()
 
     if busqueda:
 
         cursor.execute("""
-            SELECT id, nombre, email, fecha_nacimiento, telefono, activo
+            SELECT
+                id,
+                nombre,
+                email,
+                fecha_nacimiento,
+                telefono,
+                activo,
+                certificado_medico,
+                fecha_certificado
             FROM alumnos
             WHERE CAST(id AS TEXT) LIKE ?
                OR nombre LIKE ?
@@ -4101,21 +4108,53 @@ def mostrar_alumnos():
     else:
 
         cursor.execute("""
-            SELECT id, nombre, email, fecha_nacimiento, telefono, activo
+            SELECT
+                id,
+                nombre,
+                email,
+                fecha_nacimiento,
+                telefono,
+                activo,
+                certificado_medico,
+                fecha_certificado
             FROM alumnos
             ORDER BY nombre
         """)
 
-    alumnos = cursor.fetchall()
+    alumnos_db = cursor.fetchall()
 
     conexion.close()
+
+    alumnos = []
+
+    for alumno in alumnos_db:
+
+        if not alumno["certificado_medico"]:
+            estado_certificado = "Sin certificado"
+
+        elif fecha_vencida(alumno["fecha_certificado"]):
+            estado_certificado = "Vencido"
+
+        else:
+            estado_certificado = "Vigente"
+
+        alumnos.append({
+            "id": alumno["id"],
+            "nombre": alumno["nombre"],
+            "email": alumno["email"],
+            "fecha_nacimiento": alumno["fecha_nacimiento"],
+            "telefono": alumno["telefono"],
+            "activo": alumno["activo"],
+            "certificado_medico": alumno["certificado_medico"],
+            "fecha_certificado": alumno["fecha_certificado"],
+            "estado_certificado": estado_certificado
+        })
 
     return render_template(
         "alumnos.html",
         alumnos=alumnos,
         busqueda=busqueda
     )
-
 
 @app.route("/agregar")
 def agregar_alumno():

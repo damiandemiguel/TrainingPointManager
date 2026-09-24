@@ -164,6 +164,92 @@
             color: #d97706;
             font-weight: bold;
         }
+
+        .lista-abonos-movil {
+            display: none;
+        }
+
+        @media (max-width: 750px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .contenedor {
+                padding: 20px 15px;
+            }
+
+            .acciones-superiores {
+                display: none;
+            }
+
+            .resumen-estados {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .resumen {
+                padding: 14px 8px;
+            }
+
+            .resumen-numero {
+                font-size: 24px;
+            }
+
+            .tabla-contenedor {
+                display: none;
+            }
+
+            .lista-abonos-movil {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 25px;
+            }
+
+            .abono-movil {
+                background-color: #f7f7f7;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 15px;
+            }
+
+            .abono-movil-nombre {
+                font-size: 17px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .abono-movil-dato {
+                font-size: 14px;
+                color: #555;
+                margin: 7px 0;
+            }
+
+            .abono-movil-estado {
+    margin: 10px 0;
+            }
+
+            .abono-movil-acciones {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-top: 14px;
+            }
+
+            .abono-movil-acciones a {
+                display: inline-block;
+                padding: 8px 12px;
+                background-color: #222;
+                color: white;
+                text-decoration: none;
+                text-align: center;
+                border-radius: 7px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+
+        }
     </style>
 
 </head>
@@ -319,11 +405,20 @@
                     </td>
 
                     <td>
-                        {% if alumno["creditos_disponibles"] is not none %}
+                        {% if alumno["creditos_ilimitados"] %}
+
+                            ♾️ Ilimitados
+
+                        {% elif alumno["creditos_disponibles"] is not none %}
+
                             {{ alumno["creditos_disponibles"] }}
+
                         {% else %}
+
                             —
+
                         {% endif %}
+
                     </td>
 
                     <td>
@@ -333,7 +428,7 @@
                                 ⚪ Sin abono
                             </span>
 
-                        {% elif alumno["creditos_disponibles"] == 0 %}
+                        {% elif alumno["creditos_disponibles"] == 0 and not alumno["creditos_ilimitados"] %}
 
                             <span class="sin-creditos-estado">
                                 🟠 Sin créditos
@@ -384,6 +479,124 @@
     </div>
 
 </div>
+
+<div class="lista-abonos-movil">
+
+    {% for alumno in alumnos %}
+
+        <div class="abono-movil">
+
+            <div class="abono-movil-nombre">
+                {{ alumno["nombre"] }}
+            </div>
+
+
+            {% if alumno["bono_id"] %}
+
+                <div class="abono-movil-dato">
+                    🎟️ <strong>{{ alumno["nombre_bono"] }}</strong>
+                </div>
+
+
+                <div class="abono-movil-estado">
+
+                    {% if alumno["creditos_disponibles"] == 0 and not alumno["creditos_ilimitados"] %}
+
+                        <span class="sin-creditos-estado">
+                            🟠 Sin créditos
+                        </span>
+
+                    {% elif alumno["dias_para_vencer"] <= 0 %}
+
+                        <span class="vencido">
+                            🔴 Vencido
+                        </span>
+
+                    {% elif alumno["dias_para_vencer"] <= 7 %}
+
+                        <span class="por-vencer">
+                            🟡 Por vencer · {{ alumno["dias_para_vencer"] }} días
+                        </span>
+
+                    {% else %}
+
+                        <span class="vigente">
+                            🟢 Vigente · {{ alumno["dias_para_vencer"] }} días
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="abono-movil-dato">
+
+                    {% if alumno["creditos_ilimitados"] %}
+
+                        ♾️ <strong>Créditos ilimitados</strong>
+
+                    {% else %}
+
+                        🎫 <strong>{{ alumno["creditos_disponibles"] }}</strong>
+                        créditos disponibles
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="abono-movil-dato">
+
+                    📅 Vence:
+
+                    {% if alumno["fecha_vencimiento"] %}
+
+                        {{ alumno["fecha_vencimiento"][8:10] }}/{{ alumno["fecha_vencimiento"][5:7] }}/{{ alumno["fecha_vencimiento"][0:4] }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+
+                <div class="abono-movil-estado">
+
+                    <span class="sin-bono">
+                        ⚪ Sin abono activo
+                    </span>
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="abono-movil-acciones">
+
+                <a href="{{ url_for('perfil_alumno_admin', alumno_id=alumno['id']) }}">
+                    👤 Ver perfil
+                </a>
+
+                <a href="{{ url_for('nuevo_bono_admin', alumno_id=alumno['id']) }}">
+                    ➕ Cargar abono
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+</div>
+
+
+{% set nav_activa = 'abonos' %}
+{% include '_nav_admin.html' %}
 
 </body>
 </html>

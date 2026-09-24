@@ -255,38 +255,6 @@
             font-weight: bold;
         }
 
-        .navegacion-movil {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: white;
-            border-top: 1px solid #ddd;
-            box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
-            z-index: 1000;
-        }
-
-        .navegacion-movil a {
-            padding: 10px 4px 8px;
-            text-align: center;
-            text-decoration: none;
-            color: #555;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .navegacion-movil-icono {
-            display: block;
-            font-size: 21px;
-            margin-bottom: 3px;
-        }
-
-        .navegacion-movil .activo {
-            color: #111;
-            background-color: #f2f2f2;
-        }
-
         @media (max-width: 750px) {
 
             .contenedor {
@@ -310,11 +278,6 @@
 
             .herramientas-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .navegacion-movil {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
             }
 
         }
@@ -601,34 +564,8 @@
 
     </main>
 
-
-    <nav class="navegacion-movil">
-
-        <a
-            href="{{ url_for('panel') }}"
-            class="activo"
-        >
-            <span class="navegacion-movil-icono">🏠</span>
-            Inicio
-        </a>
-
-        <a href="{{ url_for('gestionar_clases') }}">
-            <span class="navegacion-movil-icono">📅</span>
-            Clases
-        </a>
-
-        <a href="{{ url_for('mostrar_alumnos') }}">
-            <span class="navegacion-movil-icono">👥</span>
-            Alumnos
-        </a>
-
-        <a href="{{ url_for('estado_alumnos') }}">
-            <span class="navegacion-movil-icono">💳</span>
-            Abonos
-        </a>
-
-    </nav>
-
+    {% set nav_activa = 'inicio' %}
+    {% include '_nav_admin.html' %}
 
     <script>
 

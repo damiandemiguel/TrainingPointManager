@@ -124,6 +124,82 @@
             background-color: #444;
         }
 
+        .lista-alumnos-movil {
+            display: none;
+        }
+
+        @media (max-width: 750px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .contenedor {
+                padding: 20px 15px;
+            }
+
+            .acciones-superiores {
+                display: none;
+            }
+
+            .buscador {
+                flex-wrap: wrap;
+            }
+
+            .buscador input {
+                width: 100%;
+                flex-basis: 100%;
+            }
+
+            table {
+                display: none;
+            }
+
+            .lista-alumnos-movil {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 25px;
+            }
+
+                .alumno-movil {
+                background-color: #f7f7f7;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 15px;
+            }
+
+            .alumno-movil-nombre {
+                font-size: 17px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .alumno-movil-dato {
+                font-size: 14px;
+                color: #555;
+                margin: 6px 0;
+                overflow-wrap: anywhere;
+            }
+
+            .alumno-movil-acciones {
+                margin-top: 14px;
+            }
+
+            .alumno-movil-acciones a {
+                display: inline-block;
+                padding: 8px 14px;
+                background-color: #222;
+                color: white;
+                text-decoration: none;
+                text-align: center;
+                border-radius: 7px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+
+        }
+
     </style>
 </head>
 
@@ -207,7 +283,87 @@
 
         </table>
 
+        <div class="lista-alumnos-movil">
+
+            {% for alumno in alumnos %}
+
+                <div class="alumno-movil">
+
+                    <div class="alumno-movil-nombre">
+                        {{ alumno.nombre }}
+                    </div>
+
+                    <div class="alumno-movil-dato">
+
+                        {% if alumno.activo == 1 %}
+
+                            🟢
+                            <span class="estado-activo">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            🔴
+                            <span class="estado-inactivo">
+                                Inactivo
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="alumno-movil-dato">
+
+                        {% if alumno.estado_certificado == "Vigente" %}
+
+                            🟢
+                            <span class="estado-activo">
+                                Certificado vigente
+                            </span>
+
+                        {% elif alumno.estado_certificado == "Vencido" %}
+
+                            🔴
+                            <span class="estado-inactivo">
+                                Certificado vencido
+                            </span>
+
+                        {% else %}
+
+                            🔴
+                            <span class="estado-inactivo">
+                                Sin certificado médico
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+            <div class="alumno-movil-acciones">
+
+                <a href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.id) }}">
+                    Ver perfil
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
     </div>
+
+
+    {% set nav_activa = 'alumnos' %}
+    {% include '_nav_admin.html' %}
+
+
+</body>
+
+</html>
 
 </body>
 

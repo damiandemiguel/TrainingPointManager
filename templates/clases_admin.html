@@ -248,6 +248,10 @@
             flex-direction: column;
         }
 
+        .volver-panel {
+            display: none;
+        }
+
         .calendario {
             grid-template-columns: 1fr;
         }
@@ -292,7 +296,7 @@
 
         <a
             href="{{ url_for('panel') }}"
-            class="boton-superior"
+            class="boton-superior volver-panel"
         >
             ⬅️ Volver al panel
         </a>
@@ -477,6 +481,9 @@
     {% endif %}
 
 </div>
+
+{% set nav_activa = 'clases' %}
+{% include '_nav_admin.html' %}
 
 </body>
 

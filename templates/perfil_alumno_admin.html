@@ -217,6 +217,10 @@
                 grid-column: auto;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
         }
 
     </style>
@@ -485,6 +489,9 @@
     });
 
 </script>
+
+{% set nav_activa = 'alumnos' %}
+{% include '_nav_admin.html' %}
 
 </body>
 
