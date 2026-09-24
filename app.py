@@ -2773,8 +2773,8 @@ def inscribirme_clase(clase_id):
 
             return redirect(
                 url_for(
-                    "mis_clases",
-                    mensaje="Ya estás inscripto en esta clase."
+                    "ver_inscriptos_alumno",
+                    clase_id=clase_id
                 )
             )
 
@@ -2795,7 +2795,12 @@ def inscribirme_clase(clase_id):
             conexion.commit()
             conexion.close()
 
-            return redirect(url_for("mis_clases"))
+            return redirect(
+                url_for(
+                    "ver_inscriptos_alumno",
+                    clase_id=clase_id
+                )
+            )
 
     # Registrar inscripción
     fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -2818,7 +2823,12 @@ def inscribirme_clase(clase_id):
     conexion.commit()
     conexion.close()
 
-    return redirect(url_for("mis_clases"))
+    return redirect(
+        url_for(
+            "ver_inscriptos_alumno",
+            clase_id=clase_id
+        )
+    )
 
 @app.route("/mis-clases/<int:clase_id>/cancelar", methods=["POST"])
 def cancelar_inscripcion_alumno(clase_id):
@@ -2936,8 +2946,8 @@ def cancelar_inscripcion_alumno(clase_id):
 
     return redirect(
         url_for(
-            "mis_clases",
-            mensaje="Tu inscripción fue cancelada correctamente."
+            "ver_inscriptos_alumno",
+            clase_id=clase_id
         )
     )
 
@@ -2981,12 +2991,30 @@ def ver_inscriptos_alumno(clase_id):
 
     inscriptos = cursor.fetchall()
 
+    # Comprobar si el alumno actual ya está inscripto
+    cursor.execute("""
+        SELECT COUNT(*) AS cantidad
+        FROM inscripciones
+        INNER JOIN alumnos
+            ON inscripciones.alumno_id = alumnos.id
+        WHERE inscripciones.clase_id = ?
+          AND alumnos.usuario_id = ?
+          AND inscripciones.estado = 'Inscripto'
+    """, (
+        clase_id,
+        session["usuario_id"]
+    ))
+
+    resultado = cursor.fetchone()
+    alumno_inscripto = resultado["cantidad"] > 0
+
     conexion.close()
 
     return render_template(
         "inscriptos_clase_alumno.html",
         clase=clase,
-        inscriptos=inscriptos
+        inscriptos=inscriptos,
+        alumno_inscripto=alumno_inscripto
     )
 
 @app.route("/mis-inscripciones")

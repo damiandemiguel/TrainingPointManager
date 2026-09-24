@@ -81,7 +81,7 @@
 
     .dia {
         background-color: white;
-        min-height: 220px;
+        min-height: 180px;
         border-radius: 8px;
         padding: 10px;
     }
@@ -108,12 +108,25 @@
         font-size: 13px;
     }
 
+    .clase-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        margin-bottom: 8px;
+    }
+
     .clase {
         background-color: #f4f4f4;
         border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 10px;
+        padding: 12px 8px;
         border-left: 4px solid #222;
+        text-align: center;
+        transition: 0.15s ease;
+    }
+
+    .clase:hover {
+        background-color: #e8e8e8;
+        transform: translateY(-1px);
     }
 
     .clase-inscripto {
@@ -121,16 +134,27 @@
         border-left-color: #2e8b57;
     }
 
+    .clase-inscripto:hover {
+        background-color: #dff1df;
+    }
+
     .hora {
         font-size: 18px;
         font-weight: bold;
-        margin-bottom: 7px;
+        margin-bottom: 5px;
     }
 
-    .dato {
-        font-size: 13px;
-        margin: 4px 0;
-        color: #555;
+    .disponibilidad {
+        font-size: 12px;
+        color: #666;
+        font-weight: bold;
+    }
+
+    .estado-inscripto {
+        margin-top: 5px;
+        font-size: 10px;
+        color: #2e8b57;
+        font-weight: bold;
     }
 
     .sin-clase-dia {
@@ -138,65 +162,6 @@
         color: #aaa;
         padding-top: 25px;
         font-size: 13px;
-    }
-
-    .acciones-clase {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 10px;
-    }
-
-    .acciones-clase form {
-        margin: 0;
-        width: 100%;
-    }
-
-    .boton-inscribirme,
-    .boton-cancelar,
-    .boton-inscriptos {
-        width: 100%;
-        min-height: 36px;
-        border-radius: 6px;
-        font-weight: bold;
-        font-size: 12px;
-        text-align: center;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        padding: 7px;
-    }
-
-    .boton-inscribirme {
-        border: none;
-        background-color: #222;
-        color: white;
-    }
-
-    .boton-inscribirme:hover {
-        background-color: #444;
-    }
-
-    .boton-cancelar {
-        border: none;
-        background-color: #ddd;
-        color: #333;
-    }
-
-    .boton-cancelar:hover {
-        background-color: #ccc;
-    }
-
-    .boton-inscriptos {
-        background-color: white;
-        border: 1px solid #ccc;
-        color: #333;
-    }
-
-    .boton-inscriptos:hover {
-        background-color: #eee;
     }
 
     .sin-clases {
@@ -228,6 +193,38 @@
         background-color: #444;
     }
 
+    .navegacion-movil {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: white;
+        border-top: 1px solid #ddd;
+        box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
+        z-index: 1000;
+    }
+
+    .navegacion-movil a {
+        padding: 10px 3px 8px;
+        text-align: center;
+        text-decoration: none;
+        color: #555;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    .navegacion-movil-icono {
+        display: block;
+        font-size: 21px;
+        margin-bottom: 3px;
+    }
+
+    .navegacion-movil .activo {
+        color: #111;
+        background-color: #f2f2f2;
+    }
+
     @media (max-width: 1100px) {
 
         .calendario {
@@ -239,20 +236,114 @@
     @media (max-width: 750px) {
 
         .contenedor {
+            width: 100%;
+            margin-top: 12px;
+            margin-bottom: 100px;
+        }
+
+        .encabezado {
             width: 94%;
-            margin-top: 20px;
+            margin: 0 auto 16px;
+            padding: 16px;
+            border-radius: 10px;
+        }
+
+        .encabezado h1 {
+            font-size: 21px;
+        }
+
+        .encabezado p {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .acciones-superiores {
+            display: none;
+        }
+
+        .mensaje {
+            width: 94%;
+            margin: 0 auto 14px;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .semana {
+            margin-bottom: 18px;
+        }
+
+        .titulo-semana {
+            width: 94%;
+            margin: auto;
+            padding: 9px 12px;
+            border-radius: 9px 9px 0 0;
+            font-size: 13px;
         }
 
         .calendario {
-            grid-template-columns: 1fr;
+            display: flex;
+            overflow-x: auto;
+            gap: 7px;
+            padding: 7px 3%;
+            border-radius: 0;
+            scroll-snap-type: x proximity;
+            -webkit-overflow-scrolling: touch;
         }
 
         .dia {
-            min-height: auto;
+            flex: 0 0 145px;
+            width: 145px;
+            min-height: 160px;
+            padding: 7px;
+            scroll-snap-align: start;
+        }
+
+        .encabezado-dia {
+            padding-bottom: 6px;
+            margin-bottom: 7px;
+        }
+
+        .nombre-dia {
+            font-size: 12px;
+        }
+
+        .fecha-dia {
+            margin-top: 2px;
+            font-size: 11px;
+        }
+
+        .clase {
+            padding: 9px 5px;
+            border-left-width: 3px;
+        }
+
+        .hora {
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .disponibilidad {
+            font-size: 10px;
+        }
+
+        .estado-inscripto {
+            font-size: 9px;
         }
 
         .sin-clase-dia {
-            padding: 15px 0;
+            padding: 18px 0;
+            font-size: 11px;
+        }
+
+        .sin-clases {
+            width: 94%;
+            margin: auto;
+            padding: 25px 15px;
+        }
+
+        .navegacion-movil {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
         }
 
     }
@@ -288,6 +379,7 @@
         </p>
 
     </div>
+
 
     <div class="acciones-superiores">
 
@@ -352,69 +444,32 @@
 
                                 {% for clase in dia.clases %}
 
-                                    <div class="clase {% if clase.alumno_inscripto %}clase-inscripto{% endif %}">
+                                    <a
+                                        href="{{ url_for('ver_inscriptos_alumno', clase_id=clase.id) }}"
+                                        class="clase-link"
+                                    >
 
-                                        <div class="hora">
-                                            🕐 {{ clase.hora_inicio }}
-                                        </div>
+                                        <div class="clase {% if clase.alumno_inscripto %}clase-inscripto{% endif %}">
 
-                                        <div class="dato">
-                                            👥 {{ clase.cantidad_inscriptos }} / {{ clase.cupo_maximo }} inscriptos
-                                        </div>
+                                            <div class="hora">
+                                                {{ clase.hora_inicio }} hs
+                                            </div>
 
-                                        <div class="dato">
-                                            🟢 {{ clase.cupo_maximo - clase.cantidad_inscriptos }} cupos disponibles
-                                        </div>
-
-
-                                        <div class="acciones-clase">
+                                            <div class="disponibilidad">
+                                                {{ clase.cupo_maximo - clase.cantidad_inscriptos }}/{{ clase.cupo_maximo }} disponibles
+                                            </div>
 
                                             {% if clase.alumno_inscripto %}
 
-                                                <form
-                                                    action="{{ url_for('cancelar_inscripcion_alumno', clase_id=clase.id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
-                                                >
-
-                                                    <button
-                                                        type="submit"
-                                                        class="boton-cancelar"
-                                                    >
-                                                        ❌ Cancelar inscripción
-                                                    </button>
-
-                                                </form>
-
-                                            {% else %}
-
-                                                <form
-                                                    action="{{ url_for('inscribirme_clase', clase_id=clase.id) }}"
-                                                    method="POST"
-                                                >
-
-                                                    <button
-                                                        type="submit"
-                                                        class="boton-inscribirme"
-                                                    >
-                                                        ➕ Inscribirme
-                                                    </button>
-
-                                                </form>
+                                                <div class="estado-inscripto">
+                                                    ✓ Inscripto
+                                                </div>
 
                                             {% endif %}
 
-
-                                            <a
-                                                href="{{ url_for('ver_inscriptos_alumno', clase_id=clase.id) }}"
-                                                class="boton-inscriptos"
-                                            >
-                                                👥 Ver inscriptos
-                                            </a>
-
                                         </div>
 
-                                    </div>
+                                    </a>
 
                                 {% endfor %}
 
@@ -452,6 +507,34 @@
     {% endif %}
 
 </div>
+
+
+<nav class="navegacion-movil">
+
+    <a href="{{ url_for('panel_alumno') }}">
+        <span class="navegacion-movil-icono">🏠</span>
+        Inicio
+    </a>
+
+    <a
+        href="{{ url_for('mis_clases') }}"
+        class="activo"
+    >
+        <span class="navegacion-movil-icono">📅</span>
+        Clases
+    </a>
+
+    <a href="{{ url_for('mis_inscripciones') }}">
+        <span class="navegacion-movil-icono">📝</span>
+        Inscripciones
+    </a>
+
+    <a href="{{ url_for('lector_qr') }}">
+        <span class="navegacion-movil-icono">📱</span>
+        QR
+    </a>
+
+</nav>
 
 </body>
 
