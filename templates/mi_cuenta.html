@@ -304,6 +304,11 @@
     {% set nav_activa = '' %}
     {% include '_nav_alumno.html' %}
 
+{% elif session["rol"] == "administrador" %}
+
+    {% set nav_activa = '' %}
+    {% include '_nav_admin.html' %}
+
 {% endif %}
 
 </body>

@@ -133,6 +133,10 @@
                 width: 95%;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
             th,
             td {
                 padding: 9px;
@@ -267,6 +271,9 @@
     {% endif %}
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
 
 </body>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,11 @@
     <title>Certificados médicos - Training Point</title>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -18,15 +24,6 @@
         .contenedor {
             max-width: 1200px;
             margin: auto;
-        }
-
-        h1 {
-            margin-bottom: 8px;
-        }
-
-        .subtitulo {
-            color: #666;
-            margin-bottom: 25px;
         }
 
         .encabezado {
@@ -47,6 +44,32 @@
             color: #ddd;
         }
 
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #222;
+            color: white;
+        }
+
+        .boton-superior:hover {
+            background-color: #444;
+        }
+
+
+        /* =========================
+           RESUMEN
+           ========================= */
+
         .resumen-estados {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -55,11 +78,11 @@
         }
 
         .resumen {
-            background: white;
+            background-color: white;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .resumen-numero {
@@ -72,11 +95,16 @@
             font-weight: bold;
         }
 
+
+        /* =========================
+           TABLA ESCRITORIO
+           ========================= */
+
         .tabla-contenedor {
             overflow-x: auto;
-            background: white;
+            background-color: white;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         table {
@@ -121,44 +149,138 @@
             background-color: #666;
         }
 
-        .acciones-superiores {
+
+        /* =========================
+           TARJETAS MÓVILES
+           ========================= */
+
+        .certificados-movil {
+            display: none;
+        }
+
+        .certificado-tarjeta {
+            background-color: white;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        }
+
+        .certificado-superior {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
         }
 
-        .boton-superior {
-            flex: 1;
-            padding: 13px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
+        .certificado-nombre {
+            font-size: 15px;
             font-weight: bold;
-            background-color: #222;
-            color: white;
         }
 
-        .boton-superior:hover {
-            background-color: #444;
+        .certificado-estado {
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
         }
+
+        .certificado-fecha {
+            margin-top: 6px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .certificado-acciones {
+            margin-top: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+        }
+
+        .accion-movil {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 38px;
+            padding: 7px 5px;
+            color: #333;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .accion-movil + .accion-movil {
+            border-top: 1px solid #eee;
+        }
+
+        .accion-flecha {
+            color: #999;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+
+        /* =========================
+           CELULAR
+           ========================= */
 
         @media (max-width: 700px) {
+
             body {
-                padding: 15px;
+                padding: 12px;
+            }
+
+            .encabezado {
+                padding: 20px 14px;
+                margin-bottom: 14px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
+
+            .encabezado p {
+                font-size: 12px;
+                line-height: 1.4;
+            }
+
+            .acciones-superiores {
+                display: none;
             }
 
             .resumen-estados {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 7px;
+                margin-bottom: 14px;
             }
 
-            th,
-            td {
-                padding: 10px;
-                font-size: 14px;
+            .resumen {
+                padding: 10px 5px;
+                border-radius: 9px;
             }
+
+            .resumen-numero {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+
+            .resumen-titulo {
+                font-size: 10px;
+            }
+
+            .tabla-contenedor {
+                display: none;
+            }
+
+            .certificados-movil {
+                display: block;
+            }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
@@ -174,6 +296,7 @@
 
     </div>
 
+
     <div class="acciones-superiores">
 
         <a
@@ -185,98 +308,135 @@
 
     </div>
 
+
     <div class="resumen-estados">
 
         <div class="resumen">
-            <div class="resumen-numero">{{ vigentes }}</div>
-            <div class="resumen-titulo">🟢 Vigentes</div>
+            <div class="resumen-numero">
+                {{ vigentes }}
+            </div>
+
+            <div class="resumen-titulo">
+                🟢 Vigentes
+            </div>
         </div>
 
-        <div class="resumen">
-            <div class="resumen-numero">{{ vencidos }}</div>
-            <div class="resumen-titulo">🔴 Vencidos</div>
-        </div>
 
         <div class="resumen">
-            <div class="resumen-numero">{{ sin_certificado }}</div>
-            <div class="resumen-titulo">⚪ Sin certificado</div>
+            <div class="resumen-numero">
+                {{ vencidos }}
+            </div>
+
+            <div class="resumen-titulo">
+                🔴 Vencidos
+            </div>
+        </div>
+
+
+        <div class="resumen">
+            <div class="resumen-numero">
+                {{ sin_certificado }}
+            </div>
+
+            <div class="resumen-titulo">
+                ⚪ Sin certificado
+            </div>
         </div>
 
     </div>
+
+
+    <!-- =========================
+         ESCRITORIO
+         ========================= -->
 
     <div class="tabla-contenedor">
 
         <table>
 
             <thead>
+
                 <tr>
                     <th>Alumno</th>
                     <th>Fecha</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
+
             </thead>
 
             <tbody>
 
                 {% for certificado in certificados %}
 
-                <tr>
+                    <tr>
 
-                    <td>
-                        <strong>{{ certificado.nombre }}</strong>
-                    </td>
+                        <td>
+                            <strong>
+                                {{ certificado.nombre }}
+                            </strong>
+                        </td>
 
-                    <td>
-                        {% if certificado.fecha_certificado %}
-                        {{ certificado.fecha_certificado[8:10] }}/{{ certificado.fecha_certificado[5:7] }}/{{ certificado.fecha_certificado[0:4] }}
-                        {% else %}
-                            —
-                        {% endif %}
-                    </td>
+                        <td>
 
-                    <td class="estado">
+                            {% if certificado.fecha_certificado %}
 
-                        {% if certificado.estado == "Vigente" %}
-                            🟢 Vigente
+                                {{ certificado.fecha_certificado[8:10] }}/{{ certificado.fecha_certificado[5:7] }}/{{ certificado.fecha_certificado[0:4] }}
 
-                        {% elif certificado.estado == "Vencido" %}
-                            🔴 Vencido
+                            {% else %}
 
-                        {% else %}
-                            ⚪ Sin certificado
-                        {% endif %}
-
-                    </td>
-
-                    <td>
-
-                        <div class="acciones">
-
-                            {% if certificado.certificado_medico %}
-
-                                <a
-                                    href="{{ url_for('static', filename='uploads/certificados/' + certificado.certificado_medico) }}"
-                                    target="_blank"
-                                    class="boton"
-                                >
-                                    📄 Certificado médico
-                                </a>
+                                —
 
                             {% endif %}
 
-                            <a
-                                href="{{ url_for('ficha_salud_admin', alumno_id=certificado.id) }}"
-                                class="boton boton-secundario"
-                            >
-                                🩺 Ficha de salud
-                            </a>
+                        </td>
 
-                        </div>
+                        <td class="estado">
 
-                    </td>
+                            {% if certificado.estado == "Vigente" %}
 
-                </tr>
+                                🟢 Vigente
+
+                            {% elif certificado.estado == "Vencido" %}
+
+                                🔴 Vencido
+
+                            {% else %}
+
+                                ⚪ Sin certificado
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="acciones">
+
+                                {% if certificado.certificado_medico %}
+
+                                    <a
+                                        href="{{ url_for('static', filename='uploads/certificados/' + certificado.certificado_medico) }}"
+                                        target="_blank"
+                                        class="boton"
+                                    >
+                                        📄 Certificado médico
+                                    </a>
+
+                                {% endif %}
+
+                                <a
+                                    href="{{ url_for('ficha_salud_admin', alumno_id=certificado.id) }}"
+                                    class="boton boton-secundario"
+                                >
+                                    🩺 Ficha de salud
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
 
                 {% endfor %}
 
@@ -286,7 +446,97 @@
 
     </div>
 
+
+    <!-- =========================
+         CELULAR
+         ========================= -->
+
+    <div class="certificados-movil">
+
+        {% for certificado in certificados %}
+
+            <div class="certificado-tarjeta">
+
+                <div class="certificado-superior">
+
+                    <div class="certificado-nombre">
+                        {{ certificado.nombre }}
+                    </div>
+
+                    <div class="certificado-estado">
+
+                        {% if certificado.estado == "Vigente" %}
+
+                            🟢 Vigente
+
+                        {% elif certificado.estado == "Vencido" %}
+
+                            🔴 Vencido
+
+                        {% else %}
+
+                            ⚪ Sin certificado
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="certificado-fecha">
+
+                    {% if certificado.fecha_certificado %}
+
+                        Certificado:
+                        {{ certificado.fecha_certificado[8:10] }}/{{ certificado.fecha_certificado[5:7] }}/{{ certificado.fecha_certificado[0:4] }}
+
+                    {% else %}
+
+                        Sin certificado cargado
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="certificado-acciones">
+
+                    {% if certificado.certificado_medico %}
+
+                        <a
+                            href="{{ url_for('static', filename='uploads/certificados/' + certificado.certificado_medico) }}"
+                            target="_blank"
+                            class="accion-movil"
+                        >
+                            <span>📄 Ver certificado médico</span>
+                            <span class="accion-flecha">›</span>
+                        </a>
+
+                    {% endif %}
+
+                    <a
+                        href="{{ url_for('ficha_salud_admin', alumno_id=certificado.id) }}"
+                        class="accion-movil"
+                    >
+                        <span>🩺 Ficha de salud</span>
+                        <span class="accion-flecha">›</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
 </div>
 
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
+
 </body>
+
 </html>

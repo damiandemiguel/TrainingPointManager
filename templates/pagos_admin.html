@@ -101,6 +101,10 @@
 
         @media (max-width: 700px) {
 
+            .acciones-superiores {
+                display: none;
+            }
+
             th,
             td {
                 padding: 10px 8px;
@@ -208,6 +212,9 @@
     </div>
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
 
 </body>
 

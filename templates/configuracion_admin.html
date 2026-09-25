@@ -188,6 +188,10 @@
                 padding: 12px;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
             .encabezado {
                 padding: 20px 15px;
             }
@@ -774,6 +778,9 @@
     </div>
 
 </div>
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
 
 <script>
     const checkboxIlimitado = document.getElementById(

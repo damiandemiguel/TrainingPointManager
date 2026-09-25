@@ -153,6 +153,10 @@
                 margin: 20px auto;
             }
 
+            .acciones-superiores {
+                display: none;
+            }
+
             .clase-superior {
                 flex-direction: column;
             }
@@ -291,6 +295,11 @@
     {% endif %}
 
 </div>
+
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
+
 
 </body>
 

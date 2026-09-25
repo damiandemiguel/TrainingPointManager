@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -65,6 +66,7 @@
             font-size: 20px;
         }
 
+
         /* HOY */
 
         .hoy {
@@ -86,9 +88,31 @@
         }
 
         .clase-hoy {
+            display: block;
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 18px;
+            text-decoration: none;
+            color: #222;
+            transition: 0.2s;
+        }
+
+        .clase-hoy:hover {
+            background-color: #f7f7f7;
+            transform: translateY(-2px);
+        }
+
+        .clase-hoy-contenido {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .clase-hoy-flecha {
+            color: #999;
+            font-size: 30px;
+            line-height: 1;
         }
 
         .clase-hoy-horario {
@@ -103,64 +127,72 @@
             margin-bottom: 15px;
         }
 
-        .clase-hoy-acciones {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .clase-hoy-accion {
-            display: inline-block;
-            padding: 9px 12px;
-            background-color: #222;
-            color: white;
-            text-decoration: none;
-            border-radius: 7px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .clase-hoy-accion:hover {
-            background-color: #444;
-        }
-
         .sin-clases-hoy {
             color: #666;
             margin: 0;
         }
 
-        /* ESTADÍSTICAS */
 
-        .estadisticas {
+        /* RESUMEN */
+
+        .resumen {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .estadistica {
+        .resumen-bloque {
             background-color: white;
             border-radius: 12px;
-            padding: 16px 10px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
         }
 
-        .estadistica-icono {
+        .resumen-bloque-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .resumen-bloque-icono {
             font-size: 24px;
-            margin-bottom: 6px;
         }
 
-        .estadistica-numero {
-            font-size: 26px;
+        .resumen-principal {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .resumen-principal-numero {
+            font-size: 32px;
             font-weight: bold;
         }
 
-        .estadistica-titulo {
-            margin-top: 5px;
+        .resumen-principal-texto {
             color: #666;
-            font-size: 13px;
+            font-size: 14px;
         }
+
+        .resumen-linea {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 9px 0;
+            border-top: 1px solid #eee;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .resumen-linea strong {
+            color: #222;
+        }
+
 
         /* ACCESOS PRINCIPALES */
 
@@ -203,45 +235,61 @@
             font-size: 13px;
         }
 
-        /* MÁS HERRAMIENTAS */
+
+        /* HERRAMIENTAS */
 
         .herramientas {
             background-color: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 8px 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
         }
 
-        .herramientas-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+        .herramientas-lista {
+            display: flex;
+            flex-direction: column;
         }
 
         .herramienta {
-            border: 1px solid #e2e2e2;
-            border-radius: 9px;
-            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 4px;
             text-decoration: none;
             color: #222;
-            text-align: center;
+            border-bottom: 1px solid #eee;
             transition: 0.2s;
         }
 
+        .herramienta:last-child {
+            border-bottom: none;
+        }
+
         .herramienta:hover {
-            background-color: #f5f5f5;
-            transform: translateY(-2px);
+            background-color: #f7f7f7;
         }
 
         .herramienta-icono {
+            width: 34px;
             font-size: 23px;
-            margin-bottom: 7px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .herramienta-titulo {
-            font-size: 13px;
+            flex: 1;
+            font-size: 15px;
             font-weight: bold;
         }
+
+        .herramienta-flecha {
+            color: #999;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+
+        /* CERRAR SESIÓN */
 
         .cerrar-sesion {
             display: block;
@@ -255,7 +303,14 @@
             font-weight: bold;
         }
 
+
+        /* MÓVIL */
+
         @media (max-width: 750px) {
+
+            .encabezado {
+                padding: 20px 15px;
+            }
 
             .contenedor {
                 width: 92%;
@@ -263,12 +318,25 @@
                 margin-bottom: 100px;
             }
 
+            .bienvenida {
+                padding: 20px;
+            }
+
+            .hoy {
+                padding: 20px;
+            }
+
             .clases-hoy {
                 grid-template-columns: 1fr;
             }
 
-            .estadisticas {
-                grid-template-columns: repeat(2, 1fr);
+            .resumen {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .resumen-bloque {
+                padding: 18px;
             }
 
             .titulo-accesos-principales,
@@ -276,8 +344,12 @@
                 display: none;
             }
 
-            .herramientas-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .herramientas {
+                padding: 5px 16px;
+            }
+
+            .herramienta {
+                padding: 15px 2px;
             }
 
         }
@@ -286,7 +358,9 @@
 
 </head>
 
+
 <body>
+
 
     <header class="encabezado">
 
@@ -299,9 +373,12 @@
 
     <main class="contenedor">
 
+
         <section class="bienvenida">
 
-            <h2>Hola, {{ session["usuario"] }} 👋</h2>
+            <h2>
+                Hola, {{ session["usuario"] }} 👋
+            </h2>
 
             <p>
                 Este es el resumen de Training Point.
@@ -320,37 +397,34 @@
 
                     {% for clase in clases_hoy %}
 
-                        <div class="clase-hoy">
+                        <a
+                            href="{{ url_for('ver_inscriptos', clase_id=clase[0]) }}"
+                            class="clase-hoy"
+                        >
 
-                            <div class="clase-hoy-horario">
-                                {{ clase[2] }} — {{ clase[3] }}
-                            </div>
+                            <div class="clase-hoy-contenido">
 
-                            <div class="clase-hoy-datos">
-                                👥 {{ clase[6] }} / {{ clase[4] }} inscriptos
-                                <br>
-                                ✅ {{ clase[7] }} asistencias
-                            </div>
+                                <div>
 
-                            <div class="clase-hoy-acciones">
+                                    <div class="clase-hoy-horario">
+                                        {{ clase[2] }} — {{ clase[3] }}
+                                    </div>
 
-                                <a
-                                    href="{{ url_for('ver_inscriptos', clase_id=clase[0]) }}"
-                                    class="clase-hoy-accion"
-                                >
-                                    Ver inscriptos
-                                </a>
+                                    <div class="clase-hoy-datos">
+                                        👥 {{ clase[6] }} / {{ clase[4] }} inscriptos
+                                        <br>
+                                        ✅ {{ clase[7] }} asistencias
+                                    </div>
 
-                                <a
-                                    href="{{ url_for('registrar_asistencia_admin', clase_id=clase[0]) }}"
-                                    class="clase-hoy-accion"
-                                >
-                                    Registrar asistencia
-                                </a>
+                                </div>
+
+                                <div class="clase-hoy-flecha">
+                                    ›
+                                </div>
 
                             </div>
 
-                        </div>
+                        </a>
 
                     {% endfor %}
 
@@ -371,49 +445,118 @@
             Resumen
         </h2>
 
-        <section class="estadisticas">
 
-            <div class="estadistica">
-                <div class="estadistica-icono">👥</div>
-                <div class="estadistica-numero">{{ total_alumnos }}</div>
-                <div class="estadistica-titulo">Alumnos</div>
+        <section class="resumen">
+
+
+            <div class="resumen-bloque">
+
+                <div class="resumen-bloque-titulo">
+
+                    <span class="resumen-bloque-icono">
+                        👥
+                    </span>
+
+                    Alumnos
+
+                </div>
+
+
+                <div class="resumen-principal">
+
+                    <span class="resumen-principal-numero">
+                        {{ total_alumnos }}
+                    </span>
+
+                    <span class="resumen-principal-texto">
+                        alumnos registrados
+                    </span>
+
+                </div>
+
+
+                <div class="resumen-linea">
+
+                    <span>🟢 Activos</span>
+
+                    <strong>
+                        {{ alumnos_activos }}
+                    </strong>
+
+                </div>
+
+
+                <div class="resumen-linea">
+
+                    <span>🔴 Inactivos</span>
+
+                    <strong>
+                        {{ alumnos_inactivos }}
+                    </strong>
+
+                </div>
+
             </div>
 
-            <div class="estadistica">
-                <div class="estadistica-icono">✅</div>
-                <div class="estadistica-numero">{{ alumnos_activos }}</div>
-                <div class="estadistica-titulo">Activos</div>
+
+            <div class="resumen-bloque">
+
+                <div class="resumen-bloque-titulo">
+
+                    <span class="resumen-bloque-icono">
+                        🩺
+                    </span>
+
+                    Documentación
+
+                </div>
+
+
+                <div class="resumen-linea">
+
+                    <span>📄 Certificados vigentes</span>
+
+                    <strong>
+                        {{ certificados_vigentes }}
+                    </strong>
+
+                </div>
+
+
+                <div class="resumen-linea">
+
+                    <span>⚠️ Certificados vencidos</span>
+
+                    <strong>
+                        {{ certificados_vencidos }}
+                    </strong>
+
+                </div>
+
+
+                <div class="resumen-linea">
+
+                    <span>📋 Fichas de salud</span>
+
+                    <strong>
+                        {{ fichas_salud }}
+                    </strong>
+
+                </div>
+
+
+                <div class="resumen-linea">
+
+                    <span>⚠️ Sin ficha de salud</span>
+
+                    <strong>
+                        {{ alumnos_sin_ficha }}
+                    </strong>
+
+                </div>
+
             </div>
 
-            <div class="estadistica">
-                <div class="estadistica-icono">⛔</div>
-                <div class="estadistica-numero">{{ alumnos_inactivos }}</div>
-                <div class="estadistica-titulo">Inactivos</div>
-            </div>
-
-            <div class="estadistica">
-                <div class="estadistica-icono">🩺</div>
-                <div class="estadistica-numero">{{ fichas_salud }}</div>
-                <div class="estadistica-titulo">Fichas de salud</div>
-            </div>
-
-            <div class="estadistica">
-                <div class="estadistica-icono">📄</div>
-                <div class="estadistica-numero">{{ certificados_vigentes }}</div>
-                <div class="estadistica-titulo">Certificados vigentes</div>
-            </div>
-
-            <div class="estadistica">
-                <div class="estadistica-icono">⚠️</div>
-                <div class="estadistica-numero">{{ certificados_vencidos }}</div>
-                <div class="estadistica-titulo">Certificados vencidos</div>
-            </div>
-
-            <div class="estadistica">
-                <div class="estadistica-icono">📋</div>
-                <div class="estadistica-numero">{{ alumnos_sin_ficha }}</div>
-                <div class="estadistica-titulo">Sin ficha de salud</div>
-            </div>
 
         </section>
 
@@ -422,13 +565,18 @@
             Accesos principales
         </h2>
 
+
         <section class="menu-principal">
+
 
             <a
                 href="{{ url_for('gestionar_clases') }}"
                 class="boton-principal"
             >
-                <div class="icono">📅</div>
+
+                <div class="icono">
+                    📅
+                </div>
 
                 <div class="titulo">
                     Clases
@@ -437,6 +585,7 @@
                 <div class="descripcion">
                     Crear y gestionar clases
                 </div>
+
             </a>
 
 
@@ -444,7 +593,10 @@
                 href="{{ url_for('mostrar_alumnos') }}"
                 class="boton-principal"
             >
-                <div class="icono">👥</div>
+
+                <div class="icono">
+                    👥
+                </div>
 
                 <div class="titulo">
                     Alumnos
@@ -453,6 +605,7 @@
                 <div class="descripcion">
                     Ver y gestionar alumnos
                 </div>
+
             </a>
 
 
@@ -460,7 +613,10 @@
                 href="{{ url_for('estado_alumnos') }}"
                 class="boton-principal"
             >
-                <div class="icono">💳</div>
+
+                <div class="icono">
+                    💳
+                </div>
 
                 <div class="titulo">
                     Abonos y créditos
@@ -469,25 +625,40 @@
                 <div class="descripcion">
                     Estado general y gestión de abonos
                 </div>
+
             </a>
+
 
         </section>
 
 
         <h2 class="titulo-seccion">
-            Más herramientas
+            Herramientas
         </h2>
+
 
         <section class="herramientas">
 
-            <div class="herramientas-grid">
+            <div class="herramientas-lista">
+
 
                 <a
                     href="{{ url_for('rutinas_admin') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">🏋️</div>
-                    <div class="herramienta-titulo">Rutinas</div>
+
+                    <div class="herramienta-icono">
+                        🏋️
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Rutinas
+                    </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
 
 
@@ -495,8 +666,19 @@
                     href="{{ url_for('asistencias_admin') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">📋</div>
-                    <div class="herramienta-titulo">Asistencias</div>
+
+                    <div class="herramienta-icono">
+                        📋
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Asistencias
+                    </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
 
 
@@ -504,8 +686,19 @@
                     href="{{ url_for('pagos_admin') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">💳</div>
-                    <div class="herramienta-titulo">Pagos</div>
+
+                    <div class="herramienta-icono">
+                        💳
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Pagos
+                    </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
 
 
@@ -513,8 +706,19 @@
                     href="{{ url_for('notificaciones_admin') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">🔔</div>
-                    <div class="herramienta-titulo">Notificaciones</div>
+
+                    <div class="herramienta-icono">
+                        🔔
+                    </div>
+
+                    <div class="herramienta-titulo">
+                        Notificaciones
+                    </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
 
 
@@ -522,10 +726,19 @@
                     href="{{ url_for('certificados_admin') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">📄</div>
+
+                    <div class="herramienta-icono">
+                        📄
+                    </div>
+
                     <div class="herramienta-titulo">
                         Certificados médicos
                     </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
 
 
@@ -533,10 +746,19 @@
                     href="{{ url_for('configuracion_admin') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">⚙️</div>
+
+                    <div class="herramienta-icono">
+                        ⚙️
+                    </div>
+
                     <div class="herramienta-titulo">
                         Configuración
                     </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
 
 
@@ -544,11 +766,21 @@
                     href="{{ url_for('mi_cuenta') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">👤</div>
+
+                    <div class="herramienta-icono">
+                        👤
+                    </div>
+
                     <div class="herramienta-titulo">
                         Mi cuenta
                     </div>
+
+                    <div class="herramienta-flecha">
+                        ›
+                    </div>
+
                 </a>
+
 
             </div>
 
@@ -562,10 +794,13 @@
             🚪 Cerrar sesión
         </a>
 
+
     </main>
+
 
     {% set nav_activa = 'inicio' %}
     {% include '_nav_admin.html' %}
+
 
     <script>
 
@@ -587,9 +822,11 @@
 
             }
 
+
             const enlacesPanel = document.querySelectorAll(
-                ".menu-principal a, .herramientas a, .clase-hoy-acciones a"
+                ".menu-principal a, .herramientas a, .clase-hoy"
             );
+
 
             enlacesPanel.forEach(function (enlace) {
 
@@ -607,6 +844,7 @@
         });
 
     </script>
+
 
 </body>
 
