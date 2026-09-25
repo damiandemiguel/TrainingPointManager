@@ -1,0 +1,138 @@
+/* =========================================================
+   TRAINING POINT
+   Base visual compartida
+   ========================================================= */
+
+
+/* =========================
+   VARIABLES
+   ========================= */
+
+:root {
+    --tp-titulo-pantalla: 21px;
+    --tp-subtitulo: 12px;
+    --tp-titulo-seccion: 15px;
+    --tp-texto-principal: 14px;
+    --tp-texto: 13px;
+    --tp-texto-secundario: 12px;
+    --tp-texto-pequeno: 11px;
+    --tp-valor-destacado: 20px;
+    --tp-opcion: 12px;
+    --tp-flecha: 20px;
+}
+
+
+/* =========================
+   CLASES COMPARTIDAS
+   ========================= */
+
+.tp-titulo-pantalla {
+    font-size: var(--tp-titulo-pantalla);
+}
+
+.tp-subtitulo {
+    font-size: var(--tp-subtitulo);
+}
+
+.tp-titulo-seccion {
+    font-size: var(--tp-titulo-seccion);
+}
+
+.tp-texto-principal {
+    font-size: var(--tp-texto-principal);
+}
+
+.tp-texto {
+    font-size: var(--tp-texto);
+}
+
+.tp-texto-secundario {
+    font-size: var(--tp-texto-secundario);
+}
+
+.tp-texto-pequeno {
+    font-size: var(--tp-texto-pequeno);
+}
+
+.tp-valor-destacado {
+    font-size: var(--tp-valor-destacado);
+}
+
+
+/* =========================
+   MÓVIL
+   ========================= */
+
+@media (max-width: 750px) {
+
+    /*
+       Jerarquía tipográfica común
+    */
+
+    .tp-titulo-pantalla {
+        font-size: 21px !important;
+    }
+
+    .tp-subtitulo {
+        font-size: 12px !important;
+        line-height: 1.4;
+    }
+
+    .tp-titulo-seccion {
+        font-size: 15px !important;
+    }
+
+    .tp-texto-principal {
+        font-size: 14px !important;
+    }
+
+    .tp-texto {
+        font-size: 13px !important;
+    }
+
+    .tp-texto-secundario {
+        font-size: 12px !important;
+    }
+
+    .tp-texto-pequeno {
+        font-size: 11px !important;
+    }
+
+    .tp-valor-destacado {
+        font-size: 20px !important;
+    }
+
+
+    /*
+       Opciones tipo menú
+    */
+
+    .tp-opcion {
+        min-height: 41px;
+        font-size: 12px !important;
+    }
+
+    .tp-opcion-icono {
+        font-size: 17px !important;
+    }
+
+    .tp-opcion-flecha {
+        margin-left: auto;
+        color: #999;
+        font-size: 20px !important;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+
+    /*
+       Textos auxiliares
+    */
+
+    .tp-ayuda {
+        font-size: 11px !important;
+        color: #777;
+        line-height: 1.4;
+    }
+
+}
