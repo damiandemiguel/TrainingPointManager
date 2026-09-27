@@ -763,14 +763,34 @@ def gestionar_clases():
     if session["rol"] != "administrador":
         return "Acceso no autorizado."
 
+    hoy = datetime.now().date()
+
+    fecha_solicitada = request.args.get("semana")
+
+    if fecha_solicitada:
+        try:
+            fecha_referencia = datetime.strptime(
+                fecha_solicitada,
+                "%Y-%m-%d"
+            ).date()
+        except ValueError:
+            fecha_referencia = hoy
+    else:
+        fecha_referencia = hoy
+
+    inicio_semana = (
+        fecha_referencia
+        - timedelta(days=fecha_referencia.weekday())
+    )
+
+    fin_semana = inicio_semana + timedelta(days=6)
+
+    semana_anterior = inicio_semana - timedelta(days=7)
+    semana_siguiente = inicio_semana + timedelta(days=7)
+
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
-
-    hoy = datetime.now().date()
-
-    fecha_inicio = hoy.replace(day=1)
-    fecha_limite = hoy + timedelta(days=30)
 
     cursor.execute("""
         SELECT
@@ -784,8 +804,8 @@ def gestionar_clases():
         GROUP BY clases.id
         ORDER BY clases.fecha ASC, clases.hora_inicio ASC
     """, (
-        fecha_inicio.strftime("%Y-%m-%d"),
-        fecha_limite.strftime("%Y-%m-%d")
+        inicio_semana.strftime("%Y-%m-%d"),
+        fin_semana.strftime("%Y-%m-%d")
     ))
 
     clases = cursor.fetchall()
@@ -793,6 +813,7 @@ def gestionar_clases():
     clases_por_fecha = {}
 
     for clase in clases:
+
         fecha_clase = clase["fecha"]
 
         if fecha_clase not in clases_por_fecha:
@@ -810,43 +831,35 @@ def gestionar_clases():
         "Domingo"
     ]
 
-    semanas = []
+    dias = []
 
-    inicio_calendario = fecha_inicio - timedelta(days=fecha_inicio.weekday())
-    inicio = inicio_calendario
+    for numero_dia in range(7):
 
-    while inicio <= fecha_limite:
+        fecha_dia = inicio_semana + timedelta(days=numero_dia)
+        fecha_texto = fecha_dia.strftime("%Y-%m-%d")
 
-        dias = []
-
-        for numero_dia in range(7):
-
-            fecha_dia = inicio + timedelta(days=numero_dia)
-            fecha_texto = fecha_dia.strftime("%Y-%m-%d")
-
-            dias.append({
-                "nombre": nombres_dias[numero_dia],
-                "fecha": fecha_dia,
-                "fecha_texto": fecha_texto,
-                "clases": clases_por_fecha.get(fecha_texto, [])
-            })
-
-        semanas.append({
-            "inicio": inicio,
-            "fin": inicio + timedelta(days=6),
-            "dias": dias
+        dias.append({
+            "nombre": nombres_dias[numero_dia],
+            "fecha": fecha_dia,
+            "fecha_texto": fecha_texto,
+            "clases": clases_por_fecha.get(fecha_texto, [])
         })
 
-        inicio = inicio + timedelta(days=7)
+    semana = {
+        "inicio": inicio_semana,
+        "fin": fin_semana,
+        "dias": dias
+    }
 
     conexion.close()
 
     return render_template(
         "clases_admin.html",
         clases=clases,
-        semanas=semanas,
+        semana=semana,
         hoy=hoy,
-        fecha_limite=fecha_limite,
+        semana_anterior=semana_anterior.strftime("%Y-%m-%d"),
+        semana_siguiente=semana_siguiente.strftime("%Y-%m-%d"),
         clases_creadas=clases_creadas,
         clases_omitidas=clases_omitidas
     )
