@@ -7,155 +7,268 @@
 
     <title>Training Point - Ingreso</title>
 
-    <style>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/training_point.css') }}"
+    >
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+    <style>
+        body.login-body {
             margin: 0;
             min-height: 100vh;
+            padding: 24px;
+            box-sizing: border-box;
 
             display: flex;
             justify-content: center;
             align-items: center;
+
+            font-family: Arial, sans-serif;
+            background-color: #080a0c;
+            color: #f5f7f9;
+
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body.login-body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(8, 10, 12, 0.65),
+                    rgba(8, 10, 12, 0.65)
+                ),
+                url("{{ url_for('static', filename='img/logo_training_point.png') }}");
+
+            background-repeat: no-repeat;
+            background-position: center 80px;
+            background-size: min(560px, 60vw);
+
+            pointer-events: none;
+            z-index: 0;
         }
 
         .login {
-            width: 90%;
-            max-width: 400px;
+            position: relative;
+            z-index: 1;
 
-            background-color: white;
+            width: 100%;
+            max-width: 390px;
 
-            padding: 40px;
+            padding: 34px 30px;
 
-            border-radius: 12px;
+            background: rgba(17, 22, 28, 0.94);
+
+            border: 1px solid rgba(36, 153, 232, 0.35);
+            border-radius: 16px;
 
             box-shadow:
-                0 4px 15px rgba(0, 0, 0, 0.15);
+                0 18px 50px rgba(0, 0, 0, 0.45);
 
             text-align: center;
         }
 
-        h1 {
-            margin-bottom: 10px;
+        .marca {
+            margin: 0 0 8px;
+
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+
+            color: #f5f7f9;
+        }
+
+        .marca .destacado {
+            color: #2499e8;
         }
 
         .subtitulo {
-            color: #666;
-            margin-bottom: 30px;
+            margin: 0 0 28px;
+
+            color: #a8b0b8;
+            font-size: 14px;
+        }
+
+        .error {
+            margin: 0 0 18px;
+            padding: 11px 12px;
+
+            color: #ff9a9a;
+            background: rgba(180, 35, 35, 0.12);
+
+            border: 1px solid rgba(255, 100, 100, 0.30);
+            border-radius: 8px;
+
+            font-size: 13px;
         }
 
         input {
             width: 100%;
             box-sizing: border-box;
 
-            padding: 14px;
+            padding: 13px 14px;
+            margin-bottom: 14px;
 
-            margin-bottom: 15px;
+            background: #0d1115;
+            color: #f5f7f9;
 
-            border: 1px solid #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 9px;
 
-            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
 
-            font-size: 16px;
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
         }
 
-        button {
+        input::placeholder {
+            color: #68727c;
+        }
+
+        input:focus {
+            border-color: #2499e8;
+
+            box-shadow:
+                0 0 0 3px rgba(36, 153, 232, 0.12);
+        }
+
+        .password-container {
+            position: relative;
             width: 100%;
+        }
 
-            padding: 14px;
+        .password-container input {
+            padding-right: 50px;
+        }
 
-            background-color: #222;
+        .mostrar-password {
+            position: absolute;
+            right: 7px;
+            top: 4px;
 
-            color: white;
+            width: 40px;
+            height: 40px;
+
+            padding: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: transparent;
+            color: #a8b0b8;
 
             border: none;
 
-            border-radius: 8px;
-
-            font-size: 16px;
-
+            font-size: 18px;
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #444;
+        .mostrar-password:hover {
+            background: transparent;
+            color: #58b9f5;
+        }
+
+        .boton-ingresar {
+            width: 100%;
+
+            margin-top: 3px;
+            padding: 13px;
+
+            background: #2499e8;
+            color: white;
+
+            border: 1px solid #2499e8;
+            border-radius: 9px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.2s ease,
+                transform 0.1s ease;
+        }
+
+        .boton-ingresar:hover {
+            background: #1688d4;
+        }
+
+        .boton-ingresar:active {
+            transform: scale(0.99);
         }
 
         .registro {
-            margin-top: 20px;
+            margin-top: 24px;
+            padding-top: 20px;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+            color: #a8b0b8;
+            font-size: 13px;
+        }
+
+        .registro p {
+            margin: 0 0 9px;
         }
 
         .registro a {
-            color: #222;
+            color: #58b9f5;
 
             font-weight: bold;
-
             text-decoration: none;
         }
 
-        .error {
-            color: #c00;
+        .registro a:hover {
+            text-decoration: underline;
+        }
 
-            margin-bottom: 15px;
-    }
+        @media (max-width: 600px) {
+            body.login-body {
+                padding: 18px;
+            }
 
-    .password-container {
-        position: relative;
-        width: 100%;
-    }
+            body.login-body::before {
+                background-position: center 90px;
+                background-size: 90vw;
+            }
 
-    .password-container input {
-        padding-right: 50px;
-    }
+            .login {
+                max-width: 360px;
+                padding: 30px 22px;
+            }
 
-    .mostrar-password {
-        position: absolute;
-        right: 10px;
-        top: 0;
-
-        width: 40px;
-        height: 48px;
-
-        padding: 0;
-
-        background: none;
-        color: #666;
-
-        border: none;
-
-        font-size: 20px;
-
-        cursor: pointer;
-    }
-
-    .mostrar-password:hover {
-        background: none;
-        color: #222;
-    }
+            .marca {
+                font-size: 25px;
+            }
+        }
     </style>
-
 </head>
 
-<body>
+<body class="login-body">
 
-    <div class="login">
+    <main class="login">
 
-        <h1>TRAINING POINT</h1>
+        <h1 class="marca">
+            <span class="destacado">T</span>RAINING
+            <span class="destacado">P</span>OINT
+        </h1>
 
         <p class="subtitulo">
             Ingresá a tu cuenta
         </p>
 
-
         {% if error %}
-
             <p class="error">
                 {{ error }}
             </p>
-
         {% endif %}
-
 
         <form method="POST">
 
@@ -163,36 +276,41 @@
                 type="text"
                 name="usuario"
                 placeholder="Tu usuario"
+                autocomplete="username"
                 required
             >
 
-    <div class="password-container">
+            <div class="password-container">
 
-        <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Tu contraseña"
-            required
-        >
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Tu contraseña"
+                    autocomplete="current-password"
+                    required
+                >
 
-        <button
-            type="button"
-            class="mostrar-password"
-            onclick="mostrarPassword()"
-            aria-label="Mostrar contraseña"
-        >
-            👁
-        </button>
+                <button
+                    type="button"
+                    class="mostrar-password"
+                    onclick="mostrarPassword()"
+                    aria-label="Mostrar u ocultar contraseña"
+                    title="Mostrar u ocultar contraseña"
+                >
+                    👁
+                </button>
 
-    </div>
+            </div>
 
-            <button type="submit">
+            <button
+                type="submit"
+                class="boton-ingresar"
+            >
                 Ingresar
             </button>
 
         </form>
-
 
         <div class="registro">
 
@@ -206,22 +324,18 @@
 
         </div>
 
-    </div>
+    </main>
 
     <script>
+        function mostrarPassword() {
+            const password = document.getElementById("password");
 
-    function mostrarPassword() {
-
-        const password = document.getElementById("password");
-
-        if (password.type === "password") {
-            password.type = "text";
-        } else {
-            password.type = "password";
+            if (password.type === "password") {
+                password.type = "text";
+            } else {
+                password.type = "password";
+            }
         }
-
-    }
-
     </script>
 
 </body>
