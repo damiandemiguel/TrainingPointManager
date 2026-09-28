@@ -8,11 +8,6 @@
 
     <title>Clases - Training Point</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/training_point.css') }}"
-    >
-
     <style>
 
         * {
@@ -408,9 +403,11 @@
 
     </style>
 
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
 </head>
 
-<body>
+<body class="tp-app">
 
 <div class="contenedor">
 
@@ -531,80 +528,30 @@
 
                     {% for clase in dia.clases %}
 
-                        <div class="clase">
+                        <a
+                            href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
+                            class="clase clase-enlace"
+                        >
 
                             <div class="hora">
                                 {{ clase.hora_inicio }} hs
                             </div>
 
-                            {% if dia.fecha < hoy %}
-
-                                <div class="dato">
-                                    ⏱️ Finalizada
-                                </div>
-
-                            {% elif dia.fecha == hoy %}
-
-                                <div class="dato">
-                                    📍 Hoy
-                                </div>
-
-                            {% endif %}
-
                             <div class="dato">
                                 👥 {{ clase.cantidad_inscriptos }} / {{ clase.cupo_maximo }}
                             </div>
 
-                            <div class="dato">
-                                🟢 {{ clase.cupo_maximo - clase.cantidad_inscriptos }} disponibles
-                            </div>
+                            {% if dia.fecha < hoy %}
+                                <div class="dato estado-clase-compacto">⏱️ Finalizada</div>
+                            {% elif dia.fecha == hoy %}
+                                <div class="dato estado-clase-compacto">📍 Hoy · {{ clase.estado }}</div>
+                            {% else %}
+                                <div class="dato estado-clase-compacto">📌 {{ clase.estado }}</div>
+                            {% endif %}
 
-                            <div class="dato">
-                                📌 {{ clase.estado }}
-                            </div>
+                            <span class="flecha-clase">›</span>
 
-
-                            <div class="acciones-clase">
-
-                                <a
-                                    href="{{ url_for('editar_clase', clase_id=clase.id) }}"
-                                    class="boton-clase"
-                                >
-                                    ✏️ Editar
-                                </a>
-
-                                <a
-                                    href="{{ url_for('ver_inscriptos', clase_id=clase.id) }}"
-                                    class="boton-clase boton-secundario"
-                                >
-                                    👥 Inscriptos
-                                </a>
-
-                                <a
-                                    href="{{ url_for('registrar_asistencia_admin', clase_id=clase.id) }}"
-                                    class="boton-clase boton-secundario"
-                                >
-                                    🏃 Asistencia
-                                </a>
-
-                                <form
-                                    method="POST"
-                                    action="{{ url_for('eliminar_clase', clase_id=clase.id) }}"
-                                    onsubmit="return confirm('⚠️ ¿Estás seguro de que querés eliminar esta clase?');"
-                                >
-
-                                    <button
-                                        type="submit"
-                                        class="boton-eliminar"
-                                    >
-                                        🗑️ Eliminar
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-                        </div>
+                        </a>
 
                     {% endfor %}
 

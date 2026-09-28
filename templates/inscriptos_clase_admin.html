@@ -208,10 +208,12 @@
 
     </style>
 
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
 </head>
 
 
-<body>
+<body class="tp-app">
 
 
     <div class="contenedor">
@@ -219,7 +221,7 @@
 
         <div class="encabezado">
 
-            <h1>👥 Inscriptos</h1>
+            <h1>📅 Detalle de la clase</h1>
 
             <p>
                 Clase del
@@ -323,7 +325,25 @@
             {% endif %}
 
 
-            <div class="acciones">
+            <h2 class="titulo-lista">
+                ⚙️ Gestionar clase
+            </h2>
+
+            <div class="acciones acciones-gestion-clase">
+
+                <a
+                    href="{{ url_for('editar_clase', clase_id=clase.id) }}"
+                    class="boton"
+                >
+                    ✏️ Editar clase
+                </a>
+
+                <a
+                    href="{{ url_for('inscribir_alumno_admin', clase_id=clase.id) }}"
+                    class="boton"
+                >
+                    ➕ Inscribir alumno
+                </a>
 
                 <a
                     href="{{ url_for('registrar_asistencia_admin', clase_id=clase.id) }}"
@@ -331,6 +351,17 @@
                 >
                     ✅ Registrar asistencia
                 </a>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('eliminar_clase', clase_id=clase.id) }}"
+                    onsubmit="return confirm('⚠️ ¿Estás seguro de que querés eliminar esta clase?');"
+                    class="form-eliminar-clase"
+                >
+                    <button type="submit" class="boton boton-eliminar-detalle">
+                        🗑️ Eliminar clase
+                    </button>
+                </form>
 
                 <a
                     href="{{ url_for('gestionar_clases') }}"

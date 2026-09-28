@@ -8,11 +8,6 @@
 
     <title>Training Point - Administrador</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/training_point.css') }}"
-    >
-
     <style>
 
         * {
@@ -413,15 +408,17 @@
 
     </style>
 
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
 </head>
 
 
-<body>
+<body class="tp-app">
 
 
     <header class="encabezado">
 
-        <h1>TRAINING POINT</h1>
+        <h1><span class="letra-celeste">T</span>RAINING <span class="letra-celeste">P</span>OINT</h1>
 
         <p>Panel de administración</p>
 

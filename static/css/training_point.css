@@ -399,3 +399,289 @@ body.tp-app .volver {
     border: 1px solid var(--tp-borde) !important;
 }
 
+/* =========================================================
+   ADMINISTRADOR - tema oscuro unificado con panel alumno
+   ========================================================= */
+
+body.tp-app {
+    background: var(--tp-fondo) !important;
+    color: var(--tp-blanco) !important;
+}
+
+body.tp-app .letra-celeste {
+    color: var(--tp-celeste) !important;
+}
+
+body.tp-app h1,
+body.tp-app h2,
+body.tp-app h3,
+body.tp-app h4 {
+    color: var(--tp-blanco) !important;
+}
+
+/* Contenedores blancos propios de las pantallas admin */
+body.tp-app .bienvenida,
+body.tp-app .hoy,
+body.tp-app .resumen-bloque,
+body.tp-app .herramientas,
+body.tp-app .tabla-contenedor,
+body.tp-app .formulario,
+body.tp-app .informacion,
+body.tp-app .aviso,
+body.tp-app .resumen,
+body.tp-app .resumen-tarjeta,
+body.tp-app .tarjeta,
+body.tp-app .tarjeta-perfil,
+body.tp-app .tarjeta-acciones,
+body.tp-app .certificado-tarjeta,
+body.tp-app .seccion,
+body.tp-app .lista,
+body.tp-app .clase,
+body.tp-app .notificacion,
+body.tp-app .datos-clase {
+    background: rgba(14, 18, 22, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24) !important;
+}
+
+/* Tarjetas y filas internas */
+body.tp-app .clase-hoy,
+body.tp-app .boton-principal,
+body.tp-app .herramienta,
+body.tp-app .dato,
+body.tp-app .inscripto,
+body.tp-app .alumno,
+body.tp-app .alumno-movil,
+body.tp-app .abono-movil,
+body.tp-app .accion-admin,
+body.tp-app .accion-movil,
+body.tp-app .dia {
+    background: rgba(27, 34, 40, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border-color: var(--tp-borde) !important;
+}
+
+/* Evitar que hover vuelva a blanco */
+body.tp-app .clase-hoy:hover,
+body.tp-app .herramienta:hover,
+body.tp-app .boton-principal:hover,
+body.tp-app .accion-admin:hover {
+    background: #222c35 !important;
+    color: var(--tp-blanco) !important;
+}
+
+/* Textos secundarios */
+body.tp-app .bienvenida p,
+body.tp-app .clase-hoy-datos,
+body.tp-app .resumen-principal-texto,
+body.tp-app .resumen-linea,
+body.tp-app .descripcion,
+body.tp-app .detalle,
+body.tp-app .fecha,
+body.tp-app .horario,
+body.tp-app .etiqueta,
+body.tp-app .sin-clases-hoy,
+body.tp-app .sin-clases,
+body.tp-app .sin-asistencias,
+body.tp-app .sin-notificaciones,
+body.tp-app .sin-inscriptos {
+    color: var(--tp-gris) !important;
+}
+
+body.tp-app .resumen-linea {
+    border-color: var(--tp-borde-suave) !important;
+}
+
+body.tp-app .resumen-linea strong,
+body.tp-app strong {
+    color: var(--tp-blanco) !important;
+}
+
+/* Celeste para información destacada */
+body.tp-app .clase-hoy-horario,
+body.tp-app .resumen-principal-numero,
+body.tp-app .resumen-numero,
+body.tp-app .hora,
+body.tp-app .importe,
+body.tp-app .cantidad,
+body.tp-app .fecha-dia,
+body.tp-app .etiqueta-hoy {
+    color: var(--tp-celeste-claro) !important;
+}
+
+/* Tablas */
+body.tp-app table {
+    background: rgba(14, 18, 22, 0.94) !important;
+    color: var(--tp-blanco) !important;
+}
+
+body.tp-app th {
+    background: #151c22 !important;
+    color: var(--tp-celeste-claro) !important;
+    border-color: var(--tp-borde) !important;
+}
+
+body.tp-app td {
+    background: rgba(17, 22, 28, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border-color: var(--tp-borde-suave) !important;
+}
+
+/* Formularios */
+body.tp-app input,
+body.tp-app select,
+body.tp-app textarea {
+    background: #11161c !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+}
+
+body.tp-app input:focus,
+body.tp-app select:focus,
+body.tp-app textarea:focus {
+    border-color: var(--tp-celeste) !important;
+    outline: none !important;
+}
+
+/* Botones */
+body.tp-app .boton,
+body.tp-app .boton-superior,
+body.tp-app .boton-principal,
+body.tp-app .boton-clase,
+body.tp-app .boton-semana,
+body.tp-app .boton-nuevo,
+body.tp-app .boton-guardar,
+body.tp-app .guardar,
+body.tp-app .cancelar,
+body.tp-app .volver,
+body.tp-app button {
+    background: var(--tp-superficie-2) !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+}
+
+/* Flechas y detalles activos */
+body.tp-app .clase-hoy-flecha,
+body.tp-app .herramienta-flecha,
+body.tp-app .accion-flecha {
+    color: var(--tp-celeste-claro) !important;
+}
+
+/* Barra inferior admin: siempre fija */
+body.tp-app .navegacion-movil {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: rgba(8, 10, 12, 0.98) !important;
+    border-top: 1px solid var(--tp-borde) !important;
+}
+
+body.tp-app .navegacion-movil a {
+    color: var(--tp-gris) !important;
+    background: transparent !important;
+}
+
+body.tp-app .navegacion-movil .activo {
+    color: var(--tp-celeste-claro) !important;
+    background: rgba(36, 153, 232, 0.10) !important;
+}
+
+@media (max-width: 750px) {
+    body.tp-app {
+        padding-bottom: 76px !important;
+    }
+}
+
+/* =========================================================
+   Ajustes finales administrador: Alumnos, Abonos y Clases
+   ========================================================= */
+
+/* El contenedor exterior no debe volver a blanco. */
+body.tp-app > .contenedor {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Buscador y resúmenes de Alumnos / Abonos */
+body.tp-app .buscador,
+body.tp-app .resumen-estados {
+    color: var(--tp-blanco) !important;
+}
+
+body.tp-app .resumen-estados .resumen,
+body.tp-app .alumno-movil,
+body.tp-app .abono-movil {
+    background: rgba(14, 18, 22, 0.94) !important;
+    border: 1px solid var(--tp-borde) !important;
+    color: var(--tp-blanco) !important;
+}
+
+/* Calendario: cada clase vuelve a ser una tarjeta breve. */
+body.tp-app .clase-enlace {
+    position: relative;
+    display: block;
+    text-decoration: none !important;
+    padding: 10px 28px 10px 10px !important;
+    min-height: 0 !important;
+    cursor: pointer;
+}
+
+body.tp-app .clase-enlace .hora {
+    margin-bottom: 5px;
+}
+
+body.tp-app .clase-enlace .dato {
+    padding: 3px 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: var(--tp-gris) !important;
+}
+
+body.tp-app .clase-enlace .estado-clase-compacto {
+    color: var(--tp-blanco) !important;
+}
+
+body.tp-app .flecha-clase {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--tp-celeste-claro);
+    font-size: 25px;
+    line-height: 1;
+}
+
+body.tp-app .clase-enlace:hover {
+    background: #222c35 !important;
+    border-color: rgba(36, 153, 232, 0.65) !important;
+}
+
+/* Detalle de clase: acciones administrativas juntas. */
+body.tp-app .acciones-gestion-clase {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+body.tp-app .acciones-gestion-clase .boton,
+body.tp-app .acciones-gestion-clase .form-eliminar-clase,
+body.tp-app .acciones-gestion-clase .form-eliminar-clase button {
+    width: 100%;
+    margin: 0 !important;
+}
+
+body.tp-app .boton-eliminar-detalle {
+    color: #ff9a9a !important;
+    border-color: rgba(255, 100, 100, 0.35) !important;
+}
+
+@media (max-width: 750px) {
+    body.tp-app .acciones-gestion-clase {
+        grid-template-columns: 1fr;
+    }
+}
+
