@@ -143,6 +143,120 @@
                 padding: 20px;
             }
 
+            .selector-alumno {
+                position: relative;
+            }
+
+            #buscador_alumno {
+                width: 100%;
+                cursor: text;
+            }
+
+            .lista-alumnos {
+                display: none;
+                position: absolute;
+                top: calc(100% + 5px);
+                left: 0;
+                right: 0;
+                z-index: 100;
+                max-height: 230px;
+                overflow-y: auto;
+                background-color: #11161c;
+                border: 1px solid rgba(36, 153, 232, 0.35);
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+                padding: 5px;
+            }
+
+            .lista-alumnos.abierta {
+                display: block;
+            }
+
+            .opcion-alumno {
+                display: block;
+                width: 100%;
+                padding: 11px 12px;
+                border: 0;
+                border-radius: 6px;
+                background: transparent;
+                color: #f5f7f9;
+                text-align: left;
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .opcion-alumno:hover {
+                background-color: rgba(36, 153, 232, 0.15);
+                color: #58b9f5;
+            }
+
+            .sin-resultados-alumno {
+                padding: 12px;
+                color: #a8b0b8;
+                font-size: 12px;
+                text-align: center;
+            }
+
+            /* =========================
+               SELECTOR BUSCABLE DE ALUMNOS
+               ========================= */
+
+            .selector-alumno {
+                position: relative;
+            }
+
+            #buscador_alumno {
+                width: 100%;
+                cursor: text;
+            }
+
+            .lista-alumnos {
+                display: none;
+                position: absolute;
+                top: calc(100% + 5px);
+                left: 0;
+                right: 0;
+                z-index: 100;
+                max-height: 230px;
+                overflow-y: auto;
+                background-color: #11161c;
+                border: 1px solid rgba(36, 153, 232, 0.35);
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+                padding: 5px;
+            }
+
+            .lista-alumnos.abierta {
+                display: block;
+            }
+
+            .opcion-alumno {
+                display: block;
+                width: 100%;
+                padding: 11px 12px;
+                border: 0;
+                border-radius: 6px;
+                background: transparent;
+                color: #f5f7f9;
+                text-align: left;
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .opcion-alumno:hover {
+                background-color: rgba(36, 153, 232, 0.15);
+                color: #58b9f5;
+            }
+
+            .sin-resultados-alumno {
+                padding: 12px;
+                color: #a8b0b8;
+                font-size: 12px;
+                text-align: center;
+            }
+
         }
 
     </style>
@@ -227,28 +341,54 @@
                 style="display: none;"
             >
 
-                <label for="alumno_id">
+                <label for="buscador_alumno">
                     Alumno
                 </label>
 
-                <select
-                    id="alumno_id"
-                    name="alumno_id"
-                >
+                <div class="selector-alumno">
 
-                    <option value="">
-                        Seleccionar alumno...
-                    </option>
+                    <input
+                        type="text"
+                        id="buscador_alumno"
+                        placeholder="Seleccionar alumno..."
+                        autocomplete="off"
+                    >
 
-                    {% for alumno in alumnos %}
+                    <input
+                        type="hidden"
+                        id="alumno_id"
+                        name="alumno_id"
+                    >
 
-                        <option value="{{ alumno.id }}">
-                            {{ alumno.nombre }}
-                        </option>
+                    <div
+                        id="lista-alumnos"
+                        class="lista-alumnos"
+                    >
 
-                    {% endfor %}
+                        {% for alumno in alumnos %}
+            
+                            <button
+                                type="button"
+                                class="opcion-alumno"
+                                data-id="{{ alumno.id }}"
+                                data-nombre="{{ alumno.nombre }}"
+                            >
+                                {{ alumno.nombre }}
+                            </button>
 
-                </select>
+                        {% endfor %}
+
+                        <div
+                            id="sin-resultados-alumno"
+                            class="sin-resultados-alumno"
+                            style="display: none;"
+                        >
+                            No se encontraron alumnos.
+                        </div>
+            
+                    </div>
+
+                </div>
 
             </div>
 
@@ -306,26 +446,155 @@
 
 <script>
 
+    function normalizarTexto(texto) {
+
+        return texto
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+
+    }
+
+
     function actualizarAlumno() {
 
         const tipo = document.getElementById("tipo").value;
         const campoAlumno = document.getElementById("campo-alumno");
-        const alumno = document.getElementById("alumno_id");
+        const alumnoId = document.getElementById("alumno_id");
+        const buscador = document.getElementById("buscador_alumno");
+        const lista = document.getElementById("lista-alumnos");
 
         if (tipo === "Individual") {
 
             campoAlumno.style.display = "block";
-            alumno.required = true;
+            alumnoId.required = true;
 
         } else {
 
             campoAlumno.style.display = "none";
-            alumno.required = false;
-            alumno.value = "";
+            alumnoId.required = false;
+            alumnoId.value = "";
+            buscador.value = "";
+            lista.classList.remove("abierta");
+
+            mostrarTodosLosAlumnos();
 
         }
 
     }
+
+
+    function mostrarTodosLosAlumnos() {
+
+        const opciones = document.querySelectorAll(".opcion-alumno");
+        const sinResultados = document.getElementById("sin-resultados-alumno");
+
+        opciones.forEach(function (opcion) {
+            opcion.style.display = "block";
+        });
+
+        sinResultados.style.display = "none";
+
+    }
+
+
+    function filtrarAlumnos() {
+
+        const buscador = document.getElementById("buscador_alumno");
+        const alumnoId = document.getElementById("alumno_id");
+        const lista = document.getElementById("lista-alumnos");
+        const opciones = document.querySelectorAll(".opcion-alumno");
+        const sinResultados = document.getElementById("sin-resultados-alumno");
+
+        const busqueda = normalizarTexto(
+            buscador.value.trim()
+        );
+
+        alumnoId.value = "";
+
+        let encontrados = 0;
+
+        opciones.forEach(function (opcion) {
+
+            const nombre = normalizarTexto(
+                opcion.dataset.nombre
+            );
+
+            if (nombre.includes(busqueda)) {
+
+                opcion.style.display = "block";
+                encontrados++;
+
+            } else {
+
+                opcion.style.display = "none";
+
+            }
+
+        });
+
+        sinResultados.style.display =
+            encontrados === 0
+                ? "block"
+                : "none";
+
+        lista.classList.add("abierta");
+
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const buscador = document.getElementById("buscador_alumno");
+        const alumnoId = document.getElementById("alumno_id");
+        const lista = document.getElementById("lista-alumnos");
+        const opciones = document.querySelectorAll(".opcion-alumno");
+
+        buscador.addEventListener("focus", function () {
+
+            mostrarTodosLosAlumnos();
+            lista.classList.add("abierta");
+
+        });
+
+
+        buscador.addEventListener("input", function () {
+
+            filtrarAlumnos();
+
+        });
+
+
+        opciones.forEach(function (opcion) {
+
+            opcion.addEventListener("click", function () {
+
+                alumnoId.value = this.dataset.id;
+                buscador.value = this.dataset.nombre;
+
+                lista.classList.remove("abierta");
+
+            });
+
+        });
+
+
+        document.addEventListener("click", function (evento) {
+
+            const selector = document.querySelector(".selector-alumno");
+
+            if (!selector.contains(evento.target)) {
+
+                lista.classList.remove("abierta");
+
+            }
+
+        });
+
+
+        actualizarAlumno();
+
+    });
 
 </script>
 

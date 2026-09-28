@@ -73,15 +73,25 @@
         .modo-opcion {
             display: block;
             padding: 15px;
-            border: 2px solid #ddd;
+            border: 1px solid rgba(36, 153, 232, 0.30);
             border-radius: 8px;
             text-align: center;
             font-weight: bold;
+            background-color: rgba(17, 22, 28, 0.92);
+            color: #f5f7f9;
+            transition: 0.2s;
+        }
+
+        .modo-opcion:hover {
+            border-color: #2499e8;
+            background-color: #1a2128;
         }
 
         .modo input:checked + .modo-opcion {
-            border-color: #222;
-            background-color: #eee;
+            border-color: #2499e8;
+            background-color: #2499e8;
+            color: #ffffff;
+            box-shadow: 0 0 0 1px rgba(36, 153, 232, 0.20);
         }
 
         .seccion {

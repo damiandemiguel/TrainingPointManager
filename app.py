@@ -2754,6 +2754,42 @@ def inscribirme_clase(clase_id):
         conexion.close()
         return "El alumno está inactivo."
 
+    # Verificar que el alumno tenga un abono activo,
+    # vigente y con créditos disponibles o Pase Libre
+    fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+
+    cursor.execute("""
+        SELECT
+            id,
+            creditos_disponibles,
+            creditos_ilimitados
+        FROM bonos
+        WHERE alumno_id = ?
+          AND estado = 'Activo'
+          AND fecha_vencimiento >= ?
+          AND (
+                creditos_disponibles > 0
+                OR creditos_ilimitados = 1
+              )
+        ORDER BY fecha_vencimiento ASC
+        LIMIT 1
+    """, (
+        alumno["id"],
+        fecha_hoy
+    ))
+
+    bono = cursor.fetchone()
+
+    if bono is None:
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mis_clases",
+                mensaje="Necesitás un abono activo y vigente con créditos disponibles para inscribirte."
+            )
+        )
+
     # Verificar cupos
     cursor.execute("""
         SELECT COUNT(*)
@@ -2766,56 +2802,107 @@ def inscribirme_clase(clase_id):
 
     if cantidad_inscriptos >= clase["cupo_maximo"]:
         conexion.close()
-        return "No hay cupos disponibles para esta clase."
 
-    # Verificar si ya existe una inscripción
+        return redirect(
+            url_for(
+                "mis_clases",
+                mensaje="No hay cupos disponibles para esta clase."
+            )
+        )
+
+    # Verificar si ya existe una inscripción para esta misma clase
     cursor.execute("""
         SELECT id, estado
         FROM inscripciones
         WHERE clase_id = ?
-           AND alumno_id = ?
-    """, (clase_id, alumno["id"]))
+          AND alumno_id = ?
+    """, (
+        clase_id,
+        alumno["id"]
+    ))
 
     inscripcion_existente = cursor.fetchone()
 
-    if inscripcion_existente is not None:
+    if (
+        inscripcion_existente is not None
+        and inscripcion_existente["estado"] == "Inscripto"
+    ):
+        conexion.close()
 
-        if inscripcion_existente["estado"] == "Inscripto":
+        return redirect(
+            url_for(
+                "ver_inscriptos_alumno",
+                clase_id=clase_id
+            )
+        )
 
-            conexion.close()
+    # Verificar si el alumno ya está inscripto
+    # en otra clase del mismo día
+    cursor.execute("""
+        SELECT
+            i.id,
+            c.id AS clase_id,
+            c.hora_inicio,
+            c.hora_fin
+        FROM inscripciones i
+        JOIN clases c
+            ON c.id = i.clase_id
+        WHERE i.alumno_id = ?
+          AND i.estado = 'Inscripto'
+          AND c.fecha = ?
+          AND c.id != ?
+        LIMIT 1
+    """, (
+        alumno["id"],
+        clase["fecha"],
+        clase_id
+    ))
 
-            return redirect(
-                url_for(
-                    "ver_inscriptos_alumno",
-                    clase_id=clase_id
+    otra_inscripcion = cursor.fetchone()
+
+    if otra_inscripcion is not None:
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mis_clases",
+                mensaje=(
+                    "Ya estás inscripto en otra clase de ese día. "
+                    "Solo podés inscribirte en una clase por día."
                 )
             )
+        )
 
-        elif inscripcion_existente["estado"] == "Cancelado":
+    # Si había una inscripción cancelada para esta misma clase,
+    # volver a activarla
+    if (
+        inscripcion_existente is not None
+        and inscripcion_existente["estado"] == "Cancelado"
+    ):
 
-            fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            cursor.execute("""
-                UPDATE inscripciones
-                SET estado = 'Inscripto',
-                    fecha_inscripcion = ?
-                WHERE id = ?
-            """, (
-                fecha_inscripcion,
-                inscripcion_existente["id"]
-            ))
+        cursor.execute("""
+            UPDATE inscripciones
+            SET estado = 'Inscripto',
+                fecha_inscripcion = ?
+            WHERE id = ?
+        """, (
+            fecha_inscripcion,
+            inscripcion_existente["id"]
+        ))
 
-            conexion.commit()
-            conexion.close()
+        conexion.commit()
+        conexion.close()
 
-            return redirect(
-                url_for(
-                    "ver_inscriptos_alumno",
-                    clase_id=clase_id
-                )
+        return redirect(
+            url_for(
+                "ver_inscriptos_alumno",
+                clase_id=clase_id
             )
+        )
 
-    # Registrar inscripción
+    # Registrar una nueva inscripción
     fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     cursor.execute("""
@@ -4169,13 +4256,130 @@ def mostrar_alumnos():
         busqueda=busqueda
     )
 
-@app.route("/agregar")
+@app.route("/agregar", methods=["GET", "POST"])
 def agregar_alumno():
 
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
 
-    return render_template("agregar.html")
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    if request.method == "POST":
+
+        nombre = request.form["nombre"].strip()
+        email = request.form["email"].strip()
+        fecha_nacimiento = request.form["fecha_nacimiento"].strip()
+        telefono = request.form["telefono"].strip()
+        direccion = request.form["direccion"].strip()
+        usuario = request.form["usuario"].strip()
+        password = request.form["password"]
+        confirmar_password = request.form["confirmar_password"]
+
+        datos = request.form
+
+        if password != confirmar_password:
+            return render_template(
+                "agregar.html",
+                error="Las contraseñas no coinciden.",
+                datos=datos
+            )
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        try:
+
+            cursor.execute(
+                "SELECT id FROM usuarios WHERE usuario = ?",
+                (usuario,)
+            )
+
+            if cursor.fetchone():
+                conexion.close()
+
+                return render_template(
+                    "agregar.html",
+                    error="Ese nombre de usuario ya está registrado.",
+                    datos=datos
+                )
+
+            cursor.execute(
+                "SELECT id FROM alumnos WHERE email = ?",
+                (email,)
+            )
+
+            if cursor.fetchone():
+                conexion.close()
+
+                return render_template(
+                    "agregar.html",
+                    error="Ya existe un alumno con ese e-mail.",
+                    datos=datos
+                )
+
+            password_segura = generate_password_hash(password)
+
+            cursor.execute("""
+                INSERT INTO usuarios (
+                    usuario,
+                    password,
+                    rol
+                )
+                VALUES (?, ?, ?)
+            """, (
+                usuario,
+                password_segura,
+                "alumno"
+            ))
+
+            usuario_id = cursor.lastrowid
+
+            cursor.execute("""
+                INSERT INTO alumnos (
+                    usuario_id,
+                    nombre,
+                    email,
+                    fecha_nacimiento,
+                    telefono,
+                    direccion
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                usuario_id,
+                nombre,
+                email,
+                fecha_nacimiento,
+                telefono,
+                direccion
+            ))
+
+            conexion.commit()
+
+        except Exception as error:
+
+            conexion.rollback()
+            conexion.close()
+
+            return render_template(
+                "agregar.html",
+                error=f"No se pudo agregar el alumno: {error}",
+                datos=datos
+            )
+
+        conexion.close()
+
+        return redirect(
+            url_for(
+                "mostrar_alumnos",
+                creado=nombre
+            )
+        )
+
+    return render_template(
+        "agregar.html",
+        datos={}
+    )
 
 @app.route("/lector-qr")
 def lector_qr():

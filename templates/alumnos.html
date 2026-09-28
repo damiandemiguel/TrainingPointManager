@@ -124,8 +124,57 @@
             background-color: #444;
         }
 
+        .accion-nuevo-alumno {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0 5px;
+        }
+
+        .boton-nuevo-alumno {
+            display: inline-block;
+            padding: 12px 22px;
+
+            background-color: #2499e8;
+            color: white;
+
+            border: 1px solid #2499e8;
+            border-radius: 8px;
+
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+
+            transition:
+                background-color 0.2s ease,
+                transform 0.1s ease;
+        }
+
+        .boton-nuevo-alumno:hover {
+            background-color: #1688d4;
+        }
+
+        .boton-nuevo-alumno:active {
+            transform: scale(0.99);
+        }
+
         .lista-alumnos-movil {
             display: none;
+        }
+
+        .mensaje-exito {
+            margin: 0 0 18px;
+            padding: 13px 16px;
+
+            background-color: rgba(34, 197, 94, 0.12);
+            color:  #8ee8ad;
+
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            border-radius: 8px;
+
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         @media (max-width: 750px) {
@@ -142,6 +191,16 @@
                 display: none;
             }
 
+            .accion-nuevo-alumno {
+                margin: 16px 0 5px;
+            }
+
+            .boton-nuevo-alumno {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 12px;
+            }
+
             .buscador {
                 flex-wrap: wrap;
             }
@@ -151,7 +210,7 @@
                 flex-basis: 100%;
             }
 
-            table {
+            .table {
                 display: none;
             }
 
@@ -162,7 +221,7 @@
                 margin-top: 25px;
             }
 
-                .alumno-movil {
+            .alumno-movil {
                 background-color: #f7f7f7;
                 border: 1px solid #ddd;
                 border-radius: 10px;
@@ -232,7 +291,7 @@
                 Gestión de alumnos de Training Point
             </p>
 
-        </div>
+                </div>
 
         <div class="acciones-superiores">
 
@@ -241,6 +300,23 @@
                 class="boton-superior"
             >
                 ⬅️ Volver al panel
+            </a>
+
+        </div>
+
+        {% if request.args.get('creado') %}
+            <div class="mensaje-exito">
+                ✅ <strong>{{ request.args.get('creado') }}</strong> fue agregado correctamente.
+            </div>
+        {% endif %}
+
+        <div class="accion-nuevo-alumno">
+
+            <a
+                href="/agregar"
+                class="boton-nuevo-alumno"
+            >
+                ➕ Nuevo alumno
             </a>
 
         </div>

@@ -10,124 +10,322 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            background-color: #080a0c;
             margin: 0;
             padding: 40px;
+            color: #f5f7f9;
         }
 
         .contenedor {
-            max-width: 600px;
+            max-width: 700px;
             margin: auto;
-            background-color: white;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
-        h1 {
+        .encabezado {
+            background-color: #11161c;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(36, 153, 232, 0.30);
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin: 8px 0 0;
+            color: #a8b0b8;
+            font-size: 13px;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 12px 18px;
+            background-color: #11161c;
+            color: white;
+            border: 1px solid rgba(36, 153, 232, 0.30);
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .formulario {
+            padding: 25px;
+            background: rgba(17, 22, 28, 0.94);
+            border: 1px solid rgba(36, 153, 232, 0.30);
+            border-radius: 12px;
+        }
+
+        .titulo-seccion {
+            margin: 5px 0 20px;
+            padding-bottom: 10px;
+            color: #58b9f5;
+            border-bottom: 1px solid rgba(36, 153, 232, 0.20);
+            font-size: 15px;
+        }
+
+        .titulo-acceso {
+            margin-top: 30px;
         }
 
         label {
             display: block;
             margin-top: 15px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-size: 13px;
             font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 12px;
             box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px;
+            background-color: #0d1115;
+            color: #f5f7f9;
+            border: 1px solid rgba(36, 153, 232, 0.35);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
         }
 
-        button {
+        input:focus {
+            border-color: #2499e8;
+            box-shadow: 0 0 0 3px rgba(36, 153, 232, 0.12);
+        }
+
+        .error {
+            margin-bottom: 20px;
+            padding: 12px;
+            color: #ff9a9a;
+            background-color: rgba(180, 35, 35, 0.12);
+            border: 1px solid rgba(255, 100, 100, 0.30);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .boton-agregar {
             width: 100%;
             margin-top: 25px;
-            padding: 14px;
-            background-color: #222;
+            padding: 13px;
+            background-color: #2499e8;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #444;
+        .boton-agregar:hover {
+            background-color: #1688d4;
         }
 
-        .volver {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #222;
-            text-decoration: none;
+        @media (max-width: 750px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .contenedor {
+                padding: 0;
+            }
+
+            .encabezado {
+                padding: 20px 15px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
+
+            .acciones-superiores {
+                display: none;
+            }
+
+            .formulario {
+                padding: 20px 15px;
+            }
         }
     </style>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/training_point.css') }}"
+    >
 </head>
 
 <body class="tp-app">
 
     <div class="contenedor">
 
-        <h1>Agregar alumno</h1>
+        <div class="encabezado">
+            <h1>➕ Agregar alumno</h1>
 
-        <form>
+            <p>
+                Alta de un nuevo alumno en Training Point
+            </p>
+        </div>
 
-            <label for="nombre">
-                Nombre y apellido
-            </label>
+        <div class="acciones-superiores">
 
-            <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                required
+            <a
+                href="{{ url_for('mostrar_alumnos') }}"
+                class="boton-superior"
             >
+                ⬅️ Volver a alumnos
+            </a>
 
-
-            <label for="email">
-                E-mail
-            </label>
-
-            <input
-                type="email"
-                id="email"
-                name="email"
-                required
+            <a
+                href="{{ url_for('panel') }}"
+                class="boton-superior"
             >
+                🏠 Volver al panel
+            </a>
 
+        </div>
 
-            <label for="fecha_nacimiento">
-                Fecha de nacimiento
-            </label>
+        <div class="formulario">
 
-            <input
-                type="text"
-                id="fecha_nacimiento"
-                name="fecha_nacimiento"
-                placeholder="DD/MM/AAAA"
-                required
-            >
+            {% if error %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endif %}
 
+            <form method="POST">
 
-            <button type="submit">
-                Agregar alumno
-            </button>
+                <h2 class="titulo-seccion">
+                    👤 Datos personales
+                </h2>
 
-        </form>
+                <label for="nombre">
+                    Nombre y apellido
+                </label>
 
-        <a href="/" class="volver">
-            Volver al inicio
-        </a>
+                <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    value="{{ datos.get('nombre', '') }}"
+                    required
+                >
+
+                <label for="email">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ datos.get('email', '') }}"
+                    required
+                >
+
+                <label for="fecha_nacimiento">
+                    Fecha de nacimiento
+                </label>
+
+                <input
+                    type="text"
+                    id="fecha_nacimiento"
+                    name="fecha_nacimiento"
+                    placeholder="DD/MM/AAAA"
+                    value="{{ datos.get('fecha_nacimiento', '') }}"
+                    required
+                >
+
+                <label for="telefono">
+                    Teléfono
+                </label>
+
+                <input
+                    type="text"
+                    id="telefono"
+                    name="telefono"
+                    value="{{ datos.get('telefono', '') }}"
+                    required
+                >
+
+                <label for="direccion">
+                    Dirección
+                </label>
+
+                <input
+                    type="text"
+                    id="direccion"
+                    name="direccion"
+                    value="{{ datos.get('direccion', '') }}"
+                    required
+                >
+
+                <h2 class="titulo-seccion titulo-acceso">
+                    🔐 Acceso a Training Point
+                </h2>
+
+                <label for="usuario">
+                    Usuario
+                </label>
+
+                <input
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    value="{{ datos.get('usuario', '') }}"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="password">
+                    Contraseña
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <label for="confirmar_password">
+                    Confirmar contraseña
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmar_password"
+                    name="confirmar_password"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="boton-agregar"
+                >
+                    ➕ Agregar alumno
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
+
+    {% set nav_activa = 'alumnos' %}
+    {% include '_nav_admin.html' %}
 
 </body>
 

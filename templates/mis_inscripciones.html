@@ -17,48 +17,72 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            color: #222;
+            background-color: #080a0c;
+            color: #f5f7f9;
         }
 
         .contenedor {
             width: 92%;
             max-width: 900px;
-            margin: 40px auto;
+            margin: 40px auto 100px;
         }
 
         .encabezado {
-            background-color: #222;
-            color: white;
-            padding: 25px;
+            background: rgba(17, 22, 28, 0.92);
+            border: 1px solid rgba(36, 153, 232, 0.30);
             border-radius: 12px;
+            padding: 25px;
             text-align: center;
             margin-bottom: 25px;
         }
 
-        .acciones-superiores {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 25px;
-    }
-
-    .boton-superior {
-        flex: 1;
-        padding: 13px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        text-align: center;
-        font-weight: bold;
-        background-color: #222;
-        color: white;
-    }
-
-    .boton-superior:hover {
-        background-color: #444;
-    }
-
         .encabezado h1 {
-            margin: 0 0 10px 0;
+            margin: 0 0 10px;
+            color: #f5f7f9;
+            font-size: 21px;
+        }
+
+        .encabezado p {
+            margin: 0;
+            color: #a8b0b8;
+            font-size: 13px;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #11161c;
+            color: #f5f7f9;
+            border: 1px solid rgba(36, 153, 232, 0.30);
+            transition: 0.2s;
+        }
+
+        .boton-superior:hover {
+            background-color: #1a2128;
+            border-color: #2499e8;
+        }
+
+        .mensaje {
+            background-color: rgba(245, 158, 11, 0.12);
+            color: #f4c76b;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
         }
 
         .inscripciones {
@@ -68,42 +92,70 @@
         }
 
         .inscripcion {
-            background-color: white;
+            background: rgba(17, 22, 28, 0.94);
+            border: 1px solid rgba(36, 153, 232, 0.30);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         }
 
         .inscripcion h2 {
-            margin-top: 0;
+            margin: 0 0 14px;
+            color: #58b9f5;
+            font-size: 17px;
         }
 
         .dato {
-            padding: 6px 0;
-            color: #555;
+            padding: 7px 0;
+            color: #a8b0b8;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .etiqueta {
             font-weight: bold;
-            color: #222;
+            color: #f5f7f9;
         }
 
-        .estado {
-            margin-top: 12px;
-            padding: 8px;
+        .boton-cancelar {
+            width: 100%;
+            min-height: 43px;
+            margin-top: 16px;
+            padding: 10px 14px;
+            border: 1px solid rgba(239, 68, 68, 0.35);
             border-radius: 8px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
+            background-color: rgba(239, 68, 68, 0.10);
+            color: #ff8b8b;
+            font-size: 12px;
             font-weight: bold;
-            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .boton-cancelar:hover {
+            background-color: rgba(239, 68, 68, 0.18);
+            border-color: rgba(239, 68, 68, 0.55);
         }
 
         .sin-inscripciones {
-            background-color: white;
-            padding: 40px;
+            background: rgba(17, 22, 28, 0.94);
+            border: 1px solid rgba(36, 153, 232, 0.30);
+            padding: 40px 25px;
             text-align: center;
             border-radius: 12px;
-            color: #666;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .sin-inscripciones h2 {
+            margin: 0 0 10px;
+            color: #f5f7f9;
+            font-size: 17px;
+        }
+
+        .sin-inscripciones p {
+            margin: 0;
+            color: #a8b0b8;
+            font-size: 13px;
         }
 
         .boton {
@@ -113,33 +165,19 @@
             border-radius: 8px;
             text-decoration: none;
             text-align: center;
+            font-size: 12px;
             font-weight: bold;
-            background-color: #222;
+            background-color: #2499e8;
             color: white;
+            border: 1px solid #2499e8;
+            transition: 0.2s;
         }
 
         .boton:hover {
-            background-color: #444;
-        }
-
-        .mensaje {
-            background-color: #fff3cd;
-            color: #664d03;
-            padding: 14px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
+            background-color: #58b9f5;
         }
 
         @media (max-width: 700px) {
-
-            .inscripciones {
-                grid-template-columns: 1fr;
-            }
-
-            .acciones-superiores {
-                display: none;
-            }
 
             .contenedor {
                 width: 94%;
@@ -158,7 +196,15 @@
 
             .encabezado p {
                 font-size: 12px;
-                margin-bottom: 0;
+            }
+
+            .acciones-superiores {
+                display: none;
+            }
+
+            .inscripciones {
+                grid-template-columns: 1fr;
+                gap: 12px;
             }
 
             .inscripcion {
@@ -173,14 +219,14 @@
                 font-size: 12px;
             }
 
-            .estado {
+            .boton-cancelar {
+                min-height: 41px;
                 font-size: 12px;
             }
 
-            .boton-cancelar {
-                height: 41px;
-                            font-size: 12px;
-}
+            .sin-inscripciones {
+                padding: 32px 18px;
+            }
 
             .sin-inscripciones h2 {
                 font-size: 15px;
@@ -190,27 +236,6 @@
                 font-size: 12px;
             }
 
-            .boton {
-                font-size: 12px;
-            }
-
-        }
-
-        .boton-cancelar {
-            width: 100%;
-            height: 45px;
-            margin-top: 15px;
-            padding: 0 10px;
-            border: none;
-            border-radius: 8px;
-            background-color: #e5e5e5;
-            color: #333;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .boton-cancelar:hover {
-            background-color: #ccc;
         }
 
     </style>
@@ -266,7 +291,6 @@
                         {{ inscripcion.fecha[8:10] }}/{{ inscripcion.fecha[5:7] }}/{{ inscripcion.fecha[0:4] }}
                     </h2>
 
-
                     <div class="dato">
 
                         <span class="etiqueta">
@@ -279,17 +303,15 @@
 
                     </div>
 
-
                     <div class="dato">
 
                         <span class="etiqueta">
-                            📝 Fecha de inscripción:
+                            📌 Fecha de inscripción:
                         </span>
 
                         {{ inscripcion.fecha_inscripcion[8:10] }}/{{ inscripcion.fecha_inscripcion[5:7] }}/{{ inscripcion.fecha_inscripcion[0:4] }}
 
                     </div>
-
 
                     <form
                         action="{{ url_for('cancelar_inscripcion_desde_mis_inscripciones', inscripcion_id=inscripcion.inscripcion_id) }}"
@@ -334,7 +356,6 @@
     {% endif %}
 
 </div>
-
 
 {% set nav_activa = 'inscripciones' %}
 {% include '_nav_alumno.html' %}

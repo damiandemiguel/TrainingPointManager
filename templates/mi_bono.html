@@ -17,95 +17,104 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            color: #222;
+            background-color: #080a0c;
+            color: #f5f7f9;
         }
 
         .contenedor {
             width: 92%;
             max-width: 900px;
-            margin: 40px auto;
+            margin: 40px auto 100px;
         }
 
         .encabezado {
-            background-color: #222;
-            color: white;
-            padding: 25px;
+            background: rgba(17, 22, 28, 0.92);
+            border: 1px solid rgba(36, 153, 232, 0.30);
             border-radius: 12px;
+            padding: 25px;
             text-align: center;
             margin-bottom: 25px;
         }
 
         .encabezado h1 {
-            margin: 0 0 10px 0;
+            margin: 0 0 10px;
+            color: #f5f7f9;
+            font-size: 21px;
+        }
+
+        .encabezado p {
+            margin: 0;
+            color: #a8b0b8;
+            font-size: 13px;
         }
 
         .acciones-superiores {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 25px;
-    }
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
 
-    .boton-superior {
-        flex: 1;
-        padding: 13px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        text-align: center;
-        font-weight: bold;
-        background-color: #222;
-        color: white;
-    }
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #11161c;
+            color: #f5f7f9;
+            border: 1px solid rgba(36, 153, 232, 0.30);
+            transition: 0.2s;
+        }
 
-    .boton-superior:hover {
-        background-color: #444;
-    }
+        .boton-superior:hover {
+            background-color: #1a2128;
+            border-color: #2499e8;
+        }
 
         .bono {
-            background-color: white;
+            background: rgba(17, 22, 28, 0.94);
+            border: 1px solid rgba(36, 153, 232, 0.30);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         }
 
         .bono h2 {
-            margin-top: 0;
-        }
-
-        .dato {
-            padding: 8px 0;
-            color: #555;
-        }
-
-        .etiqueta {
-            font-weight: bold;
-            color: #222;
+            margin: 0 0 18px;
+            color: #58b9f5;
+            font-size: 18px;
         }
 
         .creditos {
             margin: 20px 0;
-            padding: 20px;
+            padding: 22px;
             border-radius: 10px;
-            background-color: #f7f7f7;
+            background: rgba(36, 153, 232, 0.08);
+            border: 1px solid rgba(36, 153, 232, 0.25);
             text-align: center;
+            color: #a8b0b8;
+            font-size: 13px;
         }
 
         .creditos-numero {
             font-size: 36px;
             font-weight: bold;
-            margin-top: 8px;
+            margin: 8px 0;
+            color: #58b9f5;
         }
 
         .resumen-creditos {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-top: 20px;
+            margin: 20px 0;
         }
 
         .resumen-item {
-            background-color: #f7f7f7;
-            border: 1px solid #ddd;
+            background: rgba(26, 33, 40, 0.88);
+            border: 1px solid rgba(36, 153, 232, 0.22);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
@@ -113,70 +122,130 @@
 
         .resumen-item span {
             display: block;
-            color: #555;
+            color: #a8b0b8;
             margin-bottom: 8px;
+            font-size: 12px;
         }
 
         .resumen-item strong {
-            font-size: 24px;
+            display: block;
+            color: #58b9f5;
+            font-size: 20px;
+        }
+
+        .dato {
+            padding: 8px 0;
+            color: #a8b0b8;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .etiqueta {
+            font-weight: bold;
+            color: #f5f7f9;
         }
 
         .estado {
             margin-top: 15px;
             padding: 10px;
             border-radius: 8px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
+            background-color: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.30);
+            color: #8ee8ad;
+            font-size: 13px;
             font-weight: bold;
             text-align: center;
+        }
+
+        .historial {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .historial h3 {
+            margin: 0 0 15px;
+            color: #f5f7f9;
+            font-size: 15px;
+        }
+
+        .movimientos {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .movimiento {
+            background: rgba(26, 33, 40, 0.88);
+            border: 1px solid rgba(36, 153, 232, 0.22);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .movimiento-fecha {
+            color: #a8b0b8;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .movimiento-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            color: #f5f7f9;
+            font-size: 13px;
+        }
+
+        .cantidad {
+            color: #58b9f5;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .movimiento-descripcion {
+            margin-top: 8px;
+            color: #a8b0b8;
+            font-size: 12px;
+        }
+
+        .sin-movimientos {
+            color: #a8b0b8;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
         }
 
         .sin-bono {
-            background-color: white;
-            padding: 40px;
+            background: rgba(17, 22, 28, 0.94);
+            border: 1px solid rgba(36, 153, 232, 0.30);
+            padding: 40px 25px;
             text-align: center;
             border-radius: 12px;
-            color: #666;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         }
 
-        .botones {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
+        .sin-bono h2 {
+            margin: 0 0 10px;
+            color: #f5f7f9;
+            font-size: 17px;
         }
 
-        .boton {
-            flex: 1;
-            padding: 12px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-            background-color: #222;
-            color: white;
-        }
-
-        .boton:hover {
-            background-color: #444;
+        .sin-bono p {
+            margin: 0;
+            color: #a8b0b8;
+            font-size: 13px;
         }
 
         @media (max-width: 700px) {
 
-            .botones {
-                flex-direction: column;
-            }
-
-            .resumen-creditos {
-                grid-template-columns: 1fr;
+            .contenedor {
+                width: 94%;
+                margin: 20px auto 90px;
             }
 
             .acciones-superiores {
                 display: none;
-            }
-
-            .contenedor {
-                width: 94%;
-                margin: 20px auto 90px;
             }
 
             .encabezado {
@@ -186,29 +255,48 @@
 
             .encabezado h1 {
                 font-size: 21px;
+                margin-bottom: 5px;
             }
 
             .encabezado p {
                 font-size: 12px;
             }
 
-            .tarjeta-bono {
-                padding: 18px;
+            .bono {
+                padding: 16px;
             }
 
-            .tarjeta-bono h2 {
+            .bono h2 {
                 font-size: 15px;
             }
 
-            .dato {
-                font-size: 13px;
-            }
-
-            .estado {
+            .creditos {
+                padding: 18px 12px;
                 font-size: 12px;
             }
 
+            .creditos-numero {
+                font-size: 32px;
+            }
+
+            .resumen-creditos {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
             .resumen-item {
+                padding: 13px;
+            }
+
+            .resumen-item strong {
+                font-size: 18px;
+            }
+
+            .dato {
+                font-size: 12px;
+            }
+
+            .estado {
                 font-size: 12px;
             }
 
@@ -228,9 +316,9 @@
                 font-size: 12px;
             }
 
-            .sin-movimientos {
-    font-size: 12px;
-                }
+            .sin-bono {
+                padding: 32px 18px;
+            }
 
             .sin-bono h2 {
                 font-size: 15px;
@@ -240,59 +328,6 @@
                 font-size: 12px;
             }
 
-        }
-
-        .historial {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-
-        .historial h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-
-        .movimientos {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .movimiento {
-            background-color: #f7f7f7;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .movimiento-fecha {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .movimiento-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cantidad {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .movimiento-descripcion {
-            margin-top: 8px;
-            color: #555;
-            font-size: 14px;
-        }
-
-        .sin-movimientos {
-            color: #666;
-            text-align: center;
-            padding: 15px;
         }
 
     </style>
@@ -317,14 +352,14 @@
 
     <div class="acciones-superiores">
 
-    <a
-        href="{{ url_for('panel_alumno') }}"
-        class="boton-superior"
-    >
-        ⬅️ Volver al panel
-    </a>
+        <a
+            href="{{ url_for('panel_alumno') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
 
-</div>
+    </div>
 
 
     {% if bono %}
@@ -357,6 +392,7 @@
                 <div class="resumen-creditos">
 
                     <div class="resumen-item">
+
                         <span>
                             🎫 Tipo de acceso
                         </span>
@@ -364,9 +400,11 @@
                         <strong>
                             Pase Libre
                         </strong>
+
                     </div>
 
                     <div class="resumen-item">
+
                         <span>
                             ♾️ Créditos
                         </span>
@@ -374,9 +412,11 @@
                         <strong>
                             Ilimitados
                         </strong>
+
                     </div>
 
                     <div class="resumen-item">
+
                         <span>
                             📅 Vigencia
                         </span>
@@ -384,6 +424,7 @@
                         <strong>
                             Hasta {{ bono.fecha_vencimiento | fecha_ar }}
                         </strong>
+
                     </div>
 
                 </div>
@@ -409,6 +450,7 @@
                 <div class="resumen-creditos">
 
                     <div class="resumen-item">
+
                         <span>
                             📦 Créditos iniciales
                         </span>
@@ -416,9 +458,11 @@
                         <strong>
                             {{ bono.creditos_iniciales }}
                         </strong>
+
                     </div>
 
                     <div class="resumen-item">
+
                         <span>
                             ✅ Créditos utilizados
                         </span>
@@ -426,9 +470,11 @@
                         <strong>
                             {{ creditos_utilizados }}
                         </strong>
+
                     </div>
 
                     <div class="resumen-item">
+
                         <span>
                             🎫 Créditos disponibles
                         </span>
@@ -436,6 +482,7 @@
                         <strong>
                             {{ bono.creditos_disponibles }}
                         </strong>
+
                     </div>
 
                 </div>
@@ -471,6 +518,7 @@
 
             </div>
 
+
             <div class="historial">
 
                 <h3>
@@ -496,11 +544,13 @@
                                     </strong>
 
                                     <span class="cantidad">
+
                                         {% if movimiento.cantidad > 0 %}
                                             +{{ movimiento.cantidad }}
                                         {% else %}
                                             {{ movimiento.cantidad }}
                                         {% endif %}
+
                                     </span>
 
                                 </div>
@@ -535,7 +585,7 @@
 
         <div class="sin-bono">
 
-            <h2>🎫 No tenés un bono activo</h2>
+            <h2>🎫 No tenés un abono activo</h2>
 
             <p>
                 Actualmente no tenés ningún abono activo.
@@ -544,11 +594,6 @@
         </div>
 
     {% endif %}
-
-
-    <div class="botones">
-
-    </div>
 
 </div>
 
