@@ -136,3 +136,266 @@
     }
 
 }
+
+/* =========================================================
+   TRAINING POINT
+   Identidad visual oscura compartida
+   ========================================================= */
+
+:root {
+    --tp-fondo: #080a0c;
+    --tp-superficie: #11161c;
+    --tp-superficie-2: #1a2128;
+    --tp-celeste: #2499e8;
+    --tp-celeste-claro: #58b9f5;
+    --tp-blanco: #f5f7f9;
+    --tp-gris: #a8b0b8;
+    --tp-gris-oscuro: #68727c;
+    --tp-borde: rgba(36, 153, 232, 0.30);
+    --tp-borde-suave: rgba(255, 255, 255, 0.07);
+}
+
+/* Fondo general + marca de agua */
+
+body.tp-app {
+    min-height: 100vh;
+    background: var(--tp-fondo) !important;
+    color: var(--tp-blanco) !important;
+    position: relative;
+}
+
+body.tp-app::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(
+            rgba(8, 10, 12, 0.65),
+            rgba(8, 10, 12, 0.65)
+        ),
+        url("../img/logo_training_point.png");
+    background-repeat: no-repeat;
+    background-position: center 120px;
+    background-size: min(560px, 60vw);
+    pointer-events: none;
+    z-index: 0;
+}
+
+body.tp-app > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Contenedor y encabezados */
+
+body.tp-app .contenedor {
+    position: relative;
+    z-index: 1;
+}
+
+body.tp-app .encabezado {
+    background: rgba(5, 7, 9, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.28) !important;
+    text-align: center !important;
+}
+
+body.tp-app .encabezado h1 {
+    color: var(--tp-blanco) !important;
+}
+
+body.tp-app .encabezado p {
+    color: var(--tp-gris) !important;
+}
+
+/* Superficies principales */
+
+body.tp-app .calendario,
+body.tp-app .inscripciones,
+body.tp-app .tarjeta-perfil,
+body.tp-app .datos,
+body.tp-app .accesos,
+body.tp-app .bono,
+body.tp-app .historial,
+body.tp-app .lista,
+body.tp-app .seccion,
+body.tp-app .lista-clases,
+body.tp-app .tarjeta-lector,
+body.tp-app .tarjeta,
+body.tp-app .movimientos {
+    background: rgba(14, 18, 22, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border-color: var(--tp-borde-suave) !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.26) !important;
+}
+
+/* Tarjetas / filas */
+
+body.tp-app .dia,
+body.tp-app .clase,
+body.tp-app .inscripcion,
+body.tp-app .asistencia,
+body.tp-app .pago,
+body.tp-app .notificacion,
+body.tp-app .movimiento,
+body.tp-app .dato,
+body.tp-app .acceso,
+body.tp-app .resumen-item,
+body.tp-app .rutina,
+body.tp-app .lector {
+    background-color: rgba(27, 34, 40, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border-color: var(--tp-borde) !important;
+}
+
+/* Textos */
+
+body.tp-app .etiqueta,
+body.tp-app .fecha,
+body.tp-app .movimiento-fecha,
+body.tp-app .dato-simple,
+body.tp-app .ayuda,
+body.tp-app .instruccion,
+body.tp-app .sin-clases,
+body.tp-app .sin-inscripciones,
+body.tp-app .sin-asistencias,
+body.tp-app .sin-pagos,
+body.tp-app .sin-bono,
+body.tp-app .sin-movimientos,
+body.tp-app .vacio,
+body.tp-app .pendiente,
+body.tp-app .sin-clase-dia {
+    color: var(--tp-gris) !important;
+}
+
+body.tp-app .valor,
+body.tp-app .importe,
+body.tp-app .hora,
+body.tp-app .creditos-numero,
+body.tp-app .cantidad,
+body.tp-app .titulo-rutina,
+body.tp-app .titulo-notificacion,
+body.tp-app .titulo-semana,
+body.tp-app .nombre-dia {
+    color: var(--tp-celeste-claro) !important;
+}
+
+body.tp-app strong {
+    color: var(--tp-blanco);
+}
+
+body.tp-app a {
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+/* Botones */
+
+body.tp-app .boton-superior,
+body.tp-app .boton,
+body.tp-app .boton-guardar {
+    background: var(--tp-superficie-2) !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+}
+
+body.tp-app .boton-superior:hover,
+body.tp-app .boton:hover,
+body.tp-app .boton-guardar:hover {
+    background: #222c35 !important;
+    border-color: rgba(36, 153, 232, 0.65) !important;
+}
+
+/* Estados que deben conservar significado */
+
+body.tp-app .estado-ok,
+body.tp-app .disponible,
+body.tp-app .estado-inscripto {
+    color: #79d99b !important;
+}
+
+body.tp-app .estado-alerta,
+body.tp-app .no-disponible,
+body.tp-app .error {
+    color: #ff8c8c !important;
+}
+
+/* Navegación móvil */
+
+body.tp-app .navegacion-movil {
+    background-color: rgba(8, 10, 12, 0.98) !important;
+    border-top: 1px solid var(--tp-borde) !important;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.tp-app .navegacion-movil a {
+    color: var(--tp-gris) !important;
+    background-color: transparent !important;
+}
+
+body.tp-app .navegacion-movil .activo {
+    color: var(--tp-celeste-claro) !important;
+    background-color: rgba(36, 153, 232, 0.10) !important;
+}
+
+@media (max-width: 750px) {
+
+    body.tp-app::before {
+        background-position: center 125px;
+        background-size: 90vw;
+    }
+
+    body.tp-app .encabezado {
+        border-radius: 10px !important;
+    }
+
+}
+
+/* =========================================================
+   Corrección navegación móvil fija
+   ========================================================= */
+
+body.tp-app .navegacion-movil {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+}
+
+@media (max-width: 750px) {
+    body.tp-app {
+        padding-bottom: 76px !important;
+    }
+}
+
+/* =========================================================
+   Detalle de clase - alumno
+   ========================================================= */
+
+body.tp-app .datos-clase,
+body.tp-app .seccion-inscriptos {
+    background: rgba(14, 18, 22, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.26) !important;
+}
+
+body.tp-app .disponibilidad,
+body.tp-app .inscripto {
+    background: rgba(27, 34, 40, 0.94) !important;
+    color: var(--tp-blanco) !important;
+    border-color: var(--tp-borde) !important;
+}
+
+body.tp-app .sin-inscriptos {
+    color: var(--tp-gris) !important;
+}
+
+body.tp-app .boton-inscribirme,
+body.tp-app .volver {
+    background: var(--tp-superficie-2) !important;
+    color: var(--tp-blanco) !important;
+    border: 1px solid var(--tp-borde) !important;
+}
+
