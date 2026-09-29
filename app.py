@@ -24,8 +24,31 @@ from database import (
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = "static/uploads/perfiles"
-CERTIFICADOS_FOLDER = "static/uploads/certificados"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+UPLOAD_FOLDER = os.path.join(
+    BASE_DIR,
+    "static",
+    "uploads",
+    "perfiles"
+)
+
+CERTIFICADOS_FOLDER = os.path.join(
+    BASE_DIR,
+    "static",
+    "uploads",
+    "certificados"
+)
+
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
+
+os.makedirs(
+    CERTIFICADOS_FOLDER,
+    exist_ok=True
+)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["CERTIFICADOS_FOLDER"] = CERTIFICADOS_FOLDER
@@ -5083,7 +5106,7 @@ def error_interno(error):
 if __name__ == "__main__":
     modo_debug = os.environ.get(
         "FLASK_DEBUG",
-        "true"
+        "false"
     ).lower() == "true"
 
     app.run(debug=modo_debug)
