@@ -379,7 +379,8 @@ def crear_tabla_configuracion():
         ("direccion", ""),
         ("instagram", "@trainingpoint._"),
         ("cupo_predeterminado", "30"),
-        ("minutos_cancelacion", "10")
+        ("minutos_cancelacion", "10"),
+        ("minutos_anticipacion_checkin", "20")
     ]
 
     cursor.executemany("""

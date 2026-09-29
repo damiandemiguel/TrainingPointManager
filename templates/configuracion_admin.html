@@ -123,17 +123,23 @@
         }
 
         .mensaje {
-            background-color: #e7f6e7;
-            padding: 12px;
+            background-color: rgba(34, 197, 94, 0.10);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            padding: 12px 14px;
             border-radius: 8px;
             margin-bottom: 18px;
+            font-weight: 600;
         }
 
         .error {
-            background-color: #fde8e8;
-            padding: 12px;
+            background-color: rgba(239, 68, 68, 0.10);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            padding: 12px 14px;
             border-radius: 8px;
             margin-bottom: 18px;
+            font-weight: 600;
         }
 
         .lista {
@@ -403,6 +409,27 @@
                     <div class="detalle">
                         Minutos antes del inicio de la clase.
                     </div>
+                </div>
+
+                <div class="campo">
+
+                    <label for="minutos_anticipacion_checkin">
+                        Check-in permitido desde
+                    </label>
+
+                    <input
+                        type="number"
+                        id="minutos_anticipacion_checkin"
+                        name="minutos_anticipacion_checkin"
+                        min="0"
+                        value="{{ configuracion.get('minutos_anticipacion_checkin', '20') }}"
+                        required
+                    >
+
+                    <div class="detalle">
+                        Minutos antes del inicio de la clase.
+                    </div>
+
                 </div>
 
             </div>

@@ -1793,9 +1793,14 @@ def configuracion_admin():
             "minutos_cancelacion", ""
         ).strip()
 
+        minutos_checkin = request.form.get(
+            "minutos_anticipacion_checkin", ""
+        ).strip()
+
         try:
             cupo_numero = int(cupo)
             minutos_numero = int(minutos)
+            minutos_checkin_numero = int(minutos_checkin)
 
             if not nombre:
                 error = "El nombre es obligatorio."
@@ -1806,6 +1811,9 @@ def configuracion_admin():
             elif minutos_numero < 0:
                 error = "Los minutos de cancelación no pueden ser negativos."
 
+            elif minutos_checkin_numero < 0:
+                error = "Los minutos de anticipación del check-in no pueden ser negativos."
+
             else:
 
                 valores = {
@@ -1814,7 +1822,8 @@ def configuracion_admin():
                     "direccion": direccion,
                     "instagram": instagram,
                     "cupo_predeterminado": str(cupo_numero),
-                    "minutos_cancelacion": str(minutos_numero)
+                    "minutos_cancelacion": str(minutos_numero),
+                    "minutos_anticipacion_checkin": str(minutos_checkin_numero)
                 }
 
                 for clave, valor in valores.items():
@@ -1833,7 +1842,7 @@ def configuracion_admin():
                 mensaje = "Configuración actualizada correctamente."
 
         except ValueError:
-            error = "Cupo y minutos de cancelación deben ser números válidos."
+            error = "Cupo, minutos de cancelación y anticipación del check-in deben ser números válidos."
 
     cursor.execute("""
         SELECT clave, valor
@@ -4614,31 +4623,72 @@ def checkin():
         ahora = datetime.now()
 
         fecha_hoy = ahora.strftime("%Y-%m-%d")
-        hora_actual = ahora.strftime("%H:%M:%S")
 
-        # Buscar la clase que está ocurriendo en este momento
+        # Obtener la anticipación configurada para el check-in
         cursor.execute("""
-            SELECT *
-            FROM clases
-            WHERE fecha = ?
-              AND hora_inicio <= ?
-              AND hora_fin > ?
-            ORDER BY hora_inicio ASC
-            LIMIT 1
+            SELECT valor
+            FROM configuracion
+            WHERE clave = 'minutos_anticipacion_checkin'
+        """)
+
+        fila_anticipacion = cursor.fetchone()
+
+        try:
+            minutos_anticipacion = int(
+                fila_anticipacion["valor"]
+            ) if fila_anticipacion else 20
+        except (ValueError, TypeError):
+            minutos_anticipacion = 20
+
+        # Buscar una clase de hoy en la que el alumno esté inscripto
+        cursor.execute("""
+            SELECT c.*
+            FROM clases c
+            INNER JOIN inscripciones i
+                ON i.clase_id = c.id
+            WHERE c.fecha = ?
+              AND i.alumno_id = ?
+              AND i.estado = 'Inscripto'
+            ORDER BY c.hora_inicio ASC
         """, (
             fecha_hoy,
-            hora_actual,
-            hora_actual
+            alumno["id"]
         ))
 
-        clase = cursor.fetchone()
+        clases_del_dia = cursor.fetchall()
+
+        clase = None
+
+        for clase_candidata in clases_del_dia:
+
+            inicio_clase = datetime.strptime(
+                f"{fecha_hoy} {clase_candidata['hora_inicio']}",
+                "%Y-%m-%d %H:%M"
+            )
+
+            fin_clase = datetime.strptime(
+                f"{fecha_hoy} {clase_candidata['hora_fin']}",
+                "%Y-%m-%d %H:%M"
+            )
+
+            inicio_checkin = (
+                inicio_clase
+                - timedelta(minutes=minutos_anticipacion)
+            )
+
+            if inicio_checkin <= ahora < fin_clase:
+                clase = clase_candidata
+                break
 
         if clase is None:
             conexion.close()
 
             return {
                 "ok": False,
-                "mensaje": "No hay una clase en curso en este momento."
+                "mensaje": (
+                    "No tenés una clase disponible para "
+                    "registrar asistencia en este momento."
+                )
             }, 400
 
         # Verificar que el alumno esté inscripto en la clase
