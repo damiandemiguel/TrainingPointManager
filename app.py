@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
@@ -23,6 +24,7 @@ from database import (
 )
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

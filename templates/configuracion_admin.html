@@ -301,6 +301,7 @@
         {% endif %}
 
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="grilla">
 
@@ -431,6 +432,7 @@
             action="{{ url_for('nuevo_horario_habitual') }}"
             style="margin-bottom: 22px;"
         >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="grilla">
 
@@ -517,6 +519,7 @@
                                 ) }}"
                                 style="margin-top: 10px;"
                             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <button
                                     type="submit"
@@ -547,6 +550,7 @@
                                     '¿Seguro que querés eliminar este horario habitual?'
                                 );"
                             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <button
                                     type="submit"
@@ -588,6 +592,7 @@
             action="{{ url_for('nuevo_tipo_bono') }}"
             style="margin-bottom: 25px;"
         >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="grilla">
 
@@ -676,6 +681,7 @@
                             tipo_bono_id=bono['id']
                         ) }}"
                     >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                         <div class="grilla">
 
@@ -800,6 +806,7 @@
                         ) }}"
                         style="margin-top: 10px;"
                     >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                         <button
                             type="submit"

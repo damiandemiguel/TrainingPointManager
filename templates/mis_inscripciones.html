@@ -318,6 +318,7 @@
                         method="POST"
                         onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
                     >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                         <button
                             type="submit"

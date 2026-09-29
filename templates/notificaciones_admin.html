@@ -333,6 +333,7 @@
                                 action="{{ url_for('desactivar_notificacion_admin', notificacion_id=notificacion.id) }}"
                                 onsubmit="return confirm('¿Desactivar esta notificación?');"
                             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <button
                                     type="submit"

@@ -305,6 +305,7 @@
                 method="POST"
                 onsubmit="return confirm('¿Querés cancelar tu inscripción en esta clase?');"
             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <button
                     type="submit"
@@ -321,6 +322,7 @@
                 action="{{ url_for('inscribirme_clase', clase_id=clase.id) }}"
                 method="POST"
             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <button
                     type="submit"

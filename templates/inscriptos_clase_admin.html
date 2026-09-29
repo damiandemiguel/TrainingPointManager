@@ -300,6 +300,7 @@
                                 method="POST"
                                 onsubmit="return confirm('¿Querés cancelar la inscripción de este alumno?');"
                             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <button
                                     type="submit"
@@ -358,6 +359,7 @@
                     onsubmit="return confirm('⚠️ ¿Estás seguro de que querés eliminar esta clase?');"
                     class="form-eliminar-clase"
                 >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="boton boton-eliminar-detalle">
                         🗑️ Eliminar clase
                     </button>

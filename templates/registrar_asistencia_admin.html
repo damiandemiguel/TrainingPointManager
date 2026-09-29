@@ -180,6 +180,7 @@
         {% if inscriptos %}
 
             <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 {% for alumno in inscriptos %}
 

@@ -253,6 +253,7 @@
                                     method="POST"
                                     onsubmit="return confirm('¿Seguro que querés anular esta asistencia? El crédito será devuelto al alumno.');"
                                 >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                     <button
                                         type="submit"

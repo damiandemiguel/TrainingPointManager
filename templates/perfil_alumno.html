@@ -346,6 +346,7 @@
                 enctype="multipart/form-data"
                 class="form-foto"
             >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <label for="foto">
                     📷 Elegir foto
