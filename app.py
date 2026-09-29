@@ -30,6 +30,9 @@ CERTIFICADOS_FOLDER = "static/uploads/certificados"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["CERTIFICADOS_FOLDER"] = CERTIFICADOS_FOLDER
 
+# Tamaño máximo permitido por solicitud: 10 MB
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
+
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 ALLOWED_CERTIFICADO_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
 
@@ -140,8 +143,14 @@ def inicio():
 
     if request.method == "POST":
 
-        usuario = request.form["usuario"]
-        password = request.form["password"]
+        usuario = request.form.get("usuario", "").strip()
+        password = request.form.get("password", "")
+
+        if not usuario or not password:
+            return render_template(
+                "login.html",
+                error="Completá usuario y contraseña."
+            )
 
         conexion = conectar()
         cursor = conexion.cursor()
@@ -183,14 +192,21 @@ def registro():
 
     if request.method == "POST":
 
-        nombre = request.form["nombre"]
-        email = request.form["email"]
-        fecha_nacimiento = request.form["fecha_nacimiento"]
-        telefono = request.form["telefono"]
-        direccion = request.form["direccion"]
-        usuario = request.form["usuario"]
-        password = request.form["password"]
-        confirmar_password = request.form["confirmar_password"]
+        nombre = request.form.get("nombre", "").strip()
+        email = request.form.get("email", "").strip()
+        fecha_nacimiento = request.form.get("fecha_nacimiento", "").strip()
+        telefono = request.form.get("telefono", "").strip()
+        direccion = request.form.get("direccion", "").strip()
+        usuario = request.form.get("usuario", "").strip()
+        password = request.form.get("password", "")
+        confirmar_password = request.form.get("confirmar_password", "")
+
+        if not nombre or not usuario or not password or not confirmar_password:
+            return render_template(
+                "registro.html",
+                error="Completá todos los campos obligatorios.",
+                datos=request.form
+            )
 
         if password != confirmar_password:
             return render_template(
@@ -886,11 +902,24 @@ def nueva_clase():
 
     if request.method == "POST":
 
-        modo = request.form["modo"]
+        modo = request.form.get("modo", "").strip()
+        hora_inicio = request.form.get("hora_inicio", "").strip()
+        hora_fin = request.form.get("hora_fin", "").strip()
+        cupo_texto = request.form.get("cupo_maximo", "").strip()
 
-        hora_inicio = request.form["hora_inicio"]
-        hora_fin = request.form["hora_fin"]
-        cupo_maximo = int(request.form["cupo_maximo"])
+        if modo not in ("individual", "recurrente"):
+            return "Modo de creación de clase no válido."
+
+        if not hora_inicio or not hora_fin:
+            return "Debés completar el horario de la clase."
+
+        try:
+            cupo_maximo = int(cupo_texto)
+        except (ValueError, TypeError):
+            return "El cupo máximo debe ser un número válido."
+
+        if cupo_maximo <= 0:
+            return "El cupo máximo debe ser mayor a cero."
 
         conexion = conectar()
         cursor = conexion.cursor()
@@ -902,7 +931,11 @@ def nueva_clase():
 
             if modo == "individual":
 
-                fecha = request.form["fecha"]
+                fecha = request.form.get("fecha", "").strip()
+
+                if not fecha:
+                    conexion.close()
+                    return "Debés seleccionar una fecha."
 
                 cursor.execute("""
                     SELECT id
@@ -949,15 +982,34 @@ def nueva_clase():
 
                 from datetime import datetime, timedelta
 
-                fecha_desde = datetime.strptime(
-                    request.form["fecha_desde"],
-                    "%Y-%m-%d"
-                ).date()
+                fecha_desde_texto = request.form.get(
+                    "fecha_desde",
+                    ""
+                ).strip()
 
-                fecha_hasta = datetime.strptime(
-                    request.form["fecha_hasta"],
-                    "%Y-%m-%d"
-                ).date()
+                fecha_hasta_texto = request.form.get(
+                    "fecha_hasta",
+                    ""
+                ).strip()
+
+                if not fecha_desde_texto or not fecha_hasta_texto:
+                    conexion.close()
+                    return "Debés completar el rango de fechas."
+
+                try:
+                    fecha_desde = datetime.strptime(
+                        fecha_desde_texto,
+                        "%Y-%m-%d"
+                    ).date()
+
+                    fecha_hasta = datetime.strptime(
+                        fecha_hasta_texto,
+                        "%Y-%m-%d"
+                    ).date()
+
+                except ValueError:
+                    conexion.close()
+                    return "Las fechas ingresadas no son válidas."
 
                 dias = request.form.getlist("dias")
 
@@ -1025,7 +1077,15 @@ def nueva_clase():
             conexion.rollback()
             conexion.close()
 
-            return f"Error al crear la clase: {error}"
+            app.logger.exception(
+                "Error al crear una clase: %s",
+                error
+            )
+
+            return (
+                "Ocurrió un error al crear la clase. "
+                "Intentá nuevamente."
+            ), 500
 
         conexion.close()
 
@@ -1107,11 +1167,39 @@ def editar_clase(clase_id):
 
     if request.method == "POST":
 
-        fecha = request.form["fecha"]
-        hora_inicio = request.form["hora_inicio"]
-        hora_fin = request.form["hora_fin"]
-        cupo_maximo = int(request.form["cupo_maximo"])
-        estado = request.form["estado"]
+        fecha = request.form.get("fecha", "").strip()
+        hora_inicio = request.form.get("hora_inicio", "").strip()
+        hora_fin = request.form.get("hora_fin", "").strip()
+        cupo_texto = request.form.get("cupo_maximo", "").strip()
+        estado = request.form.get("estado", "").strip()
+
+        if not fecha:
+            conexion.close()
+            return "Debés seleccionar una fecha."
+
+        if not hora_inicio or not hora_fin:
+            conexion.close()
+            return "Debés completar el horario de la clase."
+
+        try:
+            cupo_maximo = int(cupo_texto)
+        except (ValueError, TypeError):
+            conexion.close()
+            return "El cupo máximo debe ser un número válido."
+
+        if cupo_maximo <= 0:
+            conexion.close()
+            return "El cupo máximo debe ser mayor a cero."
+
+        estados_permitidos = (
+            "Disponible",
+            "Completa",
+            "Cancelada"
+        )
+
+        if estado not in estados_permitidos:
+            conexion.close()
+            return "El estado de la clase no es válido."
 
         cursor.execute("""
             UPDATE clases
@@ -2551,43 +2639,12 @@ def perfil_alumno():
     if session["rol"] != "alumno":
         return "Acceso no autorizado."
 
-    if request.method == "POST":
-
-        archivo = request.files.get("foto")
-
-        if archivo and archivo_permitido(archivo.filename):
-
-            nombre_archivo = secure_filename(archivo.filename)
-
-            archivo.save(
-                os.path.join(
-                    app.config["UPLOAD_FOLDER"],
-                    nombre_archivo
-                )
-            )
-
-            conexion = conectar()
-            cursor = conexion.cursor()
-
-            cursor.execute("""
-                UPDATE alumnos
-                SET foto_perfil = ?
-                WHERE usuario_id = ?
-            """, (
-                nombre_archivo,
-                session["usuario_id"]
-            ))
-
-            conexion.commit()
-            conexion.close()
-
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
-
     cursor = conexion.cursor()
 
     cursor.execute("""
-        SELECT nombre, email, fecha_nacimiento, telefono, direccion,
+        SELECT id, nombre, email, fecha_nacimiento, telefono, direccion,
                certificado_medico, activo, foto_perfil
         FROM alumnos
         WHERE usuario_id = ?
@@ -2595,12 +2652,74 @@ def perfil_alumno():
 
     alumno = cursor.fetchone()
 
-    conexion.close()
-
     if alumno is None:
+        conexion.close()
         return "No se encontró el perfil del alumno."
 
-    return render_template("perfil_alumno.html", alumno=alumno)
+    if request.method == "POST":
+
+        archivo = request.files.get("foto")
+
+        if archivo and archivo.filename:
+
+            if not archivo_permitido(archivo.filename):
+                conexion.close()
+                return "Formato de imagen no permitido."
+
+            nombre_seguro = secure_filename(archivo.filename)
+
+            if "." not in nombre_seguro:
+                conexion.close()
+                return "Formato de imagen no permitido."
+
+            extension = nombre_seguro.rsplit(".", 1)[1].lower()
+
+            nombre_archivo = (
+                f"foto_perfil_alumno_{alumno['id']}.{extension}"
+            )
+
+            ruta_archivo = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                nombre_archivo
+            )
+
+            foto_anterior = alumno["foto_perfil"]
+
+            if (
+                foto_anterior
+                and foto_anterior != nombre_archivo
+            ):
+                ruta_anterior = os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    foto_anterior
+                )
+
+                if os.path.exists(ruta_anterior):
+                    os.remove(ruta_anterior)
+
+            archivo.save(ruta_archivo)
+
+            cursor.execute("""
+                UPDATE alumnos
+                SET foto_perfil = ?
+                WHERE id = ?
+            """, (
+                nombre_archivo,
+                alumno["id"]
+            ))
+
+            conexion.commit()
+
+            conexion.close()
+
+            return redirect(url_for("perfil_alumno"))
+
+    conexion.close()
+
+    return render_template(
+        "perfil_alumno.html",
+        alumno=alumno
+    )
 
 @app.route("/mis-clases")
 def mis_clases():
@@ -4924,6 +5043,42 @@ def desactivar_notificacion_admin(notificacion_id):
     conexion.close()
 
     return redirect(url_for("notificaciones_admin"))
+
+@app.errorhandler(404)
+def pagina_no_encontrada(error):
+
+    return (
+        "La página que estás buscando no existe. "
+        "<br><br>"
+        "<a href='/'>Volver a Training Point</a>"
+    ), 404
+
+
+@app.errorhandler(413)
+def archivo_demasiado_grande(error):
+
+    return (
+        "El archivo seleccionado es demasiado grande. "
+        "El tamaño máximo permitido es de 10 MB."
+        "<br><br>"
+        "<a href='javascript:history.back()'>Volver</a>"
+    ), 413
+
+
+@app.errorhandler(500)
+def error_interno(error):
+
+    app.logger.error(
+        "Error interno del servidor: %s",
+        error
+    )
+
+    return (
+        "Ocurrió un error interno en Training Point. "
+        "Intentá nuevamente."
+        "<br><br>"
+        "<a href='/'>Volver a Training Point</a>"
+    ), 500
 
 if __name__ == "__main__":
     modo_debug = os.environ.get(
