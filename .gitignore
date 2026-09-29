@@ -1,8 +1,20 @@
 __pycache__/
 *.pyc
 
+# Base de datos local
 trainingpoint.db
+
+# Backups
+backups/
 *_backup*.db
+
+# Archivos subidos por usuarios
 static/uploads/certificados/
+static/uploads/perfiles/
+
+# Respaldos temporales de desarrollo
 app_backup*.py
 templates/*backup*.html
+
+# Variables de entorno y secretos
+.env

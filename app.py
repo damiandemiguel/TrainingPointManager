@@ -29,7 +29,10 @@ app.config["CERTIFICADOS_FOLDER"] = CERTIFICADOS_FOLDER
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 ALLOWED_CERTIFICADO_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
 
-app.secret_key = "clave-temporal-training-point"
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "clave-desarrollo-training-point"
+)
 
 @app.template_filter("fecha_ar")
 def fecha_ar(fecha):
@@ -2217,6 +2220,9 @@ def editar_perfil():
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
 
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
@@ -2274,6 +2280,9 @@ def ficha_salud():
 
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
 
     conexion = conectar()
     conexion.row_factory = sqlite3.Row
@@ -2530,6 +2539,9 @@ def perfil_alumno():
 
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
 
     if request.method == "POST":
 
@@ -4906,4 +4918,9 @@ def desactivar_notificacion_admin(notificacion_id):
     return redirect(url_for("notificaciones_admin"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    modo_debug = os.environ.get(
+        "FLASK_DEBUG",
+        "true"
+    ).lower() == "true"
+
+    app.run(debug=modo_debug)
