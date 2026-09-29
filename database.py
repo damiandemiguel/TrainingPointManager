@@ -106,6 +106,51 @@ def crear_alumno(usuario_id, nombre, email, fecha_nacimiento, telefono, direccio
     conexion.commit()
     conexion.close()
 
+def crear_tabla_salud():
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS salud (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            alumno_id INTEGER,
+            contacto_emergencia TEXT,
+            telefono_emergencia TEXT,
+            lesiones TEXT,
+            antecedentes TEXT,
+            observaciones TEXT,
+            enfermedad_diagnosticada TEXT,
+            detalle_enfermedad TEXT,
+            antecedentes_cardiacos TEXT,
+            detalle_cardiaco TEXT,
+            problemas_respiratorios TEXT,
+            detalle_respiratorio TEXT,
+            presion_arterial TEXT,
+            detalle_presion TEXT,
+            diabetes TEXT,
+            detalle_diabetes TEXT,
+            alergias TEXT,
+            detalle_alergias TEXT,
+            medicacion TEXT,
+            detalle_medicacion TEXT,
+            lesion_actual TEXT,
+            detalle_lesion_actual TEXT,
+            lesion_anterior TEXT,
+            detalle_lesion_anterior TEXT,
+            dolores_frecuentes TEXT,
+            detalle_dolores TEXT,
+            limitaciones_movimiento TEXT,
+            detalle_limitaciones TEXT,
+            declaracion_aceptada TEXT,
+            fecha_actualizacion TEXT,
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
 def crear_tabla_tipos_bono():
     conexion = conectar()
     cursor = conexion.cursor()

@@ -7,6 +7,10 @@ from datetime import datetime, timedelta
 
 from database import (
     conectar,
+    crear_tabla_usuarios,
+    crear_tabla_alumnos,
+    crear_tabla_salud,
+    crear_tabla_clases,
     crear_tabla_tipos_bono,
     crear_tabla_bonos,
     crear_tabla_movimientos_creditos,
@@ -76,6 +80,10 @@ def calcular_vencimiento_bono(fecha_inicio, cantidad_clases):
 
     return fecha.strftime("%Y-%m-%d")
 
+crear_tabla_usuarios()
+crear_tabla_alumnos()
+crear_tabla_salud()
+crear_tabla_clases()
 crear_tabla_tipos_bono()
 crear_tabla_bonos()
 crear_tabla_movimientos_creditos()
