@@ -18,3 +18,9 @@ templates/*backup*.html
 
 # Variables de entorno y secretos
 .env
+
+# Backups locales de diseño
+TrainingPoint_admin_actual.zip
+TrainingPoint_diseno.zip
+static_backup_antes_diseno/
+templates_backup_antes_diseno/
