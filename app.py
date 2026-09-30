@@ -293,12 +293,34 @@ def registro():
 
             conexion.commit()
 
-        except Exception as error:
+        except sqlite3.IntegrityError:
 
             conexion.rollback()
             conexion.close()
 
-            return f"Error al crear la cuenta: {error}"
+            return render_template(
+                "registro.html",
+                error="Ese nombre de usuario ya está registrado.",
+                datos=request.form
+            )
+
+        except Exception:
+
+            conexion.rollback()
+            conexion.close()
+
+            app.logger.exception(
+                "Error inesperado al registrar un alumno."
+            )
+
+            return render_template(
+                "registro.html",
+                error=(
+                    "No se pudo crear la cuenta. "
+                    "Intentá nuevamente."
+                ),
+                datos=request.form
+            )
 
         conexion.close()
 
