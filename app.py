@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_wtf.csrf import CSRFProtect
+from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
@@ -22,6 +23,9 @@ from database import (
     crear_tabla_configuracion,
     crear_tabla_horarios_habituales
 )
+
+# Cargar variables de entorno desde .env si existe
+load_dotenv()
 
 app = Flask(__name__)
 csrf = CSRFProtect(app)
