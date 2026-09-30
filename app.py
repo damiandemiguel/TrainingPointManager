@@ -66,6 +66,18 @@ app.secret_key = os.environ.get(
     "clave-desarrollo-training-point"
 )
 
+# Configuración de seguridad de la sesión
+ENTORNO_PRODUCCION = os.environ.get(
+    "FLASK_ENV",
+    "development"
+).lower() == "production"
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=ENTORNO_PRODUCCION
+)
+
 @app.template_filter("fecha_ar")
 def fecha_ar(fecha):
 
