@@ -58,7 +58,6 @@ def crear_usuario(usuario, password, rol):
 
 def crear_tabla_alumnos():
     conexion = conectar()
-
     cursor = conexion.cursor()
 
     cursor.execute("""
@@ -72,9 +71,32 @@ def crear_tabla_alumnos():
             direccion TEXT,
             certificado_medico TEXT,
             activo INTEGER DEFAULT 1,
+            foto_perfil TEXT,
+            fecha_certificado TEXT,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
         )
     """)
+
+    cursor.execute(
+        "PRAGMA table_info(alumnos)"
+    )
+
+    columnas = {
+        fila[1]
+        for fila in cursor.fetchall()
+    }
+
+    if "foto_perfil" not in columnas:
+        cursor.execute("""
+            ALTER TABLE alumnos
+            ADD COLUMN foto_perfil TEXT
+        """)
+
+    if "fecha_certificado" not in columnas:
+        cursor.execute("""
+            ALTER TABLE alumnos
+            ADD COLUMN fecha_certificado TEXT
+        """)
 
     conexion.commit()
     conexion.close()
