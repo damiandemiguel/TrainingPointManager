@@ -24,13 +24,16 @@ from database import (
     crear_tabla_horarios_habituales
 )
 
-# Cargar variables de entorno desde .env si existe
-load_dotenv()
+# Directorio base del proyecto
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Cargar variables de entorno desde el .env del proyecto
+load_dotenv(
+    os.path.join(BASE_DIR, ".env")
+)
 
 app = Flask(__name__)
 csrf = CSRFProtect(app)
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 UPLOAD_FOLDER = os.path.join(
     BASE_DIR,
