@@ -61,17 +61,27 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 ALLOWED_CERTIFICADO_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
 
-app.secret_key = os.environ.get(
-    "SECRET_KEY",
-    "clave-desarrollo-training-point"
-)
-
-# Configuración de seguridad de la sesión
+# Entorno de ejecución
 ENTORNO_PRODUCCION = os.environ.get(
     "FLASK_ENV",
     "development"
 ).lower() == "production"
 
+# Clave utilizada para proteger sesiones y formularios CSRF
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
+if ENTORNO_PRODUCCION and not SECRET_KEY:
+    raise RuntimeError(
+        "SECRET_KEY debe estar configurada en producción."
+    )
+
+app.secret_key = (
+    SECRET_KEY
+    if SECRET_KEY
+    else "clave-desarrollo-training-point"
+)
+
+# Configuración de seguridad de la sesión
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
