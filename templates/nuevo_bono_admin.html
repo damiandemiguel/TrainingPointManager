@@ -134,12 +134,12 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
 
-        <!-- TIPO DE BONO -->
+        <!-- TIPO DE ABONO -->
 
         <div class="campo">
 
             <label for="tipo_bono">
-                🎟️ Tipo de bono
+                🎟️ Tipo de abono
             </label>
 
             <select
@@ -149,7 +149,7 @@
             >
 
                 <option value="">
-                    Seleccionar bono
+                    Seleccionar abono
                 </option>
 
                 {% for tipo in tipos_bono %}
@@ -170,7 +170,7 @@
         </div>
 
 
-        <!-- INFORMACIÓN DEL BONO -->
+        <!-- INFORMACIÓN DEL ABONO -->
 
         <div
             class="informacion"
@@ -208,6 +208,7 @@
                 type="date"
                 name="fecha_inicio"
                 id="fecha_inicio"
+                value="{{ fecha_hoy }}"
                 required
             >
 
@@ -275,7 +276,7 @@
                 type="submit"
                 class="boton"
             >
-                💾 Registrar bono
+                💾 Registrar abono
             </button>
 
             <a

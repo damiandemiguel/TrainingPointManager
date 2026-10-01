@@ -3889,27 +3889,15 @@ def nuevo_bono_admin(alumno_id):
               AND estado = 'Activo'
         """, (alumno_id,))
 
-        if creditos_ilimitados:
+        fecha_inicio_dt = datetime.strptime(
+            fecha_inicio,
+            "%Y-%m-%d"
+        )
 
-            fecha_inicio_dt = datetime.strptime(
-                fecha_inicio,
-                "%Y-%m-%d"
-            )
+        fecha_vencimiento_original = (
+            fecha_inicio_dt + timedelta(days=duracion_dias)
+        ).strftime("%Y-%m-%d")
 
-            fecha_vencimiento_original = (
-                fecha_inicio_dt + timedelta(days=duracion_dias)
-            ).strftime("%Y-%m-%d")
-
-        elif creditos_iniciales == 1:
-
-            fecha_vencimiento_original = fecha_inicio
-
-        else:
-
-            fecha_vencimiento_original = calcular_vencimiento_bono(
-                fecha_inicio,
-                creditos_iniciales
-            )
         cursor.execute("""
             INSERT INTO bonos (
                 alumno_id,
@@ -3978,10 +3966,13 @@ def nuevo_bono_admin(alumno_id):
 
     conexion.close()
 
+    fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+
     return render_template(
         "nuevo_bono_admin.html",
         alumno=alumno,
-        tipos_bono=tipos_bono
+        tipos_bono=tipos_bono,
+        fecha_hoy=fecha_hoy
     )
 
 @app.route("/alumnos/<int:alumno_id>/bonos")
