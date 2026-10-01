@@ -8,188 +8,32 @@
     <title>Notificaciones - Training Point</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            color: #222;
-        }
-
-        .contenedor {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .encabezado {
-            background-color: #222;
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .encabezado h1 {
-            margin: 0;
-        }
-
-        .encabezado p {
-            margin-bottom: 0;
-            color: #ddd;
-        }
-
-        .acciones-superiores {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .boton-superior {
-            flex: 1;
-            padding: 13px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-            background-color: #222;
-            color: white;
-        }
-
-        .boton-superior:hover {
-            background-color: #444;
-        }
-
-        .seccion {
-            margin-bottom: 30px;
-        }
-
-        .seccion h2 {
-            margin-bottom: 15px;
-        }
-
-        .notificacion {
-            background-color: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .notificacion-automatica {
-            border-left: 5px solid #222;
-        }
-
-        .cabecera-notificacion {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-
-        .titulo-notificacion {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .etiqueta {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .general {
-            background-color: #e8f4ff;
-        }
-
-        .individual {
-            background-color: #f1e8ff;
-        }
-
-        .automatica {
-            background-color: #fff3cd;
-        }
-
-        .mensaje {
-            line-height: 1.5;
-            white-space: pre-wrap;
-            margin: 10px 0;
-        }
-
-        .fecha {
-            color: #777;
-            font-size: 13px;
-            margin-top: 12px;
-        }
-
-        .vacio {
-            background-color: white;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            color: #666;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        @media (max-width: 600px) {
-
-            body {
-                padding: 12px;
-            }
-
-            .encabezado {
-                padding: 20px 15px;
-            }
-
-            .cabecera-notificacion {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .notificacion {
-                padding: 16px;
-            }
-
-            .acciones-superiores {
-                display: none;
-            } 
-
-            .encabezado h1 {
-                font-size: 21px;
-            }
-
-            .encabezado p {
-                font-size: 12px;
-                line-height: 1.4;
-            }
-
-            .titulo {
-                font-size: 15px;
-            }
-
-            .etiqueta {
-                font-size: 11px;
-            }
-
-            .mensaje {
-                font-size: 13px;
-                line-height: 1.5;
-            }
-
-            .fecha {
-                font-size: 11px;
-            }
-
-            .vacio {
-                font-size: 12px;
-            }
-        }
-    </style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #080a0c; margin: 0; padding: 20px; color: #f5f7f9; }
+    .contenedor { max-width: 900px; margin: 0 auto 90px; position: relative; z-index: 1; }
+    .encabezado { background: rgba(17,22,28,.92); color: #f5f7f9; padding: 25px; border: 1px solid rgba(36,153,232,.30); border-radius: 12px; text-align: center; margin-bottom: 20px; }
+    .encabezado h1 { margin: 0; }
+    .encabezado p { margin-bottom: 0; color: #a8b0b8; }
+    .acciones-superiores { display: flex; gap: 10px; margin-bottom: 25px; }
+    .boton-superior { flex: 1; padding: 13px 18px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: bold; background: #11161c; color: #f5f7f9; border: 1px solid rgba(36,153,232,.30); }
+    .boton-superior:hover { background: #1a2128; color: #58b9f5; }
+    .seccion { margin-bottom: 30px; }
+    .seccion h2 { margin-bottom: 15px; color: #f5f7f9; }
+    .notificacion { background: rgba(17,22,28,.94); border: 1px solid rgba(36,153,232,.22); border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 18px rgba(0,0,0,.28); }
+    .notificacion-automatica { border-left: 5px solid #f59e0b; }
+    .cabecera-notificacion { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 10px; }
+    .titulo-notificacion { font-size: 18px; font-weight: bold; margin: 0; color: #f5f7f9; }
+    .etiqueta { display: inline-block; padding: 5px 9px; border-radius: 20px; font-size: 12px; font-weight: bold; white-space: nowrap; }
+    .general { background: rgba(36,153,232,.15); color: #58b9f5; border: 1px solid rgba(36,153,232,.30); }
+    .individual { background: rgba(168,85,247,.14); color: #d8b4fe; border: 1px solid rgba(168,85,247,.28); }
+    .automatica { background: rgba(245,158,11,.14); color: #fcd34d; border: 1px solid rgba(245,158,11,.28); }
+    .mensaje { line-height: 1.5; white-space: pre-wrap; margin: 10px 0; color: #f5f7f9; }
+    .fecha { color: #68727c; font-size: 13px; margin-top: 12px; }
+    .vacio { background: rgba(17,22,28,.92); border: 1px solid rgba(36,153,232,.25); border-radius: 12px; padding: 30px; text-align: center; color: #a8b0b8; box-shadow: 0 4px 18px rgba(0,0,0,.28); }
+    @media (max-width:600px){
+        body{padding:12px}.contenedor{margin-bottom:90px}.encabezado{padding:20px 15px}.cabecera-notificacion{flex-direction:column;gap:8px}.notificacion{padding:16px}.acciones-superiores{display:none}.encabezado h1{font-size:21px}.encabezado p{font-size:12px;line-height:1.4}.titulo-notificacion{font-size:15px}.etiqueta{font-size:11px}.mensaje{font-size:13px;line-height:1.5}.fecha{font-size:11px}.vacio{font-size:12px}
+    }
+</style>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
 </head>

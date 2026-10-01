@@ -685,3 +685,23 @@ body.tp-app .boton-eliminar-detalle {
     }
 }
 
+/* =========================================================
+   Estados vacíos - tema oscuro
+   ========================================================= */
+
+body.tp-app .sin-clases,
+body.tp-app .vacio {
+    background: rgba(14, 18, 22, 0.94) !important;
+    color: var(--tp-gris) !important;
+    border: 1px solid var(--tp-borde) !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.26) !important;
+}
+
+body.tp-app .sin-clases h1,
+body.tp-app .sin-clases h2,
+body.tp-app .sin-clases h3,
+body.tp-app .vacio h1,
+body.tp-app .vacio h2,
+body.tp-app .vacio h3 {
+    color: var(--tp-blanco) !important;
+}

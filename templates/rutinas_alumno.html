@@ -9,199 +9,32 @@
     <title>Rutinas - Training Point</title>
 
     <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            color: #222;
-        }
-
-        .contenedor {
-            width: 92%;
-            max-width: 900px;
-            margin: 40px auto;
-        }
-
-        .encabezado {
-            background-color: #222;
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .encabezado h1 {
-            margin: 0;
-        }
-
-        .encabezado p {
-            margin-bottom: 0;
-            color: #ddd;
-        }
-
-        .acciones-superiores {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .boton-superior {
-            flex: 1;
-            padding: 13px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-            background-color: #222;
-            color: white;
-        }
-
-        .boton-superior:hover {
-            background-color: #444;
-        }
-
-        .lista-clases {
-            display: grid;
-            gap: 18px;
-        }
-
-        .clase {
-            background-color: white;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
-        }
-
-        .datos-clase {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 18px;
-        }
-
-        .fecha {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .horario {
-            color: #666;
-        }
-
-        .estado {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .disponible {
-            background-color: #e6f4ea;
-            color: #16803c;
-        }
-
-        .no-disponible {
-            background-color: #eee;
-            color: #666;
-        }
-
-        .rutina {
-            border-top: 1px solid #eee;
-            padding-top: 18px;
-        }
-
-        .titulo-rutina {
-            font-size: 19px;
-            font-weight: bold;
-            margin-bottom: 14px;
-        }
-
-        .contenido-rutina {
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
-
-        .pendiente {
-            border-top: 1px solid #eee;
-            padding-top: 18px;
-            color: #777;
-            font-style: italic;
-        }
-
-        .sin-clases {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            color: #666;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
-        }
-
-        @media (max-width: 600px) {
-
-            .contenedor {
-                width: 94%;
-                margin: 20px auto;
-            }
-
-            .datos-clase {
-                flex-direction: column;
-            }
-
-            .acciones-superiores {
-                display: none;
-            }
-
-            .encabezado {
-                Cpadding: 20px 15px;
-                margin-bottom: 16px;
-            }
-
-            .encabezado h1 {
-                font-size: 21px;
-            }
-
-            .encabezado p {
-                font-size: 12px;
-            }
-
-            .clase {
-                padding: 16px;
-            }
-
-            .fecha {
-                font-size: 15px;
-            }
-
-            .horario {
-                font-size: 12px;
-            }
-
-            .estado {
-                font-size: 11px;
-            }
-
-            .titulo-rutina {
-                font-size: 13px;
-            }
-
-            .boton {
-                font-size: 12px;
-            }
-
-        }
-
-    </style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #080a0c; color: #f5f7f9; }
+    .contenedor { width: 92%; max-width: 900px; margin: 40px auto 100px; position: relative; z-index: 1; }
+    .encabezado { background: rgba(17,22,28,.92); color: #f5f7f9; padding: 25px; border: 1px solid rgba(36,153,232,.30); border-radius: 12px; text-align: center; margin-bottom: 20px; }
+    .encabezado h1 { margin: 0; }
+    .encabezado p { margin-bottom: 0; color: #a8b0b8; }
+    .acciones-superiores { display: flex; gap: 10px; margin-bottom: 25px; }
+    .boton-superior { flex: 1; padding: 13px 18px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: bold; background: #11161c; color: #f5f7f9; border: 1px solid rgba(36,153,232,.30); }
+    .boton-superior:hover { background: #1a2128; color: #58b9f5; }
+    .lista-clases { display: grid; gap: 18px; }
+    .clase { background: rgba(17,22,28,.94); border: 1px solid rgba(36,153,232,.25); border-radius: 12px; padding: 22px; box-shadow: 0 4px 18px rgba(0,0,0,.28); }
+    .datos-clase { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 18px; }
+    .fecha { font-size: 18px; font-weight: bold; margin-bottom: 6px; color: #58b9f5; }
+    .horario { color: #a8b0b8; }
+    .estado { display: inline-block; padding: 6px 10px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap; }
+    .disponible { background: rgba(34,197,94,.14); color: #86efac; border: 1px solid rgba(34,197,94,.28); }
+    .no-disponible { background: rgba(255,255,255,.06); color: #a8b0b8; border: 1px solid rgba(255,255,255,.09); }
+    .rutina { border-top: 1px solid rgba(255,255,255,.09); padding-top: 18px; }
+    .titulo-rutina { font-size: 19px; font-weight: bold; margin-bottom: 14px; color: #f5f7f9; }
+    .contenido-rutina { white-space: pre-wrap; line-height: 1.6; color: #f5f7f9; }
+    .pendiente { border-top: 1px solid rgba(255,255,255,.09); padding-top: 18px; color: #68727c; font-style: italic; }
+    .sin-clases { background: rgba(17,22,28,.92); border: 1px solid rgba(36,153,232,.25); padding: 30px; border-radius: 12px; text-align: center; color: #a8b0b8; box-shadow: 0 4px 18px rgba(0,0,0,.28); }
+    @media (max-width:600px){
+        .contenedor{width:94%;margin:20px auto 100px}.datos-clase{flex-direction:column}.acciones-superiores{display:none}.encabezado{padding:20px 15px;margin-bottom:16px}.encabezado h1{font-size:21px}.encabezado p{font-size:12px}.clase{padding:16px}.fecha{font-size:15px}.horario{font-size:12px}.estado{font-size:11px}.titulo-rutina{font-size:13px}.boton{font-size:12px}
+    }
+</style>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
 

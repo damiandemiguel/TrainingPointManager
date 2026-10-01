@@ -10,307 +10,39 @@
 <title>Mis clases - Training Point</title>
 
 <style>
-
-    * {
-        box-sizing: border-box;
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #080a0c; color: #f5f7f9; }
+    .contenedor { width: 96%; max-width: 1400px; margin: 35px auto; position: relative; z-index: 1; }
+    .encabezado { background: rgba(17,22,28,.92); color: #f5f7f9; padding: 25px; border: 1px solid rgba(36,153,232,.30); border-radius: 12px; text-align: center; margin-bottom: 25px; }
+    .encabezado h1 { margin: 0; color: #f5f7f9; }
+    .encabezado p { margin-bottom: 0; color: #a8b0b8; }
+    .mensaje { background: rgba(245,158,11,.12); color: #fcd34d; border: 1px solid rgba(245,158,11,.35); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: bold; }
+    .semana { margin-bottom: 30px; }
+    .titulo-semana { background: #11161c; color: #58b9f5; border: 1px solid rgba(36,153,232,.30); padding: 12px 18px; border-radius: 10px 10px 0 0; font-weight: bold; text-align: center; font-size: 18px; }
+    .calendario { display: grid; grid-template-columns: repeat(7,1fr); gap: 8px; background: rgba(17,22,28,.88); padding: 8px; border: 1px solid rgba(36,153,232,.20); border-top: 0; border-radius: 0 0 12px 12px; }
+    .dia { background: rgba(26,33,40,.94); min-height: 180px; border: 1px solid rgba(255,255,255,.07); border-radius: 8px; padding: 10px; }
+    .dia-hoy { border: 2px solid #2499e8; box-shadow: 0 0 0 1px rgba(36,153,232,.15); }
+    .encabezado-dia { text-align: center; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.09); margin-bottom: 10px; }
+    .nombre-dia { font-weight: bold; font-size: 15px; color: #f5f7f9; }
+    .fecha-dia { margin-top: 4px; color: #58b9f5; font-size: 13px; }
+    .clase-link { display: block; text-decoration: none; color: inherit; margin-bottom: 8px; }
+    .clase { background: #11161c; border-radius: 8px; padding: 12px 8px; border: 1px solid rgba(36,153,232,.20); border-left: 4px solid #2499e8; text-align: center; transition: .15s ease; }
+    .clase:hover { background: #1a2128; transform: translateY(-1px); }
+    .clase-inscripto { background: rgba(46,139,87,.14); border-left-color: #4ade80; }
+    .clase-inscripto:hover { background: rgba(46,139,87,.20); }
+    .hora { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #58b9f5; }
+    .disponibilidad { font-size: 12px; color: #a8b0b8; font-weight: bold; }
+    .estado-inscripto { margin-top: 5px; font-size: 10px; color: #4ade80; font-weight: bold; }
+    .sin-clase-dia { text-align: center; color: #68727c; padding-top: 25px; font-size: 13px; }
+    .sin-clases { background: rgba(17,22,28,.92); border: 1px solid rgba(36,153,232,.25); padding: 40px; text-align: center; border-radius: 12px; color: #a8b0b8; }
+    .sin-clases h2 { color: #f5f7f9; }
+    .acciones-superiores { display: flex; gap: 10px; margin-bottom: 25px; }
+    .boton-superior { flex: 1; padding: 13px 18px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: bold; background: #11161c; color: #f5f7f9; border: 1px solid rgba(36,153,232,.30); }
+    .boton-superior:hover { background: #1a2128; color: #58b9f5; }
+    @media (max-width:1100px){ .calendario{grid-template-columns:repeat(4,1fr);} }
+    @media (max-width:750px){
+        .contenedor{width:100%;margin-top:12px;margin-bottom:100px}.encabezado{width:94%;margin:0 auto 16px;padding:16px;border-radius:10px}.encabezado h1{font-size:21px}.encabezado p{margin-top:5px;font-size:12px}.acciones-superiores{display:none}.mensaje{width:94%;margin:0 auto 14px;padding:10px;font-size:12px}.semana{margin-bottom:18px}.titulo-semana{width:94%;margin:auto;padding:9px 12px;border-radius:9px 9px 0 0;font-size:15px}.calendario{display:flex;overflow-x:auto;gap:7px;padding:7px 3%;border-radius:0;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}.dia{flex:0 0 145px;width:145px;min-height:160px;padding:7px;scroll-snap-align:start}.encabezado-dia{padding-bottom:6px;margin-bottom:7px}.nombre-dia{font-size:12px}.fecha-dia{margin-top:2px;font-size:11px}.clase{padding:9px 5px;border-left-width:3px}.hora{font-size:15px;margin-bottom:4px}.disponibilidad{font-size:10px}.estado-inscripto{font-size:9px}.sin-clase-dia{padding:18px 0;font-size:11px}.sin-clases{width:94%;margin:auto;padding:25px 15px}
     }
-
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #f2f2f2;
-        color: #222;
-    }
-
-    .contenedor {
-        width: 96%;
-        max-width: 1400px;
-        margin: 35px auto;
-    }
-
-    .encabezado {
-        background-color: #222;
-        color: white;
-        padding: 25px;
-        border-radius: 12px;
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
-    .encabezado h1 {
-        margin: 0;
-    }
-
-    .encabezado p {
-        margin-bottom: 0;
-        color: #ddd;
-    }
-
-    .mensaje {
-        background-color: #fff3cd;
-        color: #856404;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .semana {
-        margin-bottom: 30px;
-    }
-
-    .titulo-semana {
-        background-color: #333;
-        color: white;
-        padding: 12px 18px;
-        border-radius: 10px 10px 0 0;
-        font-weight: bold;
-        text-align: center;
-        font-size: 18px;
-    }
-
-    .calendario {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 8px;
-        background-color: #ddd;
-        padding: 8px;
-        border-radius: 0 0 12px 12px;
-    }
-
-    .dia {
-        background-color: white;
-        min-height: 180px;
-        border-radius: 8px;
-        padding: 10px;
-    }
-
-    .dia-hoy {
-        border: 2px solid #222;
-    }
-
-    .encabezado-dia {
-        text-align: center;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #ddd;
-        margin-bottom: 10px;
-    }
-
-    .nombre-dia {
-        font-weight: bold;
-        font-size: 15px;
-    }
-
-    .fecha-dia {
-        margin-top: 4px;
-        color: #777;
-        font-size: 13px;
-    }
-
-    .clase-link {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-        margin-bottom: 8px;
-    }
-
-    .clase {
-        background-color: #f4f4f4;
-        border-radius: 8px;
-        padding: 12px 8px;
-        border-left: 4px solid #222;
-        text-align: center;
-        transition: 0.15s ease;
-    }
-
-    .clase:hover {
-        background-color: #e8e8e8;
-        transform: translateY(-1px);
-    }
-
-    .clase-inscripto {
-        background-color: #eaf7ea;
-        border-left-color: #2e8b57;
-    }
-
-    .clase-inscripto:hover {
-        background-color: #dff1df;
-    }
-
-    .hora {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .disponibilidad {
-        font-size: 12px;
-        color: #666;
-        font-weight: bold;
-    }
-
-    .estado-inscripto {
-        margin-top: 5px;
-        font-size: 10px;
-        color: #2e8b57;
-        font-weight: bold;
-    }
-
-    .sin-clase-dia {
-        text-align: center;
-        color: #aaa;
-        padding-top: 25px;
-        font-size: 13px;
-    }
-
-    .sin-clases {
-        background-color: white;
-        padding: 40px;
-        text-align: center;
-        border-radius: 12px;
-        color: #666;
-    }
-
-    .acciones-superiores {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 25px;
-    }
-
-    .boton-superior {
-        flex: 1;
-        padding: 13px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        text-align: center;
-        font-weight: bold;
-        background-color: #222;
-        color: white;
-    }
-
-    .boton-superior:hover {
-        background-color: #444;
-    }
-
-    @media (max-width: 1100px) {
-
-        .calendario {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-    }
-
-    @media (max-width: 750px) {
-
-        .contenedor {
-            width: 100%;
-            margin-top: 12px;
-            margin-bottom: 100px;
-        }
-
-        .encabezado {
-            width: 94%;
-            margin: 0 auto 16px;
-            padding: 16px;
-            border-radius: 10px;
-        }
-
-        .encabezado h1 {
-            font-size: 21px;
-        }
-
-        .encabezado p {
-            margin-top: 5px;
-            font-size: 12px;
-        }
-
-        .acciones-superiores {
-            display: none;
-        }
-
-        .mensaje {
-            width: 94%;
-            margin: 0 auto 14px;
-            padding: 10px;
-            font-size: 12px;
-        }
-
-        .semana {
-            margin-bottom: 18px;
-        }
-
-        .titulo-semana {
-            width: 94%;
-            margin: auto;
-            padding: 9px 12px;
-            border-radius: 9px 9px 0 0;
-            font-size: 15px;
-        }
-
-        .calendario {
-            display: flex;
-            overflow-x: auto;
-            gap: 7px;
-            padding: 7px 3%;
-            border-radius: 0;
-            scroll-snap-type: x proximity;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .dia {
-            flex: 0 0 145px;
-            width: 145px;
-            min-height: 160px;
-            padding: 7px;
-            scroll-snap-align: start;
-        }
-
-        .encabezado-dia {
-            padding-bottom: 6px;
-            margin-bottom: 7px;
-        }
-
-        .nombre-dia {
-            font-size: 12px;
-        }
-
-        .fecha-dia {
-            margin-top: 2px;
-            font-size: 11px;
-        }
-
-        .clase {
-            padding: 9px 5px;
-            border-left-width: 3px;
-        }
-
-        .hora {
-            font-size: 15px;
-            margin-bottom: 4px;
-        }
-
-        .disponibilidad {
-            font-size: 10px;
-        }
-
-        .estado-inscripto {
-            font-size: 9px;
-        }
-
-        .sin-clase-dia {
-            padding: 18px 0;
-            font-size: 11px;
-        }
-
-        .sin-clases {
-            width: 94%;
-            margin: auto;
-            padding: 25px 15px;
-        }
-
-    }
-
 </style>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
