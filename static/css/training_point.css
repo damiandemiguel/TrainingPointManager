@@ -727,3 +727,50 @@ body.tp-app .metodo {
     border: 1px solid var(--tp-borde) !important;
     box-shadow: none !important;
 }
+
+/* =========================================================
+   Ajuste final - fondos detrás de textos internos
+   ========================================================= */
+
+/* Los textos dentro de las tarjetas no deben tener
+   un rectángulo de fondo propio */
+body.tp-app .inscripcion .etiqueta,
+body.tp-app .inscripcion .valor,
+body.tp-app .clase-hoy-datos,
+body.tp-app .clase-hoy-datos span,
+body.tp-app .resumen-principal-texto,
+body.tp-app .resumen-linea span,
+body.tp-app .resumen-linea strong,
+body.tp-app .notificacion .mensaje,
+body.tp-app .notificacion .fecha,
+body.tp-app .clase .fecha,
+body.tp-app .clase .horario,
+body.tp-app .rutina .contenido-rutina,
+body.tp-app .asistencia .etiqueta,
+body.tp-app .asistencia .valor,
+body.tp-app .asistencia .dato-simple,
+body.tp-app .pago .etiqueta,
+body.tp-app .pago .valor,
+body.tp-app .pago .importe,
+body.tp-app .hoy .clase-hoy-horario,
+body.tp-app .hoy .clase-hoy-datos,
+body.tp-app .resumen .resumen-principal-numero,
+body.tp-app .resumen .resumen-principal-texto,
+body.tp-app .resumen .resumen-linea,
+body.tp-app .resumen .resumen-linea span,
+body.tp-app .resumen .resumen-linea strong,
+body.tp-app .menu-principal .icono,
+body.tp-app .menu-principal .titulo,
+body.tp-app .menu-principal .descripcion,
+body.tp-app .bienvenida p,
+body.tp-app .sin-clases-hoy,
+body.tp-app .tarjeta-perfil .etiqueta,
+body.tp-app .datos .etiqueta,
+body.tp-app .datos .valor,
+body.tp-app .bono .dato .etiqueta,
+body.tp-app .bono .dato .valor {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
