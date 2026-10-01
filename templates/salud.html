@@ -8,6 +8,8 @@
 
     <title>Ficha de salud - Training Point</title>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
+
     <style>
 
         * {
@@ -192,11 +194,164 @@
             text-decoration: none;
         }
 
+        /* =========================================================
+           TEMA TRAINING POINT - FICHA DE SALUD
+           ========================================================= */
+
+        body.tp-app {
+            background: var(--tp-fondo);
+            color: var(--tp-blanco);
+        }
+
+        body.tp-app .contenedor {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 35px;
+            background: rgba(17, 22, 28, 0.94);
+            border: 1px solid var(--tp-borde);
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        body.tp-app h1,
+        body.tp-app h2 {
+            color: var(--tp-blanco);
+        }
+
+        body.tp-app .subtitulo {
+            color: var(--tp-gris);
+        }
+
+        body.tp-app .seccion {
+            border-top-color: var(--tp-borde-suave);
+        }
+
+        body.tp-app label,
+        body.tp-app .pregunta-texto {
+            color: var(--tp-blanco);
+        }
+
+        /* Campos de texto */
+        body.tp-app input[type="text"],
+        body.tp-app input[type="tel"],
+        body.tp-app textarea {
+            background: var(--tp-superficie-2);
+            color: var(--tp-blanco);
+            border: 1px solid var(--tp-borde);
+            box-shadow: none;
+        }
+
+        body.tp-app input[type="text"]:focus,
+        body.tp-app input[type="tel"]:focus,
+        body.tp-app textarea:focus {
+            border-color: var(--tp-celeste);
+            outline: none;
+        }
+
+        body.tp-app input::placeholder,
+        body.tp-app textarea::placeholder {
+            color: var(--tp-gris-oscuro);
+        }
+
+        /* Preguntas de salud */
+        body.tp-app .pregunta {
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+
+        /* Opciones Sí / No */
+        body.tp-app .opcion {
+            background: var(--tp-superficie-2);
+            color: var(--tp-blanco);
+            border: 1px solid var(--tp-borde);
+        }
+
+        body.tp-app .opciones input[type="radio"]:checked + .opcion {
+            background: var(--tp-celeste);
+            color: #fff;
+            border-color: var(--tp-celeste);
+        }
+
+        /* Nota informativa */
+        body.tp-app .nota {
+            background: rgba(36, 153, 232, 0.08);
+            color: var(--tp-gris);
+            border: 1px solid var(--tp-borde);
+            box-shadow: none;
+        }
+
+        /* Declaración */
+        body.tp-app .declaracion {
+            background: transparent;
+            color: var(--tp-gris);
+            border: 1px solid var(--tp-borde-suave);
+            box-shadow: none;
+        }
+
+        /* Certificado médico */
+        body.tp-app .archivo {
+            background: transparent;
+            color: var(--tp-blanco);
+            border: 1px dashed var(--tp-celeste);
+            box-shadow: none;
+        }
+
+        body.tp-app input[type="file"] {
+            color: var(--tp-gris);
+        }
+
+        /* Botón principal */
+        body.tp-app .boton {
+            background: var(--tp-celeste);
+            color: #fff;
+            border: 0;
+        }
+
+        body.tp-app .boton:hover {
+            background: var(--tp-celeste-claro);
+        }
+
+        /* Volver */
+        body.tp-app .volver {
+            color: var(--tp-celeste-claro);
+        }
+
+        /* Evitar fondos propios detrás de textos internos */
+        body.tp-app .campo,
+        body.tp-app .campo label,
+        body.tp-app .pregunta-texto,
+        body.tp-app .aceptacion,
+        body.tp-app .aceptacion label {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        /* Ajuste móvil */
+        @media (max-width: 600px) {
+            body.tp-app .contenedor {
+                width: calc(100% - 24px);
+                margin: 20px auto;
+                padding: 22px 16px;
+            }
+
+            body.tp-app .pregunta {
+                padding: 12px 0;
+            }
+
+            body.tp-app .opciones {
+                gap: 8px;
+            }
+        }
+
     </style>
 
 </head>
 
-<body>
+<body class="tp-app">
 
 <div class="contenedor">
 

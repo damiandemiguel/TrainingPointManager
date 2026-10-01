@@ -774,3 +774,16 @@ body.tp-app .bono .dato .valor {
     box-shadow: none !important;
     border-radius: 0 !important;
 }
+
+/* =========================================================
+   Ficha de salud administrador - textos internos
+   ========================================================= */
+
+body.tp-app .seccion .dato,
+body.tp-app .seccion .etiqueta,
+body.tp-app .seccion .valor {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
