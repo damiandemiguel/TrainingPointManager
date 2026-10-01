@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+﻿from flask import Flask, render_template, request, redirect, url_for, session
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import sqlite3
 import os
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from database import (
     conectar,
@@ -26,6 +27,13 @@ from database import (
 
 # Directorio base del proyecto
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Zona horaria oficial de Training Point
+ZONA_HORARIA = ZoneInfo("America/Argentina/Buenos_Aires")
+
+
+def ahora_local():
+    return datetime.now(ZONA_HORARIA).replace(tzinfo=None)
 
 # Cargar variables de entorno desde el .env del proyecto
 load_dotenv(
@@ -174,7 +182,7 @@ def fecha_vencida(fecha):
 
     try:
         fecha_dt = datetime.strptime(fecha[:10], "%Y-%m-%d").date()
-        hoy = datetime.now().date()
+        hoy = ahora_local().date()
 
         try:
             fecha_vencimiento = fecha_dt.replace(
@@ -427,7 +435,7 @@ def panel():
                 certificados_vigentes += 1
 
         # Clases de hoy para el panel de administración
-        fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+        fecha_hoy = ahora_local().strftime("%Y-%m-%d")
 
         cursor.execute("""
             SELECT
@@ -482,8 +490,8 @@ def panel_alumno():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
-    hoy = datetime.now().date()
-    ahora = datetime.now()
+    hoy = ahora_local().date()
+    ahora = ahora_local()
 
     # Buscar al alumno correspondiente al usuario
     cursor.execute("""
@@ -658,7 +666,7 @@ def notificaciones_alumno():
 
     avisos_automaticos = []
 
-    hoy = datetime.now().date()
+    hoy = ahora_local().date()
 
     # Aviso automático de abono próximo a vencer
     cursor.execute("""
@@ -737,7 +745,7 @@ def rutinas_alumno():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
-    hoy = datetime.now().date()
+    hoy = ahora_local().date()
     fecha_limite = hoy + timedelta(days=30)
 
     cursor.execute("""
@@ -866,7 +874,7 @@ def gestionar_clases():
     if session["rol"] != "administrador":
         return "Acceso no autorizado."
 
-    hoy = datetime.now().date()
+    hoy = ahora_local().date()
 
     fecha_solicitada = request.args.get("semana")
 
@@ -1454,7 +1462,7 @@ def registrar_asistencia_admin(clase_id):
         f"{clase['fecha']} {clase['hora_inicio']}"
     )
 
-    clase_iniciada = datetime.now() >= inicio_clase
+    clase_iniciada = ahora_local() >= inicio_clase
 
     if request.method == "POST":
 
@@ -1498,7 +1506,7 @@ def registrar_asistencia_admin(clase_id):
                 LIMIT 1
             """, (
                 alumno_id,
-                datetime.now().strftime("%Y-%m-%d")
+                ahora_local().strftime("%Y-%m-%d")
             ))
 
             bono = cursor.fetchone()
@@ -1544,7 +1552,7 @@ def registrar_asistencia_admin(clase_id):
                 clase_id,
                 alumno_id,
                 bono["id"],
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                ahora_local().strftime("%Y-%m-%d %H:%M:%S"),
                 "Manual",
                 credito_descontado
             ))
@@ -1572,7 +1580,7 @@ def registrar_asistencia_admin(clase_id):
                 """, (
                     bono["id"],
                     alumno_id,
-                    datetime.now().strftime("%Y-%m-%d"),
+                    ahora_local().strftime("%Y-%m-%d"),
                     "consumo",
                     -1,
                     "Consumo de crédito por asistencia a clase"
@@ -1783,7 +1791,7 @@ def anular_asistencia_admin(asistencia_id):
         """, (
             asistencia["bono_id"],
             asistencia["alumno_id"],
-            datetime.now().strftime("%Y-%m-%d"),
+            ahora_local().strftime("%Y-%m-%d"),
             "devolucion",
             asistencia["credito_descontado"],
             "Devolución de crédito por anulación de asistencia"
@@ -2359,7 +2367,7 @@ def inscribir_alumno_admin(clase_id):
             conexion.close()
             return "El alumno ya está inscripto en otra clase de ese día."
 
-        fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fecha_inscripcion = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
 
         cursor.execute("""
             INSERT INTO inscripciones (
@@ -2819,11 +2827,11 @@ def mis_clases():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
-    hoy = datetime.now().date()
+    hoy = ahora_local().date()
 
     fecha_limite = hoy + timedelta(days=30)
 
-    hora_actual = datetime.now().strftime("%H:%M:%S")
+    hora_actual = ahora_local().strftime("%H:%M:%S")
 
     cursor.execute("""
         SELECT
@@ -2980,7 +2988,7 @@ def inscribirme_clase(clase_id):
 
     # Verificar que el alumno tenga un abono activo,
     # vigente y con créditos disponibles o Pase Libre
-    fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+    fecha_hoy = ahora_local().strftime("%Y-%m-%d")
 
     cursor.execute("""
         SELECT
@@ -3104,7 +3112,7 @@ def inscribirme_clase(clase_id):
         and inscripcion_existente["estado"] == "Cancelado"
     ):
 
-        fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fecha_inscripcion = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
 
         cursor.execute("""
             UPDATE inscripciones
@@ -3127,7 +3135,7 @@ def inscribirme_clase(clase_id):
         )
 
     # Registrar una nueva inscripción
-    fecha_inscripcion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fecha_inscripcion = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
 
     cursor.execute("""
         INSERT INTO inscripciones (
@@ -3244,7 +3252,7 @@ def cancelar_inscripcion_alumno(clase_id):
         minutes=minutos_cancelacion
     )
 
-    if datetime.now() > limite_cancelacion:
+    if ahora_local() > limite_cancelacion:
         conexion.close()
 
         return redirect(
@@ -3754,7 +3762,7 @@ def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
         minutes=minutos_cancelacion
     )
 
-    if datetime.now() > limite_cancelacion:
+    if ahora_local() > limite_cancelacion:
         conexion.close()
 
         return redirect(
@@ -3966,7 +3974,7 @@ def nuevo_bono_admin(alumno_id):
 
     conexion.close()
 
-    fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+    fecha_hoy = ahora_local().strftime("%Y-%m-%d")
 
     return render_template(
         "nuevo_bono_admin.html",
@@ -4329,7 +4337,7 @@ def estado_alumnos():
 
     alumnos = cursor.fetchall()
 
-    hoy = datetime.now().date()
+    hoy = ahora_local().date()
 
     alumnos = [
         {
@@ -4662,7 +4670,7 @@ def checkin():
                 "mensaje": "No se encontró el alumno."
             }, 404
 
-        ahora = datetime.now()
+        ahora = ahora_local()
 
         fecha_hoy = ahora.strftime("%Y-%m-%d")
 
@@ -4898,7 +4906,7 @@ def rutinas_admin():
     conexion.row_factory = sqlite3.Row
     cursor = conexion.cursor()
 
-    hoy = datetime.now().date()
+    hoy = ahora_local().date()
 
     fecha_limite = hoy + timedelta(days=30)
 
@@ -4977,7 +4985,7 @@ def editar_rutina_admin(clase_id):
 
         else:
 
-            ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ahora = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
 
             if rutina:
 
@@ -5105,7 +5113,7 @@ def nueva_notificacion_admin():
             else:
                 alumno_id = int(alumno_id)
 
-            ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ahora = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
 
             cursor.execute("""
                 INSERT INTO notificaciones (
