@@ -486,7 +486,9 @@ body.tp-app .sin-clases,
 body.tp-app .sin-asistencias,
 body.tp-app .sin-notificaciones,
 body.tp-app .sin-inscriptos {
+    background: var(--tp-superficie) !important;
     color: var(--tp-gris) !important;
+    border: 1px solid var(--tp-borde-suave) !important;
 }
 
 body.tp-app .resumen-linea {

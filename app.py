@@ -2331,16 +2331,18 @@ def inscribir_alumno_admin(clase_id):
             return "No hay cupos disponibles para esta clase."
 
         cursor.execute("""
-            SELECT id
+            SELECT id, estado
             FROM inscripciones
             WHERE clase_id = ?
               AND alumno_id = ?
-              AND estado = 'Inscripto'
         """, (clase_id, alumno_id))
 
         inscripcion_existente = cursor.fetchone()
 
-        if inscripcion_existente is not None:
+        if (
+            inscripcion_existente is not None
+            and inscripcion_existente["estado"] == "Inscripto"
+        ):
             conexion.close()
             return "El alumno ya está inscripto en esta clase."
 
@@ -2369,22 +2371,39 @@ def inscribir_alumno_admin(clase_id):
 
         fecha_inscripcion = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
 
-        cursor.execute("""
-            INSERT INTO inscripciones (
-                clase_id,
-                alumno_id,
-                fecha_inscripcion,
-                estado
-            )
-            VALUES (?, ?, ?, ?)
-        """, (
-            clase_id,
-            alumno_id,
-            fecha_inscripcion,
-            "Inscripto"
-        ))
+        try:
+            if inscripcion_existente is not None:
+                cursor.execute("""
+                    UPDATE inscripciones
+                    SET fecha_inscripcion = ?,
+                        estado = 'Inscripto'
+                    WHERE id = ?
+                """, (
+                    fecha_inscripcion,
+                    inscripcion_existente["id"]
+                ))
+            else:
+                cursor.execute("""
+                    INSERT INTO inscripciones (
+                        clase_id,
+                        alumno_id,
+                        fecha_inscripcion,
+                        estado
+                    )
+                    VALUES (?, ?, ?, ?)
+                """, (
+                    clase_id,
+                    alumno_id,
+                    fecha_inscripcion,
+                    "Inscripto"
+                ))
 
-        conexion.commit()
+            conexion.commit()
+
+        except sqlite3.Error:
+            conexion.rollback()
+            conexion.close()
+            raise
         conexion.close()
 
         return redirect(
