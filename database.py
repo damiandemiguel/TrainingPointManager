@@ -136,7 +136,7 @@ def crear_tabla_salud():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS salud (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            alumno_id INTEGER,
+            alumno_id INTEGER UNIQUE,
             contacto_emergencia TEXT,
             telefono_emergencia TEXT,
             lesiones TEXT,

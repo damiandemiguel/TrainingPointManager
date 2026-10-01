@@ -2603,7 +2603,7 @@ def ficha_salud():
             )
             VALUES (
                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now','localtime')
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
             )
             ON CONFLICT(alumno_id) DO UPDATE SET
                 contacto_emergencia = excluded.contacto_emergencia,
@@ -2660,7 +2660,8 @@ def ficha_salud():
             datos["limitaciones_movimiento"],
             datos["detalle_limitaciones"],
             datos["observaciones"],
-            datos["declaracion_aceptada"]
+            datos["declaracion_aceptada"],
+            ahora_local().strftime("%Y-%m-%d %H:%M:%S")
         ))
 
         conexion.commit()
@@ -2698,9 +2699,13 @@ def ficha_salud():
             cursor.execute("""
                 UPDATE alumnos
                 SET certificado_medico = ?,
-                    fecha_certificado = datetime('now','localtime')
+                    fecha_certificado = ?
                 WHERE id = ?
-            """, (nombre_archivo, alumno_id))
+            """, (
+                nombre_archivo,
+                ahora_local().strftime("%Y-%m-%d %H:%M:%S"),
+                alumno_id
+            ))
 
             conexion.commit()
 
