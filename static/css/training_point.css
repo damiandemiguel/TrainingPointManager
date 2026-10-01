@@ -707,3 +707,23 @@ body.tp-app .vacio h2,
 body.tp-app .vacio h3 {
     color: var(--tp-blanco) !important;
 }
+
+/* =========================================================
+   Ajustes visuales finales - tarjetas internas y badges
+   ========================================================= */
+
+/* Datos internos: evitar "tarjetas dentro de tarjetas" */
+body.tp-app .dato {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Badges que todavía conservaban el diseño claro anterior */
+body.tp-app .rol,
+body.tp-app .metodo {
+    background: rgba(36, 153, 232, 0.12) !important;
+    color: var(--tp-celeste-claro) !important;
+    border: 1px solid var(--tp-borde) !important;
+    box-shadow: none !important;
+}
