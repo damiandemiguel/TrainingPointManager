@@ -196,6 +196,25 @@
             background-color: #444;
         }
 
+        .form-eliminar-alumno {
+            margin: 0;
+        }
+
+        .accion-eliminar {
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(220, 53, 69, 0.55);
+            background-color: rgba(220, 53, 69, 0.15);
+            color: #ff8f9a;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .accion-eliminar:hover {
+            background-color: rgba(220, 53, 69, 0.28);
+        }
+
         @media (max-width: 650px) {
 
             .contenedor {
@@ -388,7 +407,7 @@
                         {% endif %}
 
                         <a
-                            href="{{ url_for('static', filename='uploads/certificados/' + alumno.certificado_medico) }}"
+                            href="{{ url_for('ver_certificado_medico', alumno_id=alumno.id) }}"
                             target="_blank"
                             class="boton-certificado"
                         >
@@ -448,6 +467,22 @@
                 💳 Pagos
             </a>
 
+            <form
+                action="{{ url_for('eliminar_alumno_admin', alumno_id=alumno.id) }}"
+                method="POST"
+                onsubmit="return confirmarEliminacionAlumno();"
+                class="form-eliminar-alumno"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <button
+                    type="submit"
+                    class="accion-admin accion-eliminar"
+                >
+                    🗑️ Eliminar definitivamente
+                </button>
+            </form>
+
         </div>
 
     </div>
@@ -455,6 +490,17 @@
 </div>
 
 <script>
+
+    function confirmarEliminacionAlumno() {
+
+        return confirm(
+            "¿Eliminar definitivamente a {{ alumno.nombre|e }}?\n\n" +
+            "Se eliminarán también sus abonos, movimientos de créditos, " +
+            "inscripciones, asistencias, ficha de salud y notificaciones.\n\n" +
+            "Esta acción no se puede deshacer."
+        );
+
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
 

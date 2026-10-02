@@ -418,7 +418,7 @@
                                 {% if certificado.certificado_medico %}
 
                                     <a
-                                        href="{{ url_for('static', filename='uploads/certificados/' + certificado.certificado_medico) }}"
+                                        href="{{ url_for('ver_certificado_medico', alumno_id=certificado.id) }}"
                                         target="_blank"
                                         class="boton"
                                     >
@@ -507,7 +507,7 @@
                     {% if certificado.certificado_medico %}
 
                         <a
-                            href="{{ url_for('static', filename='uploads/certificados/' + certificado.certificado_medico) }}"
+                            href="{{ url_for('ver_certificado_medico', alumno_id=certificado.id) }}"
                             target="_blank"
                             class="accion-movil"
                         >

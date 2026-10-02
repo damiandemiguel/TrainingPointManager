@@ -1,4 +1,4 @@
-﻿from flask import Flask, render_template, request, redirect, url_for, session
+﻿from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -52,8 +52,7 @@ UPLOAD_FOLDER = os.path.join(
 
 CERTIFICADOS_FOLDER = os.path.join(
     BASE_DIR,
-    "static",
-    "uploads",
+    "uploads_privados",
     "certificados"
 )
 
@@ -2741,6 +2740,7 @@ def ficha_salud():
     return render_template(
         "salud.html",
         salud=salud,
+        alumno_id=alumno_id,
         certificado_medico=certificado_medico,
         fecha_certificado=fecha_certificado,
         ficha_vencida=ficha_vencida,
@@ -4151,6 +4151,50 @@ def editar_vencimiento_bono_admin(bono_id):
         bono=bono
     )
 
+@app.route("/certificados/<int:alumno_id>")
+def ver_certificado_medico(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, usuario_id, certificado_medico
+        FROM alumnos
+        WHERE id = ?
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+    conexion.close()
+
+    if alumno is None:
+        return "Alumno no encontrado.", 404
+
+    es_administrador = session.get("rol") == "administrador"
+
+    es_propietario = (
+        session.get("rol") == "alumno"
+        and alumno["usuario_id"] == session.get("usuario_id")
+    )
+
+    if not es_administrador and not es_propietario:
+        return "Acceso no autorizado.", 403
+
+    if not alumno["certificado_medico"]:
+        return "El alumno no tiene certificado médico.", 404
+
+    nombre_archivo = os.path.basename(
+        alumno["certificado_medico"]
+    )
+
+    return send_from_directory(
+        app.config["CERTIFICADOS_FOLDER"],
+        nombre_archivo
+    )
+
 @app.route("/admin/certificados")
 def certificados_admin():
 
@@ -4319,6 +4363,120 @@ def editar_alumno_admin(alumno_id):
         "editar_alumno_admin.html",
         alumno=alumno
     )
+
+@app.route("/alumnos/<int:alumno_id>/eliminar", methods=["POST"])
+def eliminar_alumno_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, usuario_id, nombre, foto_perfil, certificado_medico
+            FROM alumnos
+            WHERE id = ?
+        """, (alumno_id,))
+
+        alumno = cursor.fetchone()
+
+        if alumno is None:
+            conexion.close()
+            return "Alumno no encontrado."
+
+        usuario_id = alumno["usuario_id"]
+
+        # Primero se eliminan los registros que dependen de los bonos.
+        cursor.execute("""
+            DELETE FROM movimientos_creditos
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        cursor.execute("""
+            DELETE FROM asistencias
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        # Luego los registros relacionados directamente con el alumno.
+        cursor.execute("""
+            DELETE FROM bonos
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        cursor.execute("""
+            DELETE FROM inscripciones
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        cursor.execute("""
+            DELETE FROM salud
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        cursor.execute("""
+            DELETE FROM notificaciones
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        cursor.execute("""
+            DELETE FROM alumnos
+            WHERE id = ?
+        """, (alumno_id,))
+
+        if usuario_id is not None:
+            cursor.execute("""
+                DELETE FROM usuarios
+                WHERE id = ?
+            """, (usuario_id,))
+
+        conexion.commit()
+
+    except sqlite3.Error:
+        conexion.rollback()
+        conexion.close()
+        raise
+
+    conexion.close()
+
+    # La base ya fue eliminada correctamente.
+    # Ahora se eliminan, si existen, los archivos propios del alumno.
+    if alumno["foto_perfil"]:
+        ruta_foto = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            os.path.basename(alumno["foto_perfil"])
+        )
+
+        if os.path.isfile(ruta_foto):
+            try:
+                os.remove(ruta_foto)
+            except OSError:
+                app.logger.exception(
+                    "No se pudo eliminar la foto del alumno %s",
+                    alumno_id
+                )
+
+    if alumno["certificado_medico"]:
+        ruta_certificado = os.path.join(
+            app.config["CERTIFICADOS_FOLDER"],
+            os.path.basename(alumno["certificado_medico"])
+        )
+
+        if os.path.isfile(ruta_certificado):
+            try:
+                os.remove(ruta_certificado)
+            except OSError:
+                app.logger.exception(
+                    "No se pudo eliminar el certificado del alumno %s",
+                    alumno_id
+                )
+
+    return redirect(url_for("mostrar_alumnos"))
 
 @app.route("/estado-alumnos")
 def estado_alumnos():

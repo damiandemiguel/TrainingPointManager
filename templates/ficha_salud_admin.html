@@ -218,7 +218,8 @@
         <div style="margin-top: 15px;">
 
             <a
-                href="{{ url_for('static', filename='uploads/certificados/' + ficha.certificado_medico) }}"
+                
+                href="{{ url_for('ver_certificado_medico', alumno_id=ficha.id) }}"
                 target="_blank"
                 class="boton"
             >

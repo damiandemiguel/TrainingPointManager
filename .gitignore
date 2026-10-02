@@ -11,6 +11,7 @@ backups/
 # Archivos subidos por usuarios
 static/uploads/certificados/
 static/uploads/perfiles/
+uploads_privados/
 
 # Respaldos temporales de desarrollo
 app_backup*.py
@@ -24,3 +25,6 @@ TrainingPoint_admin_actual.zip
 TrainingPoint_diseno.zip
 static_backup_antes_diseno/
 templates_backup_antes_diseno/
+
+# Archivos del sistema macOS
+.DS_Store
