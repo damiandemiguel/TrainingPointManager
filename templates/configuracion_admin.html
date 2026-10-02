@@ -179,13 +179,24 @@
             white-space: nowrap;
         }
 
-        .activo {
-            background-color: #e7f6e7;
+        body.tp-app .estado.activo {
+            background: rgba(40, 167, 69, 0.15) !important;
+            color: #7ee29a !important;
+            border: 1px solid rgba(40, 167, 69, 0.45) !important;
         }
 
-        .inactivo {
-            background-color: #eee;
-            color: #666;
+        body.tp-app .estado.inactivo {
+            background: rgba(168, 176, 184, 0.10) !important;
+            color: var(--tp-gris) !important;
+            border: 1px solid var(--tp-borde-suave) !important;
+        }
+
+        body.tp-app .campo .detalle {
+            background: transparent !important;
+            color: var(--tp-gris) !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
         }
 
         @media (max-width: 650px) {
