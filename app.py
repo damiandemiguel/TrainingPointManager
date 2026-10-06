@@ -5328,6 +5328,53 @@ def nueva_notificacion_admin():
         mensaje_error=mensaje_error
     )
 
+
+@app.route("/admin/notificaciones/<int:notificacion_id>/activar", methods=["POST"])
+def activar_notificacion_admin(notificacion_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        UPDATE notificaciones
+        SET activa = 1
+        WHERE id = ?
+    """, (notificacion_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(url_for("notificaciones_admin"))
+
+
+@app.route("/admin/notificaciones/<int:notificacion_id>/eliminar", methods=["POST"])
+def eliminar_notificacion_admin(notificacion_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        DELETE FROM notificaciones
+        WHERE id = ?
+    """, (notificacion_id,))
+
+    conexion.commit()
+    conexion.close()
+
+    return redirect(url_for("notificaciones_admin"))
+
 @app.route("/admin/notificaciones/<int:notificacion_id>/desactivar", methods=["POST"])
 def desactivar_notificacion_admin(notificacion_id):
 

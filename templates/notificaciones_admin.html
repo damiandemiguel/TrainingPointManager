@@ -134,6 +134,41 @@
 
         .acciones {
             margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .acciones form {
+            margin: 0;
+        }
+
+        .boton-activar,
+        .boton-desactivar,
+        .boton-eliminar {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-activar {
+            background-color: #2499e8;
+            color: white;
+        }
+
+        .boton-activar:hover {
+            background-color: #58b9f5;
+        }
+
+        .boton-eliminar {
+            background-color: #b42318;
+            color: white;
+        }
+
+        .boton-eliminar:hover {
+            background-color: #d92d20;
         }
 
         .boton-desactivar {
@@ -324,16 +359,16 @@
                     </div>
 
 
-                    {% if notificacion.activa == 1 %}
+                    <div class="acciones">
 
-                        <div class="acciones">
+                        {% if notificacion.activa == 1 %}
 
                             <form
                                 method="POST"
                                 action="{{ url_for('desactivar_notificacion_admin', notificacion_id=notificacion.id) }}"
                                 onsubmit="return confirm('¿Desactivar esta notificación?');"
                             >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <button
                                     type="submit"
@@ -341,12 +376,44 @@
                                 >
                                     🔕 Desactivar
                                 </button>
-
                             </form>
 
-                        </div>
+                        {% else %}
 
-                    {% endif %}
+                            <form
+                                method="POST"
+                                action="{{ url_for('activar_notificacion_admin', notificacion_id=notificacion.id) }}"
+                                onsubmit="return confirm('¿Volver a activar esta notificación?');"
+                            >
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <button
+                                    type="submit"
+                                    class="boton-activar"
+                                >
+                                    🔔 Activar
+                                </button>
+                            </form>
+
+                        {% endif %}
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('eliminar_notificacion_admin', notificacion_id=notificacion.id) }}"
+                            onsubmit="return confirm('¿Eliminar definitivamente esta notificación? Esta acción no se puede deshacer.');"
+                        >
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <button
+                                type="submit"
+                                class="boton-eliminar"
+                            >
+                                🗑️ Eliminar
+                            </button>
+                        </form>
+
+                    </div>
 
                 </div>
 
