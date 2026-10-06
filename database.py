@@ -384,6 +384,25 @@ def crear_tabla_notificaciones():
     conexion.commit()
     conexion.close()
 
+def crear_tabla_mensajes():
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS mensajes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            alumno_id INTEGER NOT NULL,
+            remitente TEXT NOT NULL,
+            mensaje TEXT NOT NULL,
+            fecha_creacion TEXT NOT NULL,
+            leido INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
 def crear_tabla_configuracion():
     conexion = conectar()
     cursor = conexion.cursor()

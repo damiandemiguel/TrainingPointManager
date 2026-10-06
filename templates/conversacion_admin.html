@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Conversación - Training Point</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #080a0c;
+            color: #f5f7f9;
+        }
+
+        .contenedor {
+            max-width: 900px;
+            margin: 0 auto 90px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .encabezado {
+            background: rgba(17,22,28,.92);
+            padding: 25px;
+            border: 1px solid rgba(36,153,232,.30);
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #a8b0b8;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background: #11161c;
+            color: #f5f7f9;
+            border: 1px solid rgba(36,153,232,.30);
+        }
+
+        .boton-superior:hover {
+            background: #1a2128;
+            color: #58b9f5;
+        }
+
+        .conversacion {
+            background: rgba(17,22,28,.94);
+            border: 1px solid rgba(36,153,232,.22);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.28);
+        }
+
+        .mensaje-fila {
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .mensaje-fila.administrador {
+            justify-content: flex-end;
+        }
+
+        .mensaje-fila.alumno {
+            justify-content: flex-start;
+        }
+
+        .burbuja {
+            max-width: 75%;
+            padding: 12px 15px;
+            border-radius: 14px;
+        }
+
+        .administrador .burbuja {
+            background: rgba(36,153,232,.18);
+            border: 1px solid rgba(36,153,232,.35);
+        }
+
+        .alumno .burbuja {
+            background: #1a2128;
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .remitente {
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #58b9f5;
+        }
+
+        .alumno .remitente {
+            color: #a8b0b8;
+        }
+
+        .texto-mensaje {
+            white-space: pre-wrap;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        body.tp-app .burbuja .fecha {
+            margin-top: 8px;
+            padding: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            color: #a8b0b8 !important;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        .nuevo-mensaje {
+            background: rgba(17,22,28,.94);
+            border: 1px solid rgba(36,153,232,.25);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.28);
+        }
+
+        .nuevo-mensaje h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 110px;
+            padding: 12px;
+            resize: vertical;
+            border-radius: 8px;
+            border: 1px solid rgba(36,153,232,.30);
+            background: #080a0c;
+            color: #f5f7f9;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2499e8;
+        }
+
+        .boton-enviar {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #2499e8;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-enviar:hover {
+            background: #58b9f5;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .contenedor {
+                margin-bottom: 90px;
+            }
+
+            .acciones-superiores {
+                display: none;
+            }
+
+            .encabezado {
+                padding: 20px 15px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
+
+            .encabezado p {
+                font-size: 12px;
+            }
+
+            .conversacion,
+            .nuevo-mensaje {
+                padding: 15px;
+            }
+
+            .burbuja {
+                max-width: 88%;
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
+</head>
+
+<body class="tp-app">
+
+<div class="contenedor">
+
+    <div class="encabezado">
+        <h1>💬 {{ alumno["nombre"] }}</h1>
+        <p>Conversación con el alumno</p>
+    </div>
+
+    <div class="acciones-superiores">
+
+        <a
+            href="{{ url_for('mensajes_admin') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver a mensajes
+        </a>
+
+    </div>
+
+
+    <div class="conversacion">
+
+        {% for mensaje in mensajes %}
+
+            <div class="mensaje-fila {{ mensaje['remitente'] }}">
+
+                <div class="burbuja">
+
+                    <div class="remitente">
+
+                        {% if mensaje["remitente"] == "administrador" %}
+                            Vos
+                        {% else %}
+                            {{ alumno["nombre"] }}
+                        {% endif %}
+
+                    </div>
+
+                    <div class="texto-mensaje">
+                        {{ mensaje["mensaje"] }}
+                    </div>
+
+                    <div class="fecha">
+                        {{ mensaje["fecha_creacion"][8:10] }}/{{ mensaje["fecha_creacion"][5:7] }}/{{ mensaje["fecha_creacion"][0:4] }}
+                        ·
+                        {{ mensaje["fecha_creacion"][11:16] }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div class="nuevo-mensaje">
+
+        <h2>✉️ Responder</h2>
+
+        <form method="POST">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <textarea
+                name="mensaje"
+                maxlength="2000"
+                placeholder="Escribí tu respuesta..."
+                required
+            ></textarea>
+
+            <button
+                type="submit"
+                class="boton-enviar"
+            >
+                Enviar respuesta
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
+
+</body>
+</html>

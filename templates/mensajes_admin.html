@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mensajes - Training Point</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #080a0c;
+            color: #f5f7f9;
+        }
+
+        .contenedor {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto 90px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .encabezado {
+            background: rgba(17,22,28,.92);
+            padding: 25px;
+            border: 1px solid rgba(36,153,232,.30);
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #a8b0b8;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            width: 100%;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background: #11161c;
+            color: #f5f7f9;
+            border: 1px solid rgba(36,153,232,.30);
+        }
+
+        .boton-superior:hover {
+            background: #1a2128;
+            color: #58b9f5;
+        }
+
+        .lista {
+            display: grid;
+            gap: 15px;
+        }
+
+        .conversacion {
+            display: block;
+            background: rgba(17,22,28,.94);
+            border: 1px solid rgba(36,153,232,.22);
+            border-radius: 12px;
+            padding: 18px 20px;
+            text-decoration: none;
+            color: #f5f7f9;
+            box-shadow: 0 4px 18px rgba(0,0,0,.28);
+        }
+
+        .conversacion:hover {
+            border-color: rgba(36,153,232,.55);
+            background: #1a2128;
+        }
+
+        .superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nombre {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .no-leidos {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 27px;
+            height: 27px;
+            padding: 0 8px;
+            border-radius: 20px;
+            background: #2499e8;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .ultimo-mensaje {
+            margin-top: 10px;
+            color: #a8b0b8;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        body.tp-app .conversacion .fecha {
+            margin-top: 10px;
+            color: #68727c !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            font-size: 12px;
+        }
+
+        .vacio {
+            background: rgba(17,22,28,.92);
+            border: 1px solid rgba(36,153,232,.25);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: #a8b0b8;
+        }
+
+        @media (max-width: 600px) {
+            .contenedor {
+                width: 94%;
+                margin: 20px auto 90px;
+            }
+
+            .acciones-superiores {
+                display: none;
+            }
+
+            .encabezado {
+                padding: 20px 15px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
+
+            .encabezado p {
+                font-size: 12px;
+            }
+
+            .conversacion {
+                padding: 16px;
+            }
+
+            .nombre {
+                font-size: 15px;
+            }
+
+            .ultimo-mensaje {
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/training_point.css') }}">
+</head>
+
+<body class="tp-app">
+
+<div class="contenedor">
+
+    <div class="encabezado">
+        <h1>💬 Mensajes</h1>
+        <p>Conversaciones con alumnos</p>
+    </div>
+
+    <div class="acciones-superiores">
+        <a
+            href="{{ url_for('panel') }}"
+            class="boton-superior"
+        >
+            ⬅️ Volver al panel
+        </a>
+    </div>
+
+    {% if conversaciones %}
+
+        <div class="lista">
+
+            {% for conversacion in conversaciones %}
+
+                <a
+                    href="{{ url_for('conversacion_admin', alumno_id=conversacion['alumno_id']) }}"
+                    class="conversacion"
+                >
+
+                    <div class="superior">
+
+                        <div class="nombre">
+                            👤 {{ conversacion["nombre"] }}
+                        </div>
+
+                        {% if conversacion["no_leidos"] > 0 %}
+
+                            <span class="no-leidos">
+                                {{ conversacion["no_leidos"] }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="ultimo-mensaje">
+                        {{ conversacion["ultimo_mensaje"] }}
+                    </div>
+
+                    <div class="fecha">
+                        {{ conversacion["fecha_ultimo_mensaje"][8:10] }}/{{ conversacion["fecha_ultimo_mensaje"][5:7] }}/{{ conversacion["fecha_ultimo_mensaje"][0:4] }}
+                        ·
+                        {{ conversacion["fecha_ultimo_mensaje"][11:16] }}
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="vacio">
+            💬 Todavía no hay conversaciones con alumnos.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% set nav_activa = '' %}
+{% include '_nav_admin.html' %}
+
+</body>
+</html>

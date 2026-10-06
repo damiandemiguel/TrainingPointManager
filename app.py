@@ -21,6 +21,7 @@ from database import (
     crear_tabla_asistencias,
     crear_tabla_rutinas,
     crear_tabla_notificaciones,
+    crear_tabla_mensajes,
     crear_tabla_configuracion,
     crear_tabla_horarios_habituales
 )
@@ -155,6 +156,7 @@ crear_tabla_inscripciones()
 crear_tabla_asistencias()
 crear_tabla_rutinas()
 crear_tabla_notificaciones()
+crear_tabla_mensajes()
 crear_tabla_configuracion()
 crear_tabla_horarios_habituales()
 
@@ -729,6 +731,91 @@ def notificaciones_alumno():
         "notificaciones_alumno.html",
         notificaciones=notificaciones,
         avisos_automaticos=avisos_automaticos
+    )
+
+@app.route("/mensajes", methods=["GET", "POST"])
+def mensajes_alumno():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "alumno":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre
+        FROM alumnos
+        WHERE usuario_id = ?
+          AND activo = 1
+    """, (session["usuario_id"],))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "No se encontró el alumno."
+
+    if request.method == "POST":
+
+        mensaje = request.form.get("mensaje", "").strip()
+
+        if mensaje and len(mensaje) <= 2000:
+
+            ahora = ahora_local().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+            cursor.execute("""
+                INSERT INTO mensajes (
+                    alumno_id,
+                    remitente,
+                    mensaje,
+                    fecha_creacion,
+                    leido
+                )
+                VALUES (?, 'alumno', ?, ?, 0)
+            """, (
+                alumno["id"],
+                mensaje,
+                ahora
+            ))
+
+            conexion.commit()
+            conexion.close()
+
+            return redirect(url_for("mensajes_alumno"))
+
+    # Las respuestas del administrador quedan marcadas como leídas
+    # cuando el alumno abre su conversación.
+    cursor.execute("""
+        UPDATE mensajes
+        SET leido = 1
+        WHERE alumno_id = ?
+          AND remitente = 'administrador'
+          AND leido = 0
+    """, (alumno["id"],))
+
+    conexion.commit()
+
+    cursor.execute("""
+        SELECT *
+        FROM mensajes
+        WHERE alumno_id = ?
+        ORDER BY fecha_creacion ASC, id ASC
+    """, (alumno["id"],))
+
+    mensajes = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "mensajes_alumno.html",
+        alumno=alumno,
+        mensajes=mensajes
     )
 
 @app.route("/rutinas")
@@ -4425,6 +4512,11 @@ def eliminar_alumno_admin(alumno_id):
         """, (alumno_id,))
 
         cursor.execute("""
+            DELETE FROM mensajes
+            WHERE alumno_id = ?
+        """, (alumno_id,))
+
+        cursor.execute("""
             DELETE FROM alumnos
             WHERE id = ?
         """, (alumno_id,))
@@ -5214,6 +5306,153 @@ def editar_rutina_admin(clase_id):
         clase=clase,
         rutina=rutina,
         mensaje=mensaje
+    )
+
+@app.route("/admin/mensajes/<int:alumno_id>", methods=["GET", "POST"])
+def conversacion_admin(alumno_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre
+        FROM alumnos
+        WHERE id = ?
+          AND activo = 1
+    """, (alumno_id,))
+
+    alumno = cursor.fetchone()
+
+    if alumno is None:
+        conexion.close()
+        return "Alumno no encontrado.", 404
+
+    if request.method == "POST":
+
+        mensaje = request.form.get("mensaje", "").strip()
+
+        if mensaje and len(mensaje) <= 2000:
+
+            ahora = ahora_local().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+            cursor.execute("""
+                INSERT INTO mensajes (
+                    alumno_id,
+                    remitente,
+                    mensaje,
+                    fecha_creacion,
+                    leido
+                )
+                VALUES (?, 'administrador', ?, ?, 0)
+            """, (
+                alumno_id,
+                mensaje,
+                ahora
+            ))
+
+            conexion.commit()
+            conexion.close()
+
+            return redirect(
+                url_for(
+                    "conversacion_admin",
+                    alumno_id=alumno_id
+                )
+            )
+
+    # Los mensajes enviados por el alumno se consideran leídos
+    # cuando el administrador abre la conversación.
+    cursor.execute("""
+        UPDATE mensajes
+        SET leido = 1
+        WHERE alumno_id = ?
+          AND remitente = 'alumno'
+          AND leido = 0
+    """, (alumno_id,))
+
+    conexion.commit()
+
+    cursor.execute("""
+        SELECT *
+        FROM mensajes
+        WHERE alumno_id = ?
+        ORDER BY fecha_creacion ASC, id ASC
+    """, (alumno_id,))
+
+    mensajes = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "conversacion_admin.html",
+        alumno=alumno,
+        mensajes=mensajes
+    )    
+
+@app.route("/admin/mensajes")
+def mensajes_admin():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session["rol"] != "administrador":
+        return "Acceso no autorizado."
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            alumnos.id AS alumno_id,
+            alumnos.nombre,
+            (
+                SELECT mensaje
+                FROM mensajes
+                WHERE mensajes.alumno_id = alumnos.id
+                ORDER BY fecha_creacion DESC, id DESC
+                LIMIT 1
+            ) AS ultimo_mensaje,
+            (
+                SELECT fecha_creacion
+                FROM mensajes
+                WHERE mensajes.alumno_id = alumnos.id
+                ORDER BY fecha_creacion DESC, id DESC
+                LIMIT 1
+            ) AS fecha_ultimo_mensaje,
+            (
+                SELECT COUNT(*)
+                FROM mensajes
+                WHERE mensajes.alumno_id = alumnos.id
+                  AND remitente = 'alumno'
+                  AND leido = 0
+            ) AS no_leidos
+        FROM alumnos
+        WHERE alumnos.activo = 1
+          AND EXISTS (
+                SELECT 1
+                FROM mensajes
+                WHERE mensajes.alumno_id = alumnos.id
+          )
+        ORDER BY fecha_ultimo_mensaje DESC
+    """)
+
+    conversaciones = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template(
+        "mensajes_admin.html",
+        conversaciones=conversaciones
     )
 
 @app.route("/admin/notificaciones")
