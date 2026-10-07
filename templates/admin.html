@@ -282,6 +282,25 @@
             font-weight: bold;
         }
 
+        .herramienta-titulo {
+            flex: 1;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .mensajes-nuevos {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: var(--tp-celeste);
+            color: var(--tp-blanco);
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
         .herramienta-flecha {
             color: #999;
             font-size: 24px;
@@ -765,6 +784,17 @@
 
                     <div class="herramienta-titulo">
                         Mensajes
+
+                        {% if cantidad_mensajes_nuevos > 0 %}
+                            <span class="mensajes-nuevos">
+                                {{ cantidad_mensajes_nuevos }}
+                                {% if cantidad_mensajes_nuevos == 1 %}
+                                    nuevo
+                                {% else %}
+                                    nuevos
+                                {% endif %}
+                            </span>
+                        {% endif %}
                     </div>
 
                     <div class="herramienta-flecha">

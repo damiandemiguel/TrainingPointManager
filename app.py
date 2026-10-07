@@ -461,6 +461,20 @@ def panel():
 
         clases_hoy = cursor.fetchall()
 
+                # Mensajes nuevos enviados por alumnos
+        cursor.execute("""
+            SELECT COUNT(*) AS cantidad
+            FROM mensajes
+            INNER JOIN alumnos
+                ON mensajes.alumno_id = alumnos.id
+            WHERE mensajes.remitente = 'alumno'
+              AND mensajes.leido = 0
+              AND alumnos.activo = 1
+        """)
+
+        resultado_mensajes = cursor.fetchone()
+        cantidad_mensajes_nuevos = resultado_mensajes[0]
+
         conexion.close()
 
         return render_template(
@@ -473,7 +487,8 @@ def panel():
             alumnos_sin_ficha=alumnos_sin_ficha,
             certificados_vigentes=certificados_vigentes,
             certificados_vencidos=certificados_vencidos,
-            clases_hoy=clases_hoy
+            clases_hoy=clases_hoy,
+            cantidad_mensajes_nuevos=cantidad_mensajes_nuevos
         )
 
     return redirect(url_for("panel_alumno"))
@@ -579,6 +594,18 @@ def panel_alumno():
     resultado_notificaciones = cursor.fetchone()
     cantidad_notificaciones = resultado_notificaciones["cantidad"]
 
+        # Mensajes nuevos enviados por el administrador
+    cursor.execute("""
+        SELECT COUNT(*) AS cantidad
+        FROM mensajes
+        WHERE alumno_id = ?
+          AND remitente = 'administrador'
+          AND leido = 0
+    """, (alumno_id,))
+
+    resultado_mensajes = cursor.fetchone()
+    cantidad_mensajes_nuevos = resultado_mensajes["cantidad"]
+
     # Clase reservada para hoy y rutina asociada
     cursor.execute("""
         SELECT
@@ -614,6 +641,7 @@ def panel_alumno():
         proxima_clase=proxima_clase,
         bono=bono,
         cantidad_notificaciones=cantidad_notificaciones,
+        cantidad_mensajes_nuevos=cantidad_mensajes_nuevos,
         rutina_hoy=rutina_hoy
     )
 
