@@ -24,7 +24,6 @@ def conectar():
 
 def crear_tabla_usuarios():
     conexion = conectar()
-
     cursor = conexion.cursor()
 
     cursor.execute("""
@@ -32,13 +31,69 @@ def crear_tabla_usuarios():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             usuario TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            rol TEXT NOT NULL
+            rol TEXT NOT NULL,
+            debe_cambiar_password INTEGER NOT NULL DEFAULT 0
+        )
+    """)
+
+    # Actualizar bases de datos existentes sin perder usuarios
+    cursor.execute("PRAGMA table_info(usuarios)")
+
+    columnas = {
+        fila[1]
+        for fila in cursor.fetchall()
+    }
+
+    if "debe_cambiar_password" not in columnas:
+        cursor.execute("""
+            ALTER TABLE usuarios
+            ADD COLUMN debe_cambiar_password INTEGER NOT NULL DEFAULT 0
+        """)
+
+    conexion.commit()
+    conexion.close()
+
+def crear_tabla_recuperacion_password():
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS recuperacion_password (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            token_hash TEXT NOT NULL UNIQUE,
+            fecha_expiracion TEXT NOT NULL,
+            utilizado INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
         )
     """)
 
     conexion.commit()
     conexion.close()
 
+def crear_tabla_intentos_recuperacion():
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS intentos_recuperacion (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            identificador TEXT NOT NULL,
+            fecha_intento TEXT NOT NULL
+        )
+    """)
+
+    cursor.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_intentos_recuperacion_identificador
+        ON intentos_recuperacion (
+            identificador,
+            fecha_intento
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
 
 def crear_usuario(usuario, password, rol):
     conexion = conectar()

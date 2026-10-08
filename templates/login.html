@@ -204,6 +204,22 @@
             transform: scale(0.99);
         }
 
+        .recuperar-password {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .recuperar-password a {
+            color: #58b9f5;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .recuperar-password a:hover {
+            text-decoration: underline;
+        }
+
         .registro {
             margin-top: 24px;
             padding-top: 20px;
@@ -312,6 +328,12 @@
             </button>
 
         </form>
+
+        <div class="recuperar-password">
+            <a href="{{ url_for('recuperar_password') }}">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </div>
 
         <div class="registro">
 

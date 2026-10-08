@@ -5,12 +5,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
+import hashlib
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+import secrets
+
+from correo import enviar_correo_recuperacion
 
 from database import (
     conectar,
     crear_tabla_usuarios,
+    crear_tabla_recuperacion_password,
+     crear_tabla_intentos_recuperacion,
     crear_tabla_alumnos,
     crear_tabla_salud,
     crear_tabla_clases,
@@ -35,6 +41,68 @@ ZONA_HORARIA = ZoneInfo("America/Argentina/Buenos_Aires")
 
 def ahora_local():
     return datetime.now(ZONA_HORARIA).replace(tzinfo=None)
+
+def permitir_intento_recuperacion():
+    # No guardar la IP original en la base de datos.
+    ip = request.remote_addr or "desconocida"
+
+    identificador = hashlib.sha256(
+        (app.secret_key + ":" + ip).encode("utf-8")
+    ).hexdigest()
+
+    ahora = ahora_local()
+    inicio_ventana = (
+        ahora - timedelta(minutes=15)
+    ).isoformat()
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    try:
+        # Bloqueo de escritura para evitar que solicitudes
+        # simultáneas superen el límite.
+        cursor.execute("BEGIN IMMEDIATE")
+
+        cursor.execute("""
+            DELETE FROM intentos_recuperacion
+            WHERE fecha_intento < ?
+        """, (
+            (ahora - timedelta(days=1)).isoformat(),
+        ))
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM intentos_recuperacion
+            WHERE identificador = ?
+              AND fecha_intento >= ?
+        """, (identificador, inicio_ventana))
+
+        cantidad = cursor.fetchone()[0]
+
+        if cantidad >= 5:
+            conexion.commit()
+            return False
+
+        cursor.execute("""
+            INSERT INTO intentos_recuperacion (
+                identificador,
+                fecha_intento
+            )
+            VALUES (?, ?)
+        """, (identificador, ahora.isoformat()))
+
+        conexion.commit()
+        return True
+
+    except Exception:
+        conexion.rollback()
+        app.logger.exception(
+            "Error al controlar solicitudes de recuperación."
+        )
+        return False
+
+    finally:
+        conexion.close()
 
 # Cargar variables de entorno desde el .env del proyecto
 load_dotenv(
@@ -146,6 +214,8 @@ def calcular_vencimiento_bono(fecha_inicio, cantidad_clases):
     return fecha.strftime("%Y-%m-%d")
 
 crear_tabla_usuarios()
+crear_tabla_recuperacion_password()
+crear_tabla_intentos_recuperacion()
 crear_tabla_alumnos()
 crear_tabla_salud()
 crear_tabla_clases()
@@ -159,6 +229,46 @@ crear_tabla_notificaciones()
 crear_tabla_mensajes()
 crear_tabla_configuracion()
 crear_tabla_horarios_habituales()
+
+@app.before_request
+def verificar_cambio_password_obligatorio():
+
+    usuario_id = session.get("usuario_id")
+
+    if not usuario_id:
+        return
+
+    # Permitir los archivos estáticos y la pantalla de cambio
+    rutas_permitidas = {
+        "static",
+        "cambiar_password_obligatorio",
+        "cerrar_sesion"
+    }
+
+    if request.endpoint in rutas_permitidas:
+        return
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT debe_cambiar_password
+        FROM usuarios
+        WHERE id = ?
+    """, (usuario_id,))
+
+    resultado = cursor.fetchone()
+    conexion.close()
+
+    # Si la cuenta ya no existe, invalidar la sesión
+    if resultado is None:
+        session.clear()
+        return redirect(url_for("inicio"))
+
+    if resultado[0] == 1:
+        return redirect(
+            url_for("cambiar_password_obligatorio")
+        )
 
 def archivo_permitido(nombre):
 
@@ -219,7 +329,7 @@ def inicio():
         cursor = conexion.cursor()
 
         cursor.execute("""
-            SELECT id, usuario, password, rol
+            SELECT id, usuario, password, rol, debe_cambiar_password
             FROM usuarios
             WHERE usuario = ?
         """, (usuario,))
@@ -234,12 +344,20 @@ def inicio():
             nombre_usuario = usuario_encontrado[1]
             password_guardada = usuario_encontrado[2]
             rol = usuario_encontrado[3]
+            debe_cambiar_password = usuario_encontrado[4]
 
             if check_password_hash(password_guardada, password):
+
+                session.clear()
 
                 session["usuario_id"] = id_usuario
                 session["usuario"] = nombre_usuario
                 session["rol"] = rol
+
+                if debe_cambiar_password == 1:
+                    return redirect(
+                        url_for("cambiar_password_obligatorio")
+                    )
 
                 return redirect(url_for("panel"))
 
@@ -249,6 +367,310 @@ def inicio():
         )
 
     return render_template("login.html")
+
+
+@app.route("/recuperar-password", methods=["GET", "POST"])
+def recuperar_password():
+
+    if request.method == "GET":
+        return render_template("recuperar_password.html")
+
+    email = request.form.get("email", "").strip().lower()
+
+    mensaje = (
+        "Si el correo corresponde a una cuenta habilitada, "
+        "recibirás un enlace para recuperar tu contraseña."
+    )
+
+    if not email or len(email) > 254:
+        return render_template(
+            "recuperar_password.html",
+            mensaje=mensaje
+        )
+
+    if not permitir_intento_recuperacion():
+        return render_template(
+            "recuperar_password.html",
+            mensaje=mensaje
+        )
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT usuarios.id
+        FROM usuarios
+        INNER JOIN alumnos
+            ON alumnos.usuario_id = usuarios.id
+        WHERE LOWER(TRIM(alumnos.email)) = ?
+          AND alumnos.activo = 1
+          AND usuarios.rol = 'alumno'
+    """, (email,))
+
+    cuentas = cursor.fetchall()
+
+    if len(cuentas) == 1:
+        usuario_id = cuentas[0][0]
+
+        cursor.execute("""
+            SELECT fecha_expiracion
+            FROM recuperacion_password
+            WHERE usuario_id = ?
+            ORDER BY id DESC
+            LIMIT 1
+        """, (usuario_id,))
+
+        ultima_solicitud = cursor.fetchone()
+
+        if ultima_solicitud:
+            try:
+                ultimo_vencimiento = datetime.fromisoformat(
+                    ultima_solicitud[0]
+                )
+
+                fecha_ultima_solicitud = (
+                    ultimo_vencimiento - timedelta(minutes=30)
+                )
+
+                if ahora_local() - fecha_ultima_solicitud < timedelta(minutes=5):
+                    conexion.close()
+                    return render_template(
+                        "recuperar_password.html",
+                        mensaje=mensaje
+                    )
+
+            except ValueError:
+                pass
+
+        token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(
+            token.encode("utf-8")
+        ).hexdigest()
+
+        vencimiento = (
+            ahora_local() + timedelta(minutes=30)
+        ).isoformat()
+
+        if ENTORNO_PRODUCCION:
+            enlace = (
+                "https://trainingpoint.pythonanywhere.com"
+                + url_for("restablecer_password_email", token=token)
+            )
+        else:
+            enlace = url_for(
+                "restablecer_password_email",
+                token=token,
+                _external=True
+            )
+
+        cursor.execute("""
+            INSERT INTO recuperacion_password (
+                usuario_id,
+                token_hash,
+                fecha_expiracion
+            )
+            VALUES (?, ?, ?)
+        """, (
+            usuario_id,
+            token_hash,
+            vencimiento
+        ))
+
+        conexion.commit()
+        conexion.close()
+
+        try:
+            enviar_correo_recuperacion(email, enlace)
+
+        except Exception:
+            app.logger.exception(
+                "No se pudo enviar el correo de recuperación."
+            )
+
+            # Invalidar el enlace si falla el envío.
+            conexion_error = conectar()
+            cursor_error = conexion_error.cursor()
+
+            cursor_error.execute("""
+                DELETE FROM recuperacion_password
+                WHERE token_hash = ?
+            """, (token_hash,))
+
+            conexion_error.commit()
+            conexion_error.close()
+
+    else:
+        conexion.close()
+
+    return render_template(
+        "recuperar_password.html",
+        mensaje=mensaje
+    )
+
+
+@app.route("/restablecer-password/<token>", methods=["GET", "POST"])
+def restablecer_password_email(token):
+
+    mensaje_invalido = (
+        "El enlace de recuperación no es válido, "
+        "ya venció o fue utilizado. Solicitá uno nuevo."
+    )
+
+    token_hash = hashlib.sha256(
+        token.encode("utf-8")
+    ).hexdigest()
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, usuario_id, fecha_expiracion
+        FROM recuperacion_password
+        WHERE token_hash = ?
+          AND utilizado = 0
+    """, (token_hash,))
+
+    recuperacion = cursor.fetchone()
+
+    if recuperacion is None:
+        conexion.close()
+        return render_template(
+            "restablecer_password_email.html",
+            mensaje=mensaje_invalido
+        )
+
+    try:
+        vencimiento = datetime.fromisoformat(
+            recuperacion["fecha_expiracion"]
+        )
+    except ValueError:
+        conexion.close()
+        return render_template(
+            "restablecer_password_email.html",
+            mensaje=mensaje_invalido
+        )
+
+    if ahora_local() >= vencimiento:
+        conexion.close()
+        return render_template(
+            "restablecer_password_email.html",
+            mensaje=mensaje_invalido
+        )
+
+    if request.method == "GET":
+        conexion.close()
+        return render_template(
+            "restablecer_password_email.html"
+        )
+
+    password_nueva = request.form.get(
+        "password_nueva", ""
+    )
+    confirmar_password = request.form.get(
+        "confirmar_password", ""
+    )
+
+    error = None
+
+    if len(password_nueva) < 8:
+        error = (
+            "La contraseña debe tener al menos "
+            "8 caracteres."
+        )
+    elif password_nueva != confirmar_password:
+        error = "Las contraseñas no coinciden."
+
+    if error:
+        conexion.close()
+        return render_template(
+            "restablecer_password_email.html",
+            error=error
+        )
+
+    password_segura = generate_password_hash(
+        password_nueva
+    )
+
+    try:
+        # Evitar que dos solicitudes utilicen el mismo
+        # enlace de recuperación.
+        cursor.execute("BEGIN IMMEDIATE")
+
+        cursor.execute("""
+            UPDATE recuperacion_password
+            SET utilizado = 1
+            WHERE id = ?
+              AND utilizado = 0
+              AND fecha_expiracion > ?
+        """, (
+            recuperacion["id"],
+            ahora_local().isoformat()
+        ))
+
+        if cursor.rowcount != 1:
+            conexion.rollback()
+            conexion.close()
+            return render_template(
+                "restablecer_password_email.html",
+                mensaje=mensaje_invalido
+            )
+
+        cursor.execute("""
+            UPDATE usuarios
+            SET password = ?,
+                debe_cambiar_password = 0
+            WHERE id = ?
+              AND rol = 'alumno'
+        """, (
+            password_segura,
+            recuperacion["usuario_id"]
+        ))
+
+        if cursor.rowcount != 1:
+            conexion.rollback()
+            conexion.close()
+            return render_template(
+                "restablecer_password_email.html",
+                mensaje=mensaje_invalido
+            )
+
+        # Invalidar cualquier otro enlace pendiente
+        # de recuperación de esta cuenta.
+        cursor.execute("""
+            UPDATE recuperacion_password
+            SET utilizado = 1
+            WHERE usuario_id = ?
+        """, (recuperacion["usuario_id"],))
+
+        conexion.commit()
+
+    except Exception:
+        conexion.rollback()
+        app.logger.exception(
+            "Error al restablecer la contraseña."
+        )
+        conexion.close()
+        return render_template(
+            "restablecer_password_email.html",
+            error=(
+                "No se pudo actualizar la contraseña. "
+                "Intentá nuevamente."
+            )
+        )
+
+    conexion.close()
+
+    session.clear()
+
+    return render_template(
+        "restablecer_password_email.html",
+        mensaje=(
+            "Tu contraseña fue actualizada correctamente. "
+            "Ya podés iniciar sesión."
+        )
+    )
+
 
 @app.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -966,6 +1388,107 @@ def mi_cuenta():
         "mi_cuenta.html",
         usuario=usuario,
         mensaje=mensaje,
+        error=error
+    )
+
+@app.route("/cambiar-password-obligatorio", methods=["GET", "POST"])
+def cambiar_password_obligatorio():
+
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, usuario, password, rol, debe_cambiar_password
+        FROM usuarios
+        WHERE id = ?
+    """, (session["usuario_id"],))
+
+    usuario = cursor.fetchone()
+
+    if usuario is None:
+        conexion.close()
+        session.clear()
+        return redirect(url_for("inicio"))
+
+    if usuario["debe_cambiar_password"] == 0:
+        conexion.close()
+        return redirect(url_for("panel"))
+
+    error = None
+
+    if request.method == "POST":
+
+        password_temporal = request.form.get(
+            "password_temporal", ""
+        )
+        password_nueva = request.form.get(
+            "password_nueva", ""
+        )
+        confirmar_password = request.form.get(
+            "confirmar_password", ""
+        )
+
+        if not check_password_hash(
+            usuario["password"],
+            password_temporal
+        ):
+            error = "La contraseña temporal no es correcta."
+
+        elif len(password_nueva) < 8:
+            error = (
+                "La nueva contraseña debe tener "
+                "al menos 8 caracteres."
+            )
+
+        elif password_nueva != confirmar_password:
+            error = "Las nuevas contraseñas no coinciden."
+
+        elif check_password_hash(
+            usuario["password"],
+            password_nueva
+        ):
+            error = (
+                "La nueva contraseña debe ser diferente "
+                "de la contraseña temporal."
+            )
+
+        else:
+            password_segura = generate_password_hash(
+                password_nueva
+            )
+
+            cursor.execute("""
+                UPDATE usuarios
+                SET password = ?,
+                    debe_cambiar_password = 0
+                WHERE id = ?
+                  AND password = ?
+                  AND debe_cambiar_password = 1
+            """, (
+                password_segura,
+                usuario["id"],
+                usuario["password"]
+            ))
+
+            if cursor.rowcount != 1:
+                conexion.rollback()
+                conexion.close()
+                session.clear()
+                return redirect(url_for("inicio"))
+
+            conexion.commit()
+            conexion.close()
+
+            return redirect(url_for("panel"))
+
+    conexion.close()
+
+    return render_template(
+        "cambiar_password_obligatorio.html",
         error=error
     )
 
@@ -3929,6 +4452,66 @@ def cancelar_inscripcion_desde_mis_inscripciones(inscripcion_id):
         url_for(
             "mis_inscripciones"
         )
+    )
+
+@app.route(
+    "/alumnos/<int:alumno_id>/restablecer-password",
+    methods=["POST"]
+)
+def restablecer_password_alumno_admin(alumno_id):
+
+    if (
+        "usuario_id" not in session
+        or session.get("rol") != "administrador"
+    ):
+        return redirect(url_for("inicio"))
+
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT alumnos.usuario_id
+        FROM alumnos
+        INNER JOIN usuarios
+            ON alumnos.usuario_id = usuarios.id
+        WHERE alumnos.id = ?
+          AND alumnos.activo = 1
+          AND usuarios.rol = 'alumno'
+    """, (alumno_id,))
+
+    resultado = cursor.fetchone()
+
+    if resultado is None:
+        conexion.close()
+        return "Alumno activo con cuenta de acceso no encontrado.", 404
+
+    usuario_id = resultado[0]
+
+    # Contraseña temporal aleatoria
+    password_temporal = secrets.token_urlsafe(12)
+
+    password_segura = generate_password_hash(
+        password_temporal
+    )
+
+    cursor.execute("""
+        UPDATE usuarios
+        SET password = ?,
+            debe_cambiar_password = 1
+        WHERE id = ?
+          AND rol = 'alumno'
+    """, (
+        password_segura,
+        usuario_id
+    ))
+
+    conexion.commit()
+    conexion.close()
+
+    return render_template(
+        "password_temporal_admin.html",
+        password_temporal=password_temporal,
+        alumno_id=alumno_id
     )
 
 @app.route("/alumnos/<int:alumno_id>")
