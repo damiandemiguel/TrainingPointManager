@@ -308,6 +308,11 @@
             </div>
 
             <div class="dato">
+                <span class="etiqueta">Nombre de usuario</span>
+                {{ alumno.nombre_usuario or "Sin usuario asignado" }}
+            </div>
+
+            <div class="dato">
                 <span class="etiqueta">E-mail</span>
                 {{ alumno.email or "No informado" }}
             </div>

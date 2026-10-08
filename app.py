@@ -3946,10 +3946,22 @@ def perfil_alumno_admin(alumno_id):
     cursor = conexion.cursor()
 
     cursor.execute("""
-        SELECT id, nombre, email, fecha_nacimiento,
-               telefono, direccion, certificado_medico, fecha_certificado, activo, foto_perfil
+        SELECT
+            alumnos.id,
+            alumnos.nombre,
+            alumnos.email,
+            alumnos.fecha_nacimiento,
+            alumnos.telefono,
+            alumnos.direccion,
+            alumnos.certificado_medico,
+            alumnos.fecha_certificado,
+            alumnos.activo,
+            alumnos.foto_perfil,
+            usuarios.usuario AS nombre_usuario
         FROM alumnos
-        WHERE id = ?
+        LEFT JOIN usuarios
+            ON alumnos.usuario_id = usuarios.id
+        WHERE alumnos.id = ?
     """, (alumno_id,))
 
     alumno = cursor.fetchone()
