@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Abonos disponibles - Training Point</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #080a0c;
+            color: #f5f7f9;
+        }
+
+        .contenedor {
+            width: 96%;
+            max-width: 1400px;
+            margin: 35px auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .encabezado {
+            background: rgba(17, 22, 28, .92);
+            padding: 25px;
+            border: 1px solid rgba(36, 153, 232, .30);
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .encabezado h1 {
+            margin: 0;
+            color: #f5f7f9;
+        }
+
+        .encabezado p {
+            margin-bottom: 0;
+            color: #a8b0b8;
+        }
+
+        .acciones-superiores {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .boton-superior {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            background: #11161c;
+            color: #f5f7f9;
+            border: 1px solid rgba(36, 153, 232, .30);
+        }
+
+        .boton-superior:hover {
+            background: #1a2128;
+            color: #58b9f5;
+        }
+
+        .grilla-abonos {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .abono {
+            background: rgba(17, 22, 28, .92);
+            border: 1px solid rgba(36, 153, 232, .30);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .abono h2 {
+            color: #f5f7f9;
+            font-size: 20px;
+            margin: 0 0 20px;
+        }
+
+        .precio {
+            color: #58b9f5;
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0 0 16px;
+        }
+
+        .abono .detalle {
+            color: #a8b0b8;
+            font-size: 15px;
+            margin: 8px 0;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .sin-abonos {
+            background: rgba(17, 22, 28, .92);
+            border: 1px solid rgba(36, 153, 232, .25);
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: #a8b0b8;
+        }
+
+        @media (max-width: 900px) {
+            .grilla-abonos {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 750px) {
+            .contenedor {
+                width: 100%;
+                margin-top: 12px;
+                margin-bottom: 100px;
+            }
+
+            .encabezado {
+                width: 94%;
+                margin: 0 auto 16px;
+                padding: 16px;
+                border-radius: 10px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
+
+            .encabezado p {
+                margin-top: 5px;
+                font-size: 12px;
+            }
+
+            .acciones-superiores {
+                width: 94%;
+                margin: 0 auto 16px;
+            }
+
+            .grilla-abonos {
+                width: 94%;
+                margin: auto;
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .abono {
+                padding: 20px;
+            }
+
+            .abono h2 {
+                font-size: 18px;
+            }
+
+            .precio {
+                font-size: 26px;
+            }
+
+            .sin-abonos {
+                width: 94%;
+                margin: auto;
+                padding: 25px 15px;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/training_point.css') }}">
+    
+    
+
+<style>
+    body.tp-app .abono p.detalle {
+        display: block;
+        width: auto;
+        padding: 0 !important;
+        margin: 8px 0;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        border-radius: 0;
+        color: #a8b0b8 !important;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+</style>
+
+
+</head>
+
+<body class="tp-app">
+
+    <div class="contenedor">
+
+        <div class="encabezado">
+            <h1>Abonos disponibles</h1>
+            <p>
+                Conocé nuestros planes de entrenamiento
+                y elegí el que mejor se adapte a vos.
+            </p>
+        </div>
+
+        <div class="acciones-superiores">
+            <a href="{{ url_for('panel_alumno') }}"
+               class="boton-superior">
+                ⬅️ Volver al panel
+            </a>
+        </div>
+
+        {% if abonos %}
+
+            <div class="grilla-abonos">
+
+                {% for abono in abonos %}
+
+                    <div class="abono">
+
+                        <h2>{{ abono["nombre"] }}</h2>
+
+                        <p class="precio">
+                            ${{ "{:,.0f}".format(abono["precio"]).replace(",", ".") }}
+                        </p>
+
+                        <p class="detalle">
+                            {% if abono["creditos_ilimitados"] %}
+                                Créditos ilimitados
+                            {% elif abono["creditos"] == 1 %}
+                                1 crédito
+                            {% else %}
+                                {{ abono["creditos"] }} créditos
+                            {% endif %}
+                        </p>
+
+                        {% if abono["duracion_dias"] %}
+                            <p class="detalle">
+                                Vigencia: {{ abono["duracion_dias"] }} días
+                            </p>
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="sin-abonos">
+                Actualmente no hay abonos disponibles.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

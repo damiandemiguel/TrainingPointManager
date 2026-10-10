@@ -1312,6 +1312,36 @@ def rutinas_alumno():
         clases=clases
     )
 
+
+@app.route("/abonos-disponibles")
+def abonos_disponibles():
+    if "usuario_id" not in session:
+        return redirect(url_for("inicio"))
+
+    if session.get("rol") != "alumno":
+        return "Acceso no autorizado.", 403
+
+    conexion = conectar()
+    conexion.row_factory = sqlite3.Row
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre, creditos, precio,
+               duracion_dias, creditos_ilimitados
+        FROM tipos_bono
+        WHERE activo = 1
+        ORDER BY creditos ASC, precio ASC
+    """)
+
+    abonos = cursor.fetchall()
+    conexion.close()
+
+    return render_template(
+        "abonos_disponibles.html",
+        abonos=abonos
+    )
+
+
 @app.route("/mi-cuenta", methods=["GET", "POST"])
 def mi_cuenta():
 
@@ -2751,7 +2781,7 @@ def editar_tipo_bono(tipo_bono_id):
     cursor = conexion.cursor()
 
     cursor.execute("""
-        UUPDATE tipos_bono
+        UPDATE tipos_bono
         SET
             nombre = ?,
             creditos = ?,
