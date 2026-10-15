@@ -27,6 +27,34 @@ El proyecto surge de la necesidad de organizar alumnos, clases, inscripciones, a
 - Notificaciones y comunicación con alumnos.
 - Configuración de horarios y parámetros generales.
 
+## Capturas de pantalla
+
+### Panel de administración
+Vista general del sistema con indicadores de alumnos, documentación y actividad administrativa.
+
+![Panel de administración](docs/screenshots/panel_admin.png)
+
+### Gestión de alumnos
+Listado de alumnos, búsqueda y acceso a sus perfiles.
+
+![Gestión de alumnos](docs/screenshots/alumnos.png)
+
+### Calendario de clases
+Organización semanal de clases, horarios, inscripciones, cupos y estados.
+
+![Calendario de clases](docs/screenshots/clases.png)
+
+### Gestión de abonos y créditos
+Seguimiento de abonos, vencimientos y créditos disponibles.
+
+![Abonos y créditos](docs/screenshots/abonos.png)
+
+### Herramientas administrativas
+Acceso a los diferentes módulos de gestión de TrainingPointManager.
+
+![Herramientas administrativas](docs/screenshots/herramientas.png)
+
+
 ## Estructura del proyecto
 
 - `app.py`: lógica principal y rutas de la aplicación.
