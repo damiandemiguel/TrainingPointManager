@@ -1,4 +1,4 @@
-﻿from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+﻿from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -1987,19 +1987,49 @@ def eliminar_clase(clase_id):
     if "usuario_id" not in session:
         return redirect(url_for("inicio"))
 
-    if session["rol"] != "administrador":
-        return "Acceso no autorizado."
+    if session.get("rol") != "administrador":
+        return "Acceso no autorizado.", 403
 
-    conexion = conectar()
-    cursor = conexion.cursor()
+    conexion = None
 
-    cursor.execute("""
-        DELETE FROM clases
-        WHERE id = ?
-    """, (clase_id,))
+    try:
+        conexion = conectar()
+        cursor = conexion.cursor()
 
-    conexion.commit()
-    conexion.close()
+        cursor.execute("""
+            DELETE FROM clases
+            WHERE id = ?
+        """, (clase_id,))
+
+        conexion.commit()
+
+        flash("Clase eliminada correctamente.", "success")
+
+    except sqlite3.IntegrityError:
+        if conexion is not None:
+            conexion.rollback()
+
+        flash(
+            "No se puede eliminar esta clase porque tiene "
+            "inscripciones u otros registros asociados.",
+            "error"
+        )
+
+    except sqlite3.Error:
+        if conexion is not None:
+            conexion.rollback()
+
+        app.logger.exception("Error al eliminar la clase %s", clase_id)
+
+        flash(
+            "Ocurrió un error al eliminar la clase. "
+            "Intentá nuevamente.",
+            "error"
+        )
+
+    finally:
+        if conexion is not None:
+            conexion.close()
 
     return redirect(url_for("gestionar_clases"))
 
