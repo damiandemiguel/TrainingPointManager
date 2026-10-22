@@ -28,3 +28,16 @@ templates_backup_antes_diseno/
 
 # Archivos del sistema macOS
 .DS_Store
+
+# Credenciales y configuración privada
+.env
+.env.*
+
+# Bases de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
