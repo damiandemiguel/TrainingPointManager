@@ -187,6 +187,31 @@
             font-size: 21px;
         }
 
+        /* Indicador de notificaciones sin leer */
+        .icono-notificacion {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contador-notificaciones {
+            position: absolute;
+            top: -9px;
+            right: -13px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background-color: #e53935;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 18px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
         .tarjeta-titulo {
             font-size: 13px;
             font-weight: bold;
@@ -600,7 +625,16 @@
 
                 <div class="tarjeta-encabezado">
 
-                    <div class="tarjeta-icono">🔔</div>
+                    <div class="tarjeta-icono">
+                        <span class="icono-notificacion">
+                            🔔
+                            {% if cantidad_notificaciones > 0 %}
+                                <span class="contador-notificaciones">
+                                    {{ cantidad_notificaciones }}
+                                </span>
+                            {% endif %}
+                        </span>
+                    </div>
 
                     <div class="tarjeta-titulo">
                         Notificaciones
@@ -617,9 +651,9 @@
                     <div class="tarjeta-detalle">
 
                         {% if cantidad_notificaciones == 1 %}
-                            notificación activa
+                            notificación sin leer
                         {% else %}
-                            notificaciones activas
+                            notificaciones sin leer
                         {% endif %}
 
                     </div>
@@ -784,7 +818,16 @@
                     href="{{ url_for('notificaciones_alumno') }}"
                     class="herramienta"
                 >
-                    <div class="herramienta-icono">🔔</div>
+                    <div class="herramienta-icono">
+                        <span class="icono-notificacion">
+                            🔔
+                            {% if cantidad_notificaciones > 0 %}
+                                <span class="contador-notificaciones">
+                                    {{ cantidad_notificaciones }}
+                                </span>
+                            {% endif %}
+                        </span>
+                    </div>
                     <div class="herramienta-titulo">Notificaciones</div>
                     <div class="herramienta-flecha">›</div>
                 </a>

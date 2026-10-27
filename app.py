@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
+﻿from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -1004,19 +1004,25 @@ def panel_alumno():
 
     bono = cursor.fetchone()
 
-    # Notificaciones activas correspondientes al alumno
+    # Notificaciones pendientes de lectura del alumno
     cursor.execute("""
         SELECT COUNT(*) AS cantidad
-        FROM notificaciones
-        WHERE activa = 1
+        FROM notificaciones AS n
+        WHERE n.activa = 1
           AND (
-                tipo = 'General'
+                n.tipo = 'General'
                 OR (
-                    tipo = 'Individual'
-                    AND alumno_id = ?
+                    n.tipo = 'Individual'
+                    AND n.alumno_id = ?
                 )
-              )
-    """, (alumno_id,))
+            )
+        AND NOT EXISTS (
+            SELECT 1
+            FROM notificaciones_leidas AS nl
+            WHERE nl.notificacion_id = n.id
+              AND nl.alumno_id = ?
+        )
+    """, (alumno_id, alumno_id))
 
     resultado_notificaciones = cursor.fetchone()
     cantidad_notificaciones = resultado_notificaciones["cantidad"]
@@ -1119,6 +1125,25 @@ def notificaciones_alumno():
     """, (alumno["id"],))
 
     notificaciones = cursor.fetchall()
+
+    # Marcar como leídas las notificaciones que ve el alumno
+    fecha_lectura = ahora_local().strftime("%Y-%m-%d %H:%M:%S")
+
+    for notificacion in notificaciones:
+        cursor.execute("""
+            INSERT OR IGNORE INTO notificaciones_leidas (
+                alumno_id,
+                notificacion_id,
+                fecha_lectura
+            )
+            VALUES (?, ?, ?)
+        """, (
+            alumno["id"],
+            notificacion["id"],
+            fecha_lectura
+        ))
+
+    conexion.commit()
 
     avisos_automaticos = []
 
