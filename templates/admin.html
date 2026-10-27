@@ -459,6 +459,68 @@
 
         </section>
 
+        <!-- Cumpleaños próximos -->
+        <section class="hoy">
+
+            <h2>🎂 Cumpleaños de alumnos</h2>
+
+            {% if cumpleanos_proximos %}
+
+                <div class="lista-cumpleanos">
+
+                    {% for alumno in cumpleanos_proximos %}
+
+                        <a
+                            href="{{ url_for('perfil_alumno_admin', alumno_id=alumno.alumno_id) }}"
+                            class="clase-hoy"
+                            style="margin-bottom: 12px;"
+                        >
+
+                            <div class="clase-hoy-contenido">
+
+                                <div>
+
+                                    <strong>{{ alumno.nombre }}</strong>
+
+                                    <p style="margin: 8px 0; color: #555;">
+
+                                        {% if alumno.dias_restantes == 0 %}
+                                            🎉 ¡Hoy cumple años!
+                                        {% elif alumno.dias_restantes == 1 %}
+                                            🎈 Cumple mañana
+                                        {% else %}
+                                            📅 Cumple en {{ alumno.dias_restantes }} días
+                                        {% endif %}
+
+                                    </p>
+
+                                    <span style="color: #666; font-size: 14px;">
+                                        {{ alumno.fecha.strftime('%d/%m/%Y') }}
+                                        · Cumple {{ alumno.edad }} años
+                                    </span>
+
+                                </div>
+
+                                <div class="clase-hoy-flecha">›</div>
+
+                            </div>
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="sin-clases-hoy">
+                    No hay cumpleaños en los próximos 7 días.
+                </p>
+
+            {% endif %}
+
+        </section>
+
 
         <section class="hoy">
 

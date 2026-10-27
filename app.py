@@ -1,4 +1,4 @@
-﻿from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -897,6 +897,10 @@ def panel():
         resultado_mensajes = cursor.fetchone()
         cantidad_mensajes_nuevos = resultado_mensajes[0]
 
+        # Cumpleaños próximos para el administrador
+        from cumpleanos import obtener_cumpleanos_proximos
+        cumpleanos_proximos = obtener_cumpleanos_proximos()
+
         conexion.close()
 
         return render_template(
@@ -910,7 +914,8 @@ def panel():
             certificados_vigentes=certificados_vigentes,
             certificados_vencidos=certificados_vencidos,
             clases_hoy=clases_hoy,
-            cantidad_mensajes_nuevos=cantidad_mensajes_nuevos
+            cantidad_mensajes_nuevos=cantidad_mensajes_nuevos,
+            cumpleanos_proximos=cumpleanos_proximos
         )
 
     return redirect(url_for("panel_alumno"))
