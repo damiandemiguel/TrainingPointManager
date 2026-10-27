@@ -6,6 +6,7 @@ from procesar_recordatorios import (
     procesar_recordatorios,
     envio_real_de_prueba
 )
+from envio_emails import enviar_email
 
 
 def ejecutar():
@@ -31,6 +32,11 @@ def ejecutar():
             funcion_envio=envio_real_de_prueba
         )
 
+    elif modo == "produccion":
+        procesar_recordatorios(
+            simulacion=False,
+            funcion_envio=enviar_email
+        )
     else:
         raise ValueError(
             f"Modo de recordatorios no permitido: {modo}"

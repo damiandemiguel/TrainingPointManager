@@ -7,7 +7,9 @@ from database import conectar
 
 def buscar_abonos_por_vencer():
     fecha_objetivo = (
-        date.today() + timedelta(days=3)
+        datetime.now(
+            ZoneInfo("America/Argentina/Buenos_Aires")
+        ).date() + timedelta(days=3)
     ).isoformat()
 
     conexion = conectar()
