@@ -124,6 +124,7 @@
         }
 
         @media (max-width: 750px) {
+
             .contenedor {
                 width: 100%;
                 margin-top: 12px;
@@ -133,22 +134,22 @@
             .encabezado {
                 width: 94%;
                 margin: 0 auto 16px;
-                padding: 16px;
+                padding: 18px;
                 border-radius: 10px;
             }
 
             .encabezado h1 {
-                font-size: 21px;
+                font-size: 23px;
             }
 
             .encabezado p {
-                margin-top: 5px;
-                font-size: 12px;
+                margin-top: 8px;
+                font-size: 14px;
+                line-height: 1.5;
             }
 
             .acciones-superiores {
-                width: 94%;
-                margin: 0 auto 16px;
+                display: none;
             }
 
             .grilla-abonos {
@@ -159,23 +160,28 @@
             }
 
             .abono {
-                padding: 20px;
+                padding: 22px 18px;
             }
 
             .abono h2 {
-                font-size: 18px;
+                font-size: 20px;
+                margin-bottom: 16px;
             }
 
             .precio {
-                font-size: 26px;
+                font-size: 32px;
+                margin-bottom: 14px;
             }
 
             .sin-abonos {
                 width: 94%;
                 margin: auto;
-                padding: 25px 15px;
+                padding: 28px 18px;
+                font-size: 15px;
+                line-height: 1.5;
             }
         }
+
     </style>
 
     <link rel="stylesheet"
@@ -266,7 +272,10 @@
 
         {% endif %}
 
-    </div>
+        </div>
+
+    {% set nav_activa = '' %}
+    {% include '_nav_alumno.html' %}
 
 </body>
 </html>

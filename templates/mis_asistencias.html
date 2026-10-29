@@ -114,17 +114,9 @@
 
         @media (max-width: 700px) {
 
-            .asistencia {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .acciones-superiores {
-                display: none;
-            }
-
             .contenedor {
                 width: 94%;
-                margin: 20px auto 90px;
+                margin: 20px auto 100px;
             }
 
             .encabezado {
@@ -133,38 +125,56 @@
             }
 
             .encabezado h1 {
-                font-size: 21px;
-                margin-bottom: 5px;
+                font-size: 23px;
+                margin-bottom: 6px;
             }
 
             .encabezado p {
-                font-size: 12px;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .acciones-superiores {
+                display: none;
             }
 
             .lista {
                 padding: 15px;
-            }            
+            }
 
             .asistencia {
-                font-size: 13px;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                padding: 16px;
+                font-size: 15px;
+            }
+
+            .dato {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
             }
 
             .etiqueta {
-                font-size: 11px;
-            }            
+                font-size: 13px;
+                line-height: 1.4;
+            }
 
             .valor {
-                font-size: 13px;
+                font-size: 15px;
+                line-height: 1.5;
             }
 
             .dato-simple {
-                font-size: 12px;
+                font-size: 14px;
+                line-height: 1.5;
+                overflow-wrap: anywhere;
             }
 
             .sin-asistencias {
-                font-size: 12px;
+                font-size: 14px;
+                line-height: 1.5;
             }
-
         }
 
         @media (max-width: 450px) {
@@ -188,6 +198,14 @@
 
         .dato-simple strong {
             color: #333;
+        }
+
+        @media (max-width: 700px) {
+            .dato-simple {
+                font-size: 14px;
+                line-height: 1.5;
+                overflow-wrap: anywhere;
+            }
         }
 
     </style>

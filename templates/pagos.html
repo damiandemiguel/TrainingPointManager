@@ -108,17 +108,9 @@
 
         @media (max-width: 700px) {
 
-            .pago {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .acciones-superiores {
-                display: none;
-            }
-
             .contenedor {
                 width: 94%;
-                margin: 20px auto 90px;
+                margin: 20px auto 100px;
             }
 
             .encabezado {
@@ -127,12 +119,17 @@
             }
 
             .encabezado h1 {
-                font-size: 21px;
-                margin-bottom: 5px;
+                font-size: 23px;
+                margin-bottom: 6px;
             }
 
             .encabezado p {
-                font-size: 12px;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .acciones-superiores {
+                display: none;
             }
 
             .lista {
@@ -140,30 +137,38 @@
             }
 
             .pago {
-                font-size: 13px;
-            }       
-
-            .etiqueta {
-    font-size: 11px;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                padding: 16px;
+                font-size: 15px;
             }
 
-            .valor,
-            .importe {
+            .dato {
+        gap: 6px;
+                min-width: 0;
+            }
+
+            .etiqueta {
                 font-size: 13px;
+                line-height: 1.4;
+            }
+
+            .valor {
+                font-size: 15px;
+                line-height: 1.5;
+                overflow-wrap: anywhere;
+            }
+
+            .importe {
+                font-size: 20px;
+                line-height: 1.4;
+                overflow-wrap: anywhere;
             }
 
             .sin-pagos {
-                font-size: 12px;
+                font-size: 14px;
+                line-height: 1.5;
             }
-
-        }
-
-        @media (max-width: 450px) {
-
-            .pago {
-                grid-template-columns: 1fr;
-            }
-
         }
 
     </style>

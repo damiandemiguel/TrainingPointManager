@@ -31,8 +31,89 @@
     .contenido-rutina { white-space: pre-wrap; line-height: 1.6; color: #f5f7f9; }
     .pendiente { border-top: 1px solid rgba(255,255,255,.09); padding-top: 18px; color: #68727c; font-style: italic; }
     .sin-clases { background: rgba(17,22,28,.92); border: 1px solid rgba(36,153,232,.25); padding: 30px; border-radius: 12px; text-align: center; color: #a8b0b8; box-shadow: 0 4px 18px rgba(0,0,0,.28); }
-    @media (max-width:600px){
-        .contenedor{width:94%;margin:20px auto 100px}.datos-clase{flex-direction:column}.acciones-superiores{display:none}.encabezado{padding:20px 15px;margin-bottom:16px}.encabezado h1{font-size:21px}.encabezado p{font-size:12px}.clase{padding:16px}.fecha{font-size:15px}.horario{font-size:12px}.estado{font-size:11px}.titulo-rutina{font-size:13px}.boton{font-size:12px}
+    @media (max-width: 600px) {
+
+        .contenedor {
+            width: 94%;
+            margin: 20px auto 100px;
+        }
+
+        .encabezado {
+            padding: 20px 15px;
+            margin-bottom: 16px;
+        }
+
+        .encabezado h1 {
+            font-size: 23px;
+        }
+
+        .encabezado p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .acciones-superiores {
+            display: none;
+        }
+
+        .lista-clases {
+            gap: 15px;
+        }
+
+        .clase {
+            padding: 18px;
+        }
+
+        .datos-clase {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .fecha {
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .horario {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .estado {
+            font-size: 13px;
+            padding: 7px 11px;
+        }
+
+        .rutina {
+            padding-top: 16px;
+        }
+
+        .titulo-rutina {
+            font-size: 18px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .contenido-rutina {
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .pendiente {
+            font-size: 14px;
+            line-height: 1.5;
+            padding-top: 16px;
+        }
+
+        .sin-clases {
+            padding: 25px 18px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
     }
 </style>
 
