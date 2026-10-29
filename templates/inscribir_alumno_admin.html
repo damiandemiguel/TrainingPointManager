@@ -120,6 +120,40 @@
 
         }
 
+        #buscar_alumno {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 17px;
+        }
+
+        .resultados-alumnos {
+            display: none;
+            max-height: 230px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .resultado-alumno {
+            width: 100%;
+            display: block;
+            padding: 12px;
+            border: none;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .resultado-alumno:hover,
+        .resultado-alumno:focus {
+            background: #e6f7fc;
+        }
+
     </style>
 
 
@@ -165,24 +199,23 @@
                     Seleccioná el alumno:
                 </label>
 
-                <select name="alumno_id" id="alumno_id" required>
+                <input
+                    type="text"
+                    id="buscar_alumno"
+                    placeholder="🔎 Escribí el nombre o apellido..."
+                    autocomplete="off"
+                    aria-controls="resultados_alumnos"
+                    aria-expanded="false"
+                >
 
-                    <option value="">
-                        -- Seleccionar alumno --
-                    </option>
+                <input
+                    type="hidden"
+                    name="alumno_id"
+                    id="alumno_id"
+                    required
+                >
 
-                    {% for alumno in alumnos %}
-
-                        <option value="{{ alumno.id }}">
-                            {{ alumno.nombre }}
-                            {% if alumno.email %}
-                                — {{ alumno.email }}
-                            {% endif %}
-                        </option>
-
-                    {% endfor %}
-
-                </select>
+                <div id="resultados_alumnos" class="resultados-alumnos" role="listbox"></div>
 
 
                 <div class="botones">
@@ -227,6 +260,88 @@
     </div>
 
 </div>
+
+<script>
+const alumnos = [
+    {% for alumno in alumnos %}
+    {
+        id: {{ alumno.id | tojson }},
+        nombre: {{ alumno.nombre | tojson }},
+        email: {{ (alumno.email or '') | tojson }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+const buscador = document.getElementById("buscar_alumno");
+const campoId = document.getElementById("alumno_id");
+const resultados = document.getElementById("resultados_alumnos");
+
+if (buscador && campoId && resultados) {
+    const formulario = buscador.closest("form");
+
+    const normalizar = texto =>
+        texto.normalize("NFD")
+             .replace(/[\u0300-\u036f]/g, "")
+             .toLowerCase();
+
+    buscador.addEventListener("input", () => {
+        campoId.value = "";
+        resultados.replaceChildren();
+
+        const texto = normalizar(buscador.value.trim());
+
+        if (!texto) {
+            resultados.style.display = "none";
+            buscador.setAttribute("aria-expanded", "false");
+            return;
+        }
+
+        const coincidencias = alumnos.filter(alumno =>
+            normalizar(alumno.nombre).includes(texto) ||
+            normalizar(alumno.email).includes(texto)
+        );
+
+        coincidencias.forEach(alumno => {
+            const opcion = document.createElement("button");
+            opcion.type = "button";
+            opcion.className = "resultado-alumno";
+            opcion.setAttribute("role", "option");
+            opcion.textContent = alumno.nombre;
+
+            opcion.addEventListener("click", () => {
+                buscador.value = alumno.nombre;
+                campoId.value = alumno.id;
+                resultados.style.display = "none";
+                buscador.setAttribute("aria-expanded", "false");
+            });
+
+            resultados.appendChild(opcion);
+        });
+
+        if (!coincidencias.length) {
+            const aviso = document.createElement("div");
+            aviso.className = "resultado-alumno";
+            aviso.textContent = "No se encontraron alumnos";
+            resultados.appendChild(aviso);
+        }
+
+        resultados.style.display = "block";
+        buscador.setAttribute("aria-expanded", "true");
+    });
+
+    formulario.addEventListener("submit", evento => {
+        if (!campoId.value) {
+            evento.preventDefault();
+            buscador.setCustomValidity("Seleccioná un alumno de la lista.");
+            buscador.reportValidity();
+        }
+    });
+
+    buscador.addEventListener("input", () => {
+        buscador.setCustomValidity("");
+    });
+}
+</script>
 
 </body>
 

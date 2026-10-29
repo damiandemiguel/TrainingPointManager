@@ -9,15 +9,15 @@
    ========================= */
 
 :root {
-    --tp-titulo-pantalla: 21px;
-    --tp-subtitulo: 12px;
-    --tp-titulo-seccion: 15px;
-    --tp-texto-principal: 14px;
-    --tp-texto: 13px;
-    --tp-texto-secundario: 12px;
-    --tp-texto-pequeno: 11px;
-    --tp-valor-destacado: 20px;
-    --tp-opcion: 12px;
+    --tp-titulo-pantalla: 23px;
+    --tp-subtitulo: 14px;
+    --tp-titulo-seccion: 17px;
+    --tp-texto-principal: 16px;
+    --tp-texto: 15px;
+    --tp-texto-secundario: 14px;
+    --tp-texto-pequeno: 12px;
+    --tp-valor-destacado: 22px;
+    --tp-opcion: 14px;
     --tp-flecha: 20px;
 }
 
@@ -70,36 +70,36 @@
     */
 
     .tp-titulo-pantalla {
-        font-size: 21px !important;
+        font-size: var(--tp-titulo-pantalla) !important;
     }
 
     .tp-subtitulo {
-        font-size: 12px !important;
+        font-size: var(--tp-subtitulo) !important;
         line-height: 1.4;
     }
 
     .tp-titulo-seccion {
-        font-size: 15px !important;
+        font-size: var(--tp-titulo-seccion) !important;
     }
 
     .tp-texto-principal {
-        font-size: 14px !important;
+        font-size: var(--tp-texto-principal) !important;
     }
 
     .tp-texto {
-        font-size: 13px !important;
+        font-size: var(--tp-texto) !important;
     }
 
     .tp-texto-secundario {
-        font-size: 12px !important;
+        font-size: var(--tp-texto-secundario) !important;
     }
 
     .tp-texto-pequeno {
-        font-size: 11px !important;
+        font-size: var(--tp-texto-pequeno) !important;
     }
 
     .tp-valor-destacado {
-        font-size: 20px !important;
+        font-size: var(--tp-valor-destacado) !important;
     }
 
 
@@ -108,8 +108,8 @@
     */
 
     .tp-opcion {
-        min-height: 41px;
-        font-size: 12px !important;
+        min-height: 44px;
+        font-size: var(--tp-opcion) !important;
     }
 
     .tp-opcion-icono {
@@ -130,7 +130,7 @@
     */
 
     .tp-ayuda {
-        font-size: 11px !important;
+        font-size: var(--tp-texto-pequeno) !important;
         color: #777;
         line-height: 1.4;
     }
@@ -786,4 +786,31 @@ body.tp-app .seccion .valor {
     border: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+}
+
+/* =========================================================
+   MEJORA DE LEGIBILIDAD GENERAL
+   ========================================================= */
+
+body.tp-app {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Formularios */
+body.tp-app input:not([type="checkbox"]):not([type="radio"]),
+body.tp-app select,
+body.tp-app textarea {
+    font-size: 16px;
+}
+
+/* Tablas */
+body.tp-app table {
+    font-size: 15px;
+}
+
+/* Textos de botones */
+body.tp-app button,
+body.tp-app .boton {
+    font-size: 15px;
 }

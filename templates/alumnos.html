@@ -321,16 +321,21 @@
 
         </div>
 
-        <form method="GET" action="{{ url_for('mostrar_alumnos') }}" class="buscador">
+        <form
+            method="GET"
+            action="{{ url_for('mostrar_alumnos') }}"
+            class="buscador"
+            id="form-buscar-alumnos"
+        >
 
             <input
-                type="text"
+                type="search"
+                id="buscar-alumnos"
                 name="busqueda"
-                placeholder="Buscar por ID, nombre o e-mail..."
-                value="{{ busqueda }}"
+                placeholder="🔎 Buscar por ID, nombre o e-mail..."
+                value=""
+                autocomplete="off"
             >
-
-            <button type="submit">Buscar</button>
 
             {% if busqueda %}
                 <a href="{{ url_for('mostrar_alumnos') }}">Limpiar</a>
@@ -453,10 +458,49 @@
     {% set nav_activa = 'alumnos' %}
     {% include '_nav_admin.html' %}
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buscador = document.getElementById("buscar-alumnos");
 
-</body>
+    if (!buscador) return;
 
-</html>
+    const filas = document.querySelectorAll("table tr:not(:first-child)");
+    const tarjetas = document.querySelectorAll(".lista-alumnos-movil .alumno-movil");
+
+    function normalizar(texto) {
+        return texto
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+    }
+
+    function filtrar() {
+        const texto = normalizar(buscador.value.trim());
+
+        filas.forEach(fila => {
+            const coincide = normalizar(fila.textContent).includes(texto);
+            fila.style.display = coincide ? "" : "none";
+        });
+
+        tarjetas.forEach(tarjeta => {
+            const coincide = normalizar(tarjeta.textContent).includes(texto);
+            tarjeta.style.display = coincide ? "" : "none";
+        });
+    }
+
+    buscador.addEventListener("input", filtrar);
+    const formulario = document.getElementById("form-buscar-alumnos");
+
+if (formulario) {
+    formulario.addEventListener("submit", function(evento) {
+        evento.preventDefault();
+        filtrar();
+    });
+}
+
+    filtrar();
+});
+</script>
 
 </body>
 

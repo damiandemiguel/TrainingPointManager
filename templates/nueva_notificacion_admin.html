@@ -259,6 +259,66 @@
 
         }
 
+        /* Selector desplegable de alumnos */
+
+        .selector-alumno {
+            position: relative;
+            width: 100%;
+        }
+
+        .lista-alumnos {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            z-index: 100;
+
+            max-height: 220px;
+            overflow-y: auto;
+
+            background: #151d26;
+            border: 1px solid #2876a5;
+            border-radius: 8px;
+
+            padding: 4px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .lista-alumnos.abierta {
+            display: block;
+        }
+
+        .lista-alumnos .opcion-alumno {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+
+            padding: 12px 14px;
+            margin: 0;
+
+            background: transparent;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .lista-alumnos .opcion-alumno:hover,
+        .lista-alumnos .opcion-alumno:focus {
+            background: #193b52;
+            color: #ffffff;
+        }
+
+        .sin-resultados-alumno {
+            padding: 12px 14px;
+            color: #aeb9c4;
+            font-size: 14px;
+        }
+
     </style>
 
 
@@ -587,6 +647,24 @@
             if (!selector.contains(evento.target)) {
 
                 lista.classList.remove("abierta");
+
+            }
+
+        });
+
+                const formulario = document.querySelector(".tarjeta form");
+
+        formulario.addEventListener("submit", function (evento) {
+
+            const tipo = document.getElementById("tipo").value;
+
+            if (tipo === "Individual" && !alumnoId.value) {
+
+                evento.preventDefault();
+
+                alert("Seleccioná un alumno de la lista antes de enviar la notificación.");
+
+                buscador.focus();
 
             }
 
