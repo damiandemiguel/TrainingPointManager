@@ -21,6 +21,26 @@ def conectar():
 
     return conexion
 
+def crear_tabla_gimnasios():
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS gimnasios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            slug TEXT NOT NULL UNIQUE,
+            logo TEXT,
+            color_primario TEXT NOT NULL DEFAULT '#35BCE0',
+            color_secundario TEXT NOT NULL DEFAULT '#FFFFFF',
+            activo INTEGER NOT NULL DEFAULT 1,
+            fecha_alta TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
 
 def crear_tabla_usuarios():
     conexion = conectar()
