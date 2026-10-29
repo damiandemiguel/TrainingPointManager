@@ -41,3 +41,6 @@ templates_backup_antes_diseno/
 # Archivos temporales de Python
 __pycache__/
 *.pyc
+
+# Base de datos de desarrollo comercial
+trainingpoint_comercial.db

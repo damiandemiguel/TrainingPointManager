@@ -5,9 +5,9 @@ from werkzeug.security import generate_password_hash
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-RUTA_DB = os.path.join(
-    BASE_DIR,
-    "trainingpoint.db"
+RUTA_DB = os.environ.get(
+    "TRAININGPOINT_DB",
+    os.path.join(BASE_DIR, "trainingpoint.db")
 )
 
 
