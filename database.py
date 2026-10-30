@@ -21,12 +21,12 @@ def conectar():
 
     return conexion
 
-def crear_tabla_gimnasios():
+def crear_tabla_organizaciones():
     conexion = conectar()
     cursor = conexion.cursor()
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS gimnasios (
+        CREATE TABLE IF NOT EXISTS organizaciones (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
             slug TEXT NOT NULL UNIQUE,
@@ -49,10 +49,12 @@ def crear_tabla_usuarios():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            organizacion_id INTEGER,
             usuario TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             rol TEXT NOT NULL,
-            debe_cambiar_password INTEGER NOT NULL DEFAULT 0
+            debe_cambiar_password INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (organizacion_id) REFERENCES organizaciones(id)
         )
     """)
 
@@ -115,17 +117,33 @@ def crear_tabla_intentos_recuperacion():
     conexion.commit()
     conexion.close()
 
-def crear_usuario(usuario, password, rol):
+def crear_usuario(usuario, password, rol, organizacion_id=None):
     conexion = conectar()
-
     cursor = conexion.cursor()
 
     password_segura = generate_password_hash(password)
 
-    cursor.execute("""
-        INSERT INTO usuarios (usuario, password, rol)
-        VALUES (?, ?, ?)
-    """, (usuario, password_segura, rol))
+    cursor.execute("PRAGMA table_info(usuarios)")
+    columnas = {fila[1] for fila in cursor.fetchall()}
+
+    if "organizacion_id" in columnas:
+        cursor.execute("""
+            INSERT INTO usuarios (
+                usuario, password, rol, organizacion_id
+            )
+            VALUES (?, ?, ?, ?)
+        """, (usuario, password_segura, rol, organizacion_id))
+    else:
+        if organizacion_id is not None:
+            conexion.close()
+            raise ValueError(
+                "La base de datos no admite organizacion_id"
+            )
+
+        cursor.execute("""
+            INSERT INTO usuarios (usuario, password, rol)
+            VALUES (?, ?, ?)
+        """, (usuario, password_segura, rol))
 
     conexion.commit()
     conexion.close()

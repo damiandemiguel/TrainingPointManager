@@ -328,11 +328,23 @@ def inicio():
         conexion = conectar()
         cursor = conexion.cursor()
 
-        cursor.execute("""
-            SELECT id, usuario, password, rol, debe_cambiar_password
-            FROM usuarios
-            WHERE usuario = ?
-        """, (usuario,))
+        cursor.execute("PRAGMA table_info(usuarios)")
+        columnas = {fila[1] for fila in cursor.fetchall()}
+
+        if "organizacion_id" in columnas:
+            cursor.execute("""
+                SELECT id, usuario, password, rol,
+                       debe_cambiar_password, organizacion_id
+                FROM usuarios
+                WHERE usuario = ?
+            """, (usuario,))
+        else:
+            cursor.execute("""
+                SELECT id, usuario, password, rol,
+                       debe_cambiar_password, NULL AS organizacion_id
+                FROM usuarios
+                WHERE usuario = ?
+            """, (usuario,))
 
         usuario_encontrado = cursor.fetchone()
 
@@ -345,6 +357,7 @@ def inicio():
             password_guardada = usuario_encontrado[2]
             rol = usuario_encontrado[3]
             debe_cambiar_password = usuario_encontrado[4]
+            organizacion_id = usuario_encontrado[5]
 
             if check_password_hash(password_guardada, password):
 
@@ -353,6 +366,7 @@ def inicio():
                 session["usuario_id"] = id_usuario
                 session["usuario"] = nombre_usuario
                 session["rol"] = rol
+                session["organizacion_id"] = organizacion_id
 
                 if debe_cambiar_password == 1:
                     return redirect(
